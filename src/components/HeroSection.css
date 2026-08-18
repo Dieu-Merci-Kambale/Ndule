@@ -1,0 +1,308 @@
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-color: #ffffff;
+  padding-top: 100px;
+  padding-bottom: 80px;
+  font-family: 'Inter', sans-serif;
+}
+
+.hero-noise {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.03;
+  pointer-events: none;
+  background-image: url('https://grainy-gradients.vercel.app/noise.svg');
+  background-repeat: repeat;
+}
+
+.hero-glow-left {
+  position: absolute;
+  top: -10%;
+  left: -20%;
+  width: 70vw;
+  height: 70vw;
+  background-color: rgba(96, 165, 250, 0.1);
+  filter: blur(120px);
+  mix-blend-mode: multiply;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.hero-glow-right {
+  position: absolute;
+  bottom: -10%;
+  right: -20%;
+  width: 60vw;
+  height: 60vw;
+  background-color: rgba(147, 197, 253, 0.1);
+  filter: blur(100px);
+  mix-blend-mode: multiply;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.badge {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  z-index: 20;
+  font-size: 14px;
+  font-weight: 700;
+  color: #44403c;
+  animation: float 3s ease-in-out infinite;
+}
+
+.badge-1 { top: 25%; left: 15%; animation-delay: 0s; }
+.badge-2 { top: 33%; right: 20%; animation-delay: 4s; }
+.badge-3 { bottom: 33%; right: 15%; animation-delay: 2s; }
+@media (max-width: 1023px) {
+  .badge-1, .badge-2, .badge-3 { display: none; }
+}
+
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #3B82F6;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.emotion-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border-radius: 9999px;
+  border: 1px solid #e7e5e4;
+  background-color: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(4px);
+  margin-bottom: 24px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  transition: border-color 0.3s;
+}
+.emotion-pill:hover { border-color: #BFDBFE; }
+
+.emotion-text {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #57534e;
+}
+.emotion-pill:hover .emotion-text { color: #2563EB; }
+
+.hero-subtitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2563EB;
+  margin-bottom: 24px;
+  letter-spacing: 0.025em;
+}
+
+.hero-title-container {
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 20;
+}
+
+.hero-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  color: #000000;
+  line-height: 0.95;
+  margin: 0;
+  display: block;
+}
+
+.hero-title-en {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  color: #2563EB;
+  font-weight: 800;
+  font-size: 2.25rem;
+  letter-spacing: -0.05em;
+  line-height: 1.1;
+  margin-top: 8px;
+}
+
+@media (min-width: 640px) {
+  .hero-title, .hero-title-en { font-size: 3.5rem; }
+}
+@media (min-width: 1024px) {
+  .hero-title, .hero-title-en { font-size: 4.5rem; }
+}
+
+.hero-title-slide {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1), transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  text-align: center;
+}
+
+.hero-title-slide.active {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+.hero-paragraph {
+  font-size: 1.1rem;
+  color: #57534e;
+  max-width: 672px;
+  margin: 0 auto 48px;
+  line-height: 1.6;
+  font-weight: 500;
+}
+@media (min-width: 768px) { 
+  .hero-paragraph { font-size: 24px; } 
+}
+
+.cta-button {
+  padding: 16px 32px;
+  border-radius: 9999px;
+  background: linear-gradient(to right, var(--blue-400), var(--blue-600));
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.2), 0 0 0 4px white, 0 0 0 5px #2563EB;
+  transition: all 0.2s;
+  position: relative;
+  z-index: 30;
+  margin-bottom: 32px;
+}
+.cta-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.4), 0 0 0 4px white, 0 0 0 5px #2563EB;
+}
+
+.social-proof {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  z-index: 30;
+}
+
+.avatars {
+  display: flex;
+}
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid white;
+  margin-left: -12px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.avatar:first-child { margin-left: 0; }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.stars-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+.stars {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #3B82F6;
+}
+.proof-text {
+  font-size: 14px;
+  color: #44403c;
+  font-weight: 600;
+  margin: 0;
+}
+.proof-text strong { color: #2563EB; font-weight: 700; }
+
+.ticker-wrap {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  border-top: 1px solid #e7e5e4;
+  border-bottom: 1px solid #e7e5e4;
+  background-color: #fafaf9;
+  padding: 12px 0;
+  z-index: 20;
+}
+
+.ticker-content {
+  display: flex;
+  white-space: nowrap;
+  animation: ticker 30s linear infinite;
+  width: fit-content;
+}
+
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 32px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #000000;
+  padding: 0 16px;
+  letter-spacing: 0.05em;
+}
+
+.ticker-star {
+  color: #2563EB;
+  font-size: 16px;
+}
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,294 @@
+/* Stats.css */
+.stats-content {
+  max-width: 900px;
+  margin: 16px auto 0;
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 768px) {
+  .stats-content { margin: 20px auto 0; }
+}
+
+/* Header */
+.stats-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stats-back-btn {
+  margin-top: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.stats-header-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stats-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #000000;
+  margin: 0;
+}
+
+.stats-subtitle {
+  font-size: 13px;
+  color: #6B7280;
+  margin: 0;
+}
+
+/* KPIs Grid */
+.stats-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+@media (min-width: 768px) {
+  .stats-kpi-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+.kpi-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #F3F4F6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.kpi-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #4B5563;
+  font-weight: 500;
+}
+
+.kpi-card-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: #000000;
+}
+
+/* Chart Section */
+.stats-chart-section {
+  background-color: white;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #F3F4F6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  margin-bottom: 24px;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.chart-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chart-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #000000;
+  margin: 0;
+}
+
+.chart-subtitle {
+  font-size: 13px;
+  color: #9CA3AF;
+}
+
+.chart-collapse-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.chart-container {
+  display: flex;
+  height: 250px;
+  width: 100%;
+}
+
+.chart-y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-right: 16px;
+  font-size: 11px;
+  color: #9CA3AF;
+  height: calc(100% - 24px); /* Account for x-axis height */
+}
+
+.chart-area {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-grid-lines {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  height: calc(100% - 24px);
+}
+
+.grid-line {
+  width: 100%;
+  height: 1px;
+  background-color: #F3F4F6;
+}
+
+.chart-line-zero {
+  position: absolute;
+  bottom: 24px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #3B82F6;
+  box-shadow: 0 2px 4px rgba(255, 87, 34, 0.2);
+}
+
+.chart-x-axis {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 24px;
+  align-items: flex-end;
+  font-size: 11px;
+  color: #9CA3AF;
+}
+
+/* Bottom Grid (Popular & Recent) */
+.stats-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .stats-bottom-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.popular-songs-section, .recent-activity-section {
+  background-color: white;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #F3F4F6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  min-height: 150px;
+}
+
+.section-header-small {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.section-header-small h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #000000;
+  margin: 0;
+}
+
+/* Popular song item */
+.popular-song-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.song-rank {
+  font-size: 14px;
+  font-weight: 700;
+  color: #D1D5DB;
+  width: 16px;
+}
+
+.song-cover {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.song-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.song-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.song-info h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0;
+}
+
+.song-info span {
+  font-size: 11px;
+  color: #9CA3AF;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.song-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stats-number {
+  font-size: 14px;
+  font-weight: 700;
+  color: #000000;
+}
+
+.stats-label {
+  font-size: 11px;
+  color: #9CA3AF;
+}
+
+/* Recent Activity Empty State */
+.empty-activity {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: #6B7280;
+}

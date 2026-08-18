@@ -1,0 +1,83 @@
+import React, { useState } from 'react';
+import { ArrowRight, ChevronDown, Menu, X } from 'lucide-react';
+import { useTranslation } from '../hooks/useTranslation';
+import './Navbar.css';
+
+const Navbar = () => {
+  const { t, lang } = useTranslation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  return (
+    <nav className="navbar">
+      <div className="navbar-container">
+        
+        {/* Logo */}
+        <a href="/" className="navbar-logo">
+          <span style={{fontSize: '28px', marginRight: '4px'}}>🎵</span>
+          <span style={{fontWeight: 800, fontSize: '1.5rem', color: '#2563eb'}}>Ndule</span>
+        </a>
+
+        {/* Center Links in Pill (Desktop) */}
+        <div className="navbar-links">
+          <a href={`/${lang}#playlist`}>{t.navbar.examples}</a>
+          <a href={`/${lang}#testimonials`}>{t.navbar.reviews}</a>
+          <a href={`/${lang}#faq`}>{t.navbar.faq}</a>
+          <a href={`/${lang}/dashboard`}>{t.navbar.dashboard || (lang === 'fr' ? 'Tableau de bord' : 'Dashboard')}</a>
+        </div>
+
+        {/* Right Side (Desktop) */}
+        <div className="navbar-right">
+          <button className="navbar-lang">
+            <span className="navbar-lang-flag">{lang === 'fr' ? '🇫🇷' : '🇬🇧'}</span>
+            <span className="navbar-lang-text">{lang}</span>
+            <ChevronDown />
+          </button>
+          
+          <a href={`/${lang}/login`} className="navbar-login">{t.navbar.login}</a>
+          
+          <a href={`/${lang}/login`} className="navbar-btn">
+            {t.navbar.start}
+            <ArrowRight size={16} />
+          </a>
+        </div>
+
+        {/* Mobile Menu Toggle Button */}
+        <button 
+          className="navbar-mobile-toggle"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div className="navbar-mobile-menu">
+          <div className="navbar-mobile-links">
+            <a href={`/${lang}#playlist`} onClick={() => setIsMobileMenuOpen(false)}>{t.navbar.examples}</a>
+            <a href={`/${lang}#testimonials`} onClick={() => setIsMobileMenuOpen(false)}>{t.navbar.reviews}</a>
+            <a href={`/${lang}#faq`} onClick={() => setIsMobileMenuOpen(false)}>{t.navbar.faq}</a>
+            <a href={`/${lang}/dashboard`} onClick={() => setIsMobileMenuOpen(false)}>{t.navbar.dashboard || (lang === 'fr' ? 'Tableau de bord' : 'Dashboard')}</a>
+            
+            <div className="navbar-mobile-divider"></div>
+            
+            <button className="navbar-lang" style={{ alignSelf: 'flex-start' }}>
+              <span className="navbar-lang-flag">{lang === 'fr' ? '🇫🇷' : '🇬🇧'}</span>
+              <span className="navbar-lang-text">{lang}</span>
+              <ChevronDown />
+            </button>
+            
+            <a href={`/${lang}/login`} className="navbar-login" style={{ fontSize: '18px', padding: '12px 0' }}>{t.navbar.login}</a>
+            
+            <a href={`/${lang}/login`} className="navbar-btn" style={{ justifyContent: 'center' }}>
+              {t.navbar.start}
+              <ArrowRight size={16} />
+            </a>
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+};
+
+export default Navbar;

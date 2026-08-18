@@ -1,0 +1,275 @@
+/* Notes.css */
+.notes-content {
+  max-width: 650px;
+  margin: 16px auto 60px;
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 768px) {
+  .notes-content { margin: 40px auto 60px; }
+}
+
+/* Pricing Header */
+.pricing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.pricing-header-left h2 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #000000;
+  margin: 0 0 4px 0;
+}
+
+.pricing-header-left p {
+  font-size: 13px;
+  color: #6B7280;
+  margin: 0;
+}
+
+.currency-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background-color: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 50px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.currency-text {
+  font-weight: 600;
+  color: #4B5563;
+}
+
+.currency-badge {
+  background-color: #ECFDF5;
+  color: #10B981;
+  font-weight: 700;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+
+/* Pricing Cards */
+.pricing-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.pricing-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 16px;
+  padding: 20px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.pricing-card:hover {
+  border-color: #D1D5DB;
+}
+
+.pricing-card.selected {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 1px #3B82F6;
+}
+
+.pricing-card-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pricing-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pricing-info h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #000000;
+  margin: 0;
+}
+
+.pricing-info span {
+  font-size: 13px;
+  color: #6B7280;
+}
+
+.pricing-price {
+  font-size: 18px;
+  font-weight: 800;
+  color: #000000;
+}
+
+/* Popular Card specific styles */
+.popular-card {
+  background-color: #FFFFFF;
+  border-color: #93C5FD;
+}
+
+.popular-card:hover {
+  border-color: #3B82F6;
+}
+
+.popular-ribbon {
+  position: absolute;
+  top: -12px;
+  right: 16px;
+  background-color: #60A5FA;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 4px rgba(255, 87, 34, 0.2);
+}
+
+/* Promo Code */
+.promo-code-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: #6B7280;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  margin: 0 auto 32px;
+}
+
+.promo-code-btn:hover {
+  color: #374151;
+}
+
+/* Social Proof */
+.social-proof {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.avatars-group {
+  display: flex;
+  align-items: center;
+}
+
+.avatar-overlap {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid white;
+  margin-left: -12px;
+}
+
+.avatar-overlap:first-child {
+  margin-left: 0;
+}
+
+.reviews-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.rating-score {
+  font-size: 13px;
+  font-weight: 700;
+  color: #3B82F6;
+  margin-left: 6px;
+}
+
+.reviews-info p {
+  font-size: 11px;
+  color: #6B7280;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* CTA Button */
+.continue-purchase-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #60A5FA, #2563EB);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(230, 46, 4, 0.2);
+  margin-bottom: 32px;
+  transition: transform 0.1s, box-shadow 0.2s;
+}
+
+.continue-purchase-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(230, 46, 4, 0.3);
+}
+
+.continue-purchase-btn:active {
+  transform: translateY(0);
+}
+
+/* Info Block */
+.how-it-works-block {
+  background-color: white;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid #F3F4F6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.how-it-works-block h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #000000;
+  margin: 0 0 16px 0;
+}
+
+.info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: #4B5563;
+}
