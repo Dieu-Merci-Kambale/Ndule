@@ -9,9 +9,9 @@ const Credits = () => {
   const [error, setError] = useState('');
 
   const plans = {
-    'decouverte': { id: 'decouverte', notes: 2, priceUsd: 3.00 },
-    'populaire': { id: 'populaire', notes: 5, priceUsd: 7.00 },
-    'premium': { id: 'premium', notes: 10, priceUsd: 15.00 }
+    'decouverte': { id: 'decouverte', notes: 2, priceUsd: 0.22 },
+    'populaire': { id: 'populaire', notes: 5, priceUsd: 0.22 },
+    'premium': { id: 'premium', notes: 10, priceUsd: 0.22 }
   };
 
   const handleCheckout = async () => {
@@ -96,7 +96,7 @@ const Credits = () => {
               <span>2 Crédits</span>
             </div>
           </div>
-          <div className="pricing-price">$3.00</div>
+          <div className="pricing-price">$0.22</div>
         </div>
 
         <div
@@ -115,7 +115,7 @@ const Credits = () => {
               <span className="text-stone-500">5 Crédits</span>
             </div>
           </div>
-          <div className="pricing-price text-blue-500">$7.00</div>
+          <div className="pricing-price text-blue-500">$0.22</div>
         </div>
 
         <div
@@ -131,7 +131,7 @@ const Credits = () => {
               <span>10 Crédits</span>
             </div>
           </div>
-          <div className="pricing-price">$15.00</div>
+          <div className="pricing-price">$0.22</div>
         </div>
       </div>
 

@@ -5,13 +5,15 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { usePlayer } from '../context/PlayerContext';
 import VideoModal from '../components/VideoModal';
+import { useLocation } from 'react-router-dom';
 
 const DashboardHome = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { playTrack } = usePlayer();
   const [recentTracks, setRecentTracks] = useState([]);
   const [userName, setUserName] = useState('');
-  
+  const [isVerifying, setIsVerifying] = useState(false);
   const [activeVideoTrack, setActiveVideoTrack] = useState(null);
 
   useEffect(() => {
@@ -32,6 +34,42 @@ const DashboardHome = () => {
     };
     fetchRecent();
   }, []);
+
+  useEffect(() => {
+    const verifyPayment = async () => {
+      const searchParams = new URLSearchParams(location.search);
+      const depositId = searchParams.get('depositId');
+      
+      if (depositId && !isVerifying) {
+        setIsVerifying(true);
+        try {
+          const { data, error: funcError } = await supabase.functions.invoke('pawapay-verify', {
+            body: { depositId }
+          });
+          
+          let errorMsg = funcError ? funcError.message : null;
+          if (funcError && funcError.context && typeof funcError.context.json === 'function') {
+             const errBody = await funcError.context.json().catch(() => null);
+             if (errBody && errBody.error) errorMsg = errBody.error;
+          }
+          
+          if (data && data.success && data.status === 'COMPLETED') {
+            alert("Paiement validé ! Vos crédits ont été ajoutés.");
+          } else {
+            alert(`Paiement en cours de traitement. Statut actuel: ${data?.status || 'Inconnu'}. Erreur détaillée: ${errorMsg || 'Aucune'}`);
+          }
+        } catch (err) {
+          console.error("Verification error:", err);
+        } finally {
+          setIsVerifying(false);
+          // Remove depositId from URL cleanly
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      }
+    };
+    
+    verifyPayment();
+  }, [location]);
 
   return (
     <div className="dashboard-home-content">

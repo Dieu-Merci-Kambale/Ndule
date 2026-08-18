@@ -50,7 +50,7 @@ serve(async (req) => {
     let origin = req.headers.get('origin') || 'http://127.0.0.1:5173'
     // PawaPay API strict validation blocks 'localhost', replacing it with 127.0.0.1
     origin = origin.replace('localhost', '127.0.0.1')
-    const returnUrl = `${origin}/fr/dashboard`
+    const returnUrl = `${origin}/fr/dashboard?depositId=${depositId}`
     
     // According to E-Facture working config, use v1 widget sessions
     const apiUrl = 'https://api.pawapay.cloud/v1/widget/sessions'
