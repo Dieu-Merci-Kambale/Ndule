@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { ArrowRight, ChevronDown, Menu, X } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
+import ContactModal from './ContactModal';
 import './Navbar.css';
 
 const Navbar = () => {
   const { t, lang } = useTranslation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isContactOpen, setIsContactOpen] = useState(false);
 
   return (
     <nav className="navbar">
@@ -22,7 +24,7 @@ const Navbar = () => {
           <a href={`/${lang}#playlist`}>{t.navbar.examples}</a>
           <a href={`/${lang}#testimonials`}>{t.navbar.reviews}</a>
           <a href={`/${lang}#faq`}>{t.navbar.faq}</a>
-          <a href={`/${lang}/contact`}>{t.navbar.contact || 'Contact'}</a>
+          <button onClick={() => setIsContactOpen(true)} className="navbar-link-btn">{t.navbar.contact || 'Contact'}</button>
         </div>
 
         {/* Right Side (Desktop) */}
@@ -57,7 +59,12 @@ const Navbar = () => {
             <a href={`/${lang}#playlist`} onClick={() => setIsMobileMenuOpen(false)}>{t.navbar.examples}</a>
             <a href={`/${lang}#testimonials`} onClick={() => setIsMobileMenuOpen(false)}>{t.navbar.reviews}</a>
             <a href={`/${lang}#faq`} onClick={() => setIsMobileMenuOpen(false)}>{t.navbar.faq}</a>
-            <a href={`/${lang}/contact`} onClick={() => setIsMobileMenuOpen(false)}>{t.navbar.contact || 'Contact'}</a>
+            <button 
+              onClick={() => { setIsContactOpen(true); setIsMobileMenuOpen(false); }} 
+              className="navbar-mobile-link-btn"
+            >
+              {t.navbar.contact || 'Contact'}
+            </button>
             
             <div className="navbar-mobile-divider"></div>
             
@@ -76,6 +83,9 @@ const Navbar = () => {
           </div>
         </div>
       )}
+
+      {/* Contact Modal */}
+      <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
     </nav>
   );
 };
