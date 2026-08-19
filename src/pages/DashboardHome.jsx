@@ -36,6 +36,41 @@ const DashboardHome = () => {
   }, []);
 
   useEffect(() => {
+    // Background sync for ANY pending transactions (in case user closed page before redirect or webhook failed)
+    const syncPendingTransactions = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      
+      const { data: pendingTxs } = await supabase
+        .from('transactions')
+        .select('deposit_id')
+        .eq('user_id', user.id)
+        .eq('status', 'pending');
+        
+      if (pendingTxs && pendingTxs.length > 0) {
+        let hasUpdates = false;
+        for (const tx of pendingTxs) {
+           try {
+             const { data } = await supabase.functions.invoke('pawapay-verify', {
+                body: { depositId: tx.deposit_id }
+             });
+             if (data && data.success && ['COMPLETED', 'APPROVED', 'SUCCESS', 'SUCCESSFUL'].includes(data.status?.toUpperCase())) {
+                hasUpdates = true;
+             }
+           } catch (e) {
+             console.error("Sync error:", e);
+           }
+        }
+        if (hasUpdates) {
+           window.location.reload();
+        }
+      }
+    };
+    
+    syncPendingTransactions();
+  }, []);
+
+  useEffect(() => {
     const verifyPayment = async () => {
       const searchParams = new URLSearchParams(location.search);
       const depositId = searchParams.get('depositId');
