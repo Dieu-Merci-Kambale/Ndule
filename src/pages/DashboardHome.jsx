@@ -59,7 +59,8 @@ const DashboardHome = () => {
             }
             
             const isSuccess = data && data.success && ['COMPLETED', 'APPROVED', 'SUCCESS', 'SUCCESSFUL'].includes(data.status?.toUpperCase());
-            const isPending = data && data.success && ['PENDING', 'SUBMITTED', 'PROCESSING'].includes(data.status?.toUpperCase());
+            const isFailure = data && data.success && ['FAILED', 'CANCELLED', 'REJECTED', 'ERROR'].includes(data.status?.toUpperCase());
+            const isPending = data && data.success && !isSuccess && !isFailure;
             
             if (isSuccess) {
               alert("Paiement validé ! Vos crédits ont été ajoutés.");
@@ -70,7 +71,7 @@ const DashboardHome = () => {
               // Poll again after 5 seconds
               setTimeout(checkStatus, 5000);
             } else {
-              alert(`Paiement en cours de traitement ou échoué. Statut final: ${data?.status || 'Inconnu'}. Erreur: ${errorMsg || 'Aucune'}`);
+              alert(`Le paiement n'a pas pu être validé automatiquement. Statut final: ${data?.status || 'Inconnu'}. Erreur: ${errorMsg || 'Aucune'}`);
               window.history.replaceState({}, document.title, window.location.pathname);
               setIsVerifying(false);
             }
