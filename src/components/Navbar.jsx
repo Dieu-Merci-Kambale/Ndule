@@ -22,7 +22,7 @@ const Navbar = () => {
           <a href={`/${lang}#playlist`}>{t.navbar.examples}</a>
           <a href={`/${lang}#testimonials`}>{t.navbar.reviews}</a>
           <a href={`/${lang}#faq`}>{t.navbar.faq}</a>
-          <a href={`/${lang}/dashboard`}>{t.navbar.dashboard || (lang === 'fr' ? 'Tableau de bord' : 'Dashboard')}</a>
+          <a href={`/${lang}/contact`}>{t.navbar.contact || 'Contact'}</a>
         </div>
 
         {/* Right Side (Desktop) */}
@@ -57,7 +57,7 @@ const Navbar = () => {
             <a href={`/${lang}#playlist`} onClick={() => setIsMobileMenuOpen(false)}>{t.navbar.examples}</a>
             <a href={`/${lang}#testimonials`} onClick={() => setIsMobileMenuOpen(false)}>{t.navbar.reviews}</a>
             <a href={`/${lang}#faq`} onClick={() => setIsMobileMenuOpen(false)}>{t.navbar.faq}</a>
-            <a href={`/${lang}/dashboard`} onClick={() => setIsMobileMenuOpen(false)}>{t.navbar.dashboard || (lang === 'fr' ? 'Tableau de bord' : 'Dashboard')}</a>
+            <a href={`/${lang}/contact`} onClick={() => setIsMobileMenuOpen(false)}>{t.navbar.contact || 'Contact'}</a>
             
             <div className="navbar-mobile-divider"></div>
             

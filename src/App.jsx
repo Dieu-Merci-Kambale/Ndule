@@ -12,6 +12,7 @@ import Explore from './pages/Explore';
 import Stats from './pages/Stats';
 import Credits from './pages/Credits';
 import Login from './pages/Login';
+import Contact from './pages/Contact';
 import ProtectedRoute from './components/ProtectedRoute';
 import { PlayerProvider } from './context/PlayerContext';
 
@@ -26,6 +27,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="privacy" element={<Privacy />} />
             <Route path="terms" element={<Terms />} />
+            <Route path="contact" element={<Contact />} />
           </Route>
           
           <Route path="/fr/login" element={<Login />} />
@@ -45,6 +47,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="privacy" element={<Privacy />} />
             <Route path="terms" element={<Terms />} />
+            <Route path="contact" element={<Contact />} />
           </Route>
           
           <Route path="/en" element={<DashboardLayout />}>
