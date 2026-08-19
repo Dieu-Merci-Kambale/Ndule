@@ -52,7 +52,7 @@ export default {
   footer: {
     privacy: "Privacy Policy",
     terms: "Terms of Service",
-    contact: "contact@wazzap.ai",
+    contact: "contact@ndule.com",
     copyright: "Ndule. Music for everyone."
   },
   privacyPage: {

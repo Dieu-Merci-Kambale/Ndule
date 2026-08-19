@@ -11,6 +11,10 @@ const PlaylistSection = () => {
   const getTrackAudioUrl = (styleStr, titleStr) => {
     const style = (styleStr || '').toLowerCase();
     const title = (titleStr || '').toLowerCase();
+    
+    if (title.includes('déborah') || title.includes('deborah')) {
+      return 'https://cdn1.suno.ai/0cd32548-7db0-45fc-b179-805909e83908.mp3';
+    }
 
     if (style.includes('afrobeat')) return 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3';
     if (style.includes('amapiano')) return 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3';
