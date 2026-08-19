@@ -42,29 +42,47 @@ const DashboardHome = () => {
       
       if (depositId && !isVerifying) {
         setIsVerifying(true);
-        try {
-          const { data, error: funcError } = await supabase.functions.invoke('pawapay-verify', {
-            body: { depositId }
-          });
-          
-          let errorMsg = funcError ? funcError.message : null;
-          if (funcError && funcError.context && typeof funcError.context.json === 'function') {
-             const errBody = await funcError.context.json().catch(() => null);
-             if (errBody && errBody.error) errorMsg = errBody.error;
+        let attempts = 0;
+        const maxAttempts = 24; // 2 minutes with 5s interval
+
+        const checkStatus = async () => {
+          try {
+            attempts++;
+            const { data, error: funcError } = await supabase.functions.invoke('pawapay-verify', {
+              body: { depositId }
+            });
+            
+            let errorMsg = funcError ? funcError.message : null;
+            if (funcError && funcError.context && typeof funcError.context.json === 'function') {
+               const errBody = await funcError.context.json().catch(() => null);
+               if (errBody && errBody.error) errorMsg = errBody.error;
+            }
+            
+            const isSuccess = data && data.success && ['COMPLETED', 'APPROVED', 'SUCCESS', 'SUCCESSFUL'].includes(data.status?.toUpperCase());
+            const isPending = data && data.success && ['PENDING', 'SUBMITTED', 'PROCESSING'].includes(data.status?.toUpperCase());
+            
+            if (isSuccess) {
+              alert("Paiement validé ! Vos crédits ont été ajoutés.");
+              window.history.replaceState({}, document.title, window.location.pathname);
+              setIsVerifying(false);
+              window.location.reload(); // Force reload to fetch new credits
+            } else if (isPending && attempts < maxAttempts) {
+              // Poll again after 5 seconds
+              setTimeout(checkStatus, 5000);
+            } else {
+              alert(`Paiement en cours de traitement ou échoué. Statut final: ${data?.status || 'Inconnu'}. Erreur: ${errorMsg || 'Aucune'}`);
+              window.history.replaceState({}, document.title, window.location.pathname);
+              setIsVerifying(false);
+            }
+          } catch (err) {
+            console.error("Verification error:", err);
+            setIsVerifying(false);
+            window.history.replaceState({}, document.title, window.location.pathname);
           }
-          
-          if (data && data.success && data.status === 'COMPLETED') {
-            alert("Paiement validé ! Vos crédits ont été ajoutés.");
-          } else {
-            alert(`Paiement en cours de traitement. Statut actuel: ${data?.status || 'Inconnu'}. Erreur détaillée: ${errorMsg || 'Aucune'}`);
-          }
-        } catch (err) {
-          console.error("Verification error:", err);
-        } finally {
-          setIsVerifying(false);
-          // Remove depositId from URL cleanly
-          window.history.replaceState({}, document.title, window.location.pathname);
-        }
+        };
+
+        // Démarrer la première vérification
+        checkStatus();
       }
     };
     

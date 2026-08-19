@@ -34,9 +34,11 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: "Transaction not found" }), { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
 
+    const isSuccessStatus = (status: string) => ['COMPLETED', 'APPROVED', 'SUCCESS', 'SUCCESSFUL'].includes(status?.toUpperCase());
+
     // If already processed, just return success
-    if (transaction.status === 'COMPLETED' || transaction.status === 'completed') {
-      return new Response(JSON.stringify({ success: true, status: 'COMPLETED' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    if (isSuccessStatus(transaction.status)) {
+      return new Response(JSON.stringify({ success: true, status: transaction.status }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
 
     // 2. Interrogate PawaPay for the real status
@@ -50,14 +52,14 @@ serve(async (req) => {
     })
 
     if (!response.ok) {
-       throw new Error(`Failed to check PawaPay status: ${response.statusText}`)
+      throw new Error(`Failed to check PawaPay status: ${response.statusText}`)
     }
 
     const data = await response.json()
     const pawaStatus = Array.isArray(data) ? data[0]?.status : data?.status
 
     if (!pawaStatus) {
-       return new Response(JSON.stringify({ error: "Invalid status from PawaPay" }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      return new Response(JSON.stringify({ error: "Invalid status from PawaPay" }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
 
     // 3. Update transaction status
@@ -66,8 +68,8 @@ serve(async (req) => {
       .update({ status: pawaStatus })
       .eq('deposit_id', depositId)
 
-    // 4. If status is COMPLETED, add notes
-    if (pawaStatus === 'COMPLETED') {
+    // 4. If status is a success, add notes
+    if (isSuccessStatus(pawaStatus)) {
       const { data: profile } = await supabase
         .from('profiles')
         .select('notes_balance')
