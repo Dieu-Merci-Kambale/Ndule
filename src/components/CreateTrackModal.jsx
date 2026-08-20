@@ -135,9 +135,10 @@ const CreateTrackModal = ({ isOpen, onClose, onTrackCreated, userNotes, initialT
         setLyricsTitle(finalTitle);
         
         // Effet machine à écrire (Live typing)
-        for (let i = 0; i <= finalText.length; i += 4) {
+        // On augmente la taille des paquets pour que l'écriture soit très rapide (1-2s max) et on évite de faire lagger React
+        for (let i = 0; i <= finalText.length; i += 25) {
           setLyricsText(finalText.substring(0, i));
-          await new Promise(r => setTimeout(r, 10)); // ~10ms par paquet de 4 caractères
+          await new Promise(r => setTimeout(r, 15));
         }
         setLyricsText(finalText);
       } catch (err) {
