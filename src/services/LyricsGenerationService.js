@@ -63,12 +63,7 @@ Titre : [Nom de la chanson créatif]
     
     return `Titre : Magie de l'Instant (${occasion})
 
-[Intro]
-(Musique douce qui monte en intensité)
-Yeah... C'est pour toi.
-Écoute bien ça.
-
-[Couplet 1]
+[Verse 1]
 On a traversé tant de chemins
 Les souvenirs gravés entre nos mains
 Aujourd'hui on se pose, on prend le temps
@@ -76,13 +71,13 @@ Pour célébrer cet unique moment
 Tu m'as raconté ton histoire, écoute bien :
 "${cleanStory}"
 
-[Refrain]
+[Chorus]
 Et on s'envole ce soir, plus haut que le ciel !
 Dans ce rythme ${style}, la vie est si belle
 Peu importe demain, l'important c'est nous
 Laisse la musique nous rendre un peu fous !
 
-[Couplet 2]
+[Verse 2]
 Les mots parfois manquent pour tout exprimer
 Mais la mélodie vient nous rattraper
 Chaque note qui résonne est une promesse
@@ -90,24 +85,18 @@ De transformer nos doutes en allégresse
 Garde le sourire, regarde devant toi
 La vie est une danse, fais-en ton choix.
 
-[Refrain]
+[Chorus]
 Et on s'envole ce soir, plus haut que le ciel !
 Dans ce rythme ${style}, la vie est si belle
 Peu importe demain, l'important c'est nous
 Laisse la musique nous rendre un peu fous !
 
-[Pont]
+[Bridge]
 (Solo instrumental entraînant)
 Ne t'arrête pas, laisse le groove t'emporter
 C'est notre hymne, notre réalité
-Plus rien ne compte quand les basses résonnent
+Plus qu'une simple fête, c'est ce qu'on se donne
 C'est la victoire que nos cœurs couronnent !
-
-[Refrain]
-Et on s'envole ce soir, plus haut que le ciel !
-Dans ce rythme ${style}, la vie est si belle
-Peu importe demain, l'important c'est nous
-Laisse la musique nous rendre un peu fous !
 
 [Outro]
 Ouais... Plus haut que le ciel.

@@ -7,12 +7,12 @@ async function test() {
   const payload = {
     model: "suno",
     task_type: "music",
+    customMode: true,
     input: {
-      prompt: "[Verse 1]\nHello world",
-      tags: "pop",
+      prompt: "[Verse 1]\nTest custom lyrics here",
+      tags: "pop, vocal",
       title: "Test",
       make_instrumental: false,
-      custom_mode: true,
       mv: "chirp-crow"
     }
   };

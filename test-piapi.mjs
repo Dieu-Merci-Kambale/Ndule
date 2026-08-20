@@ -5,13 +5,12 @@ async function testPiAPI() {
 
   const payload = {
     model: "suno",
-    task_type: "music",
+    task_type: "generate",
     input: {
       prompt: "[Verse 1]\nTest custom lyrics",
       tags: "Afrobeat",
       title: "Test Song",
       make_instrumental: false,
-      custom_mode: true,
       wait_audio: true,
       mv: "chirp-crow"
     }
