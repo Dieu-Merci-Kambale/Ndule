@@ -146,34 +146,13 @@ class MusicGenerationService {
 
     } catch (error) {
       console.error("[MusicService] Échec de la génération:", error);
-
-      // FALLBACK SI PAS DE CREDITS PIAPI (Pour test de l'interface)
-      if (error.message.includes("insufficient credits") || error.message.includes("500") || error.message.includes("Fonds insuffisants")) {
-        console.warn("Utilisation d'une musique de secours (API Suno sans crédits).");
-        onProgress(100);
-        return [{
-          id: `track_mock_${Date.now()}`,
-          title: params.title || "Chanson Générée",
-          audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-          coverUrl: "https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?q=80&w=200&auto=format&fit=crop",
-          duration: "6:12",
-          style: params.style,
-          createdAt: new Date().toISOString()
-        }];
+      
+      // Propage l'erreur à l'interface utilisateur au lieu de générer une fausse musique
+      if (error.message.includes("insufficient credits") || error.message.includes("Fonds insuffisants")) {
+        throw new Error("Vous n'avez pas assez de Notes (crédits) pour générer cette chanson. Veuillez recharger votre compte.");
       }
-
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      onProgress(100);
-
-      return [{
-        id: `track_error_mock_${Date.now()}`,
-        title: `${params.title} (Généré hors-ligne)`,
-        style: params.style,
-        audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-        coverUrl: 'https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?q=80&w=400&auto=format&fit=crop',
-        duration: '2:30',
-        createdAt: new Date().toISOString()
-      }];
+      
+      throw new Error("La génération de la musique a échoué. Veuillez réessayer. Détail: " + error.message);
     }
   }
 }
