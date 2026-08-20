@@ -112,15 +112,17 @@ const CreateTrackModal = ({ isOpen, onClose, onTrackCreated, userNotes, initialT
     if (step < 4) {
       setStep(step + 1);
     } else if (step === 4) {
+      setStep(5);
       setIsGeneratingLyrics(true);
+      setLyricsTitle('Réflexion de l\'IA...');
+      setLyricsText('');
       
       const occasionName = OCCASIONS.find(o => o.id === occasion)?.name || 'Chanson';
-      const styleName = STYLES.find(s => s.id === style)?.name || 'Pop';
+      const styleName = STYLES.find(s => s.id === style)?.name || ALL_STYLES.find(s => s.id === style)?.name || 'Pop';
       
       try {
         const generatedText = await lyricsService.generateLyrics(occasionName, story, styleName);
         
-        // Essayer d'extraire le titre s'il y a "Titre :" dans la génération
         let finalTitle = `Ma Chanson - ${occasionName}`;
         let finalText = generatedText;
         
@@ -131,6 +133,12 @@ const CreateTrackModal = ({ isOpen, onClose, onTrackCreated, userNotes, initialT
         }
 
         setLyricsTitle(finalTitle);
+        
+        // Effet machine à écrire (Live typing)
+        for (let i = 0; i <= finalText.length; i += 4) {
+          setLyricsText(finalText.substring(0, i));
+          await new Promise(r => setTimeout(r, 10)); // ~10ms par paquet de 4 caractères
+        }
         setLyricsText(finalText);
       } catch (err) {
         console.error("Failed to generate lyrics", err);
@@ -139,7 +147,6 @@ const CreateTrackModal = ({ isOpen, onClose, onTrackCreated, userNotes, initialT
       }
       
       setIsGeneratingLyrics(false);
-      setStep(5);
     }
   };
 
@@ -391,17 +398,7 @@ const CreateTrackModal = ({ isOpen, onClose, onTrackCreated, userNotes, initialT
             </div>
           )}
 
-          {/* ÉTAPE DE GÉNÉRATION DES PAROLES */}
-          {isGeneratingLyrics && (
-            <div className="wizard-step generating-step">
-               <div className="generating-icon-pulse">
-                  <div className="pulse-ring"></div>
-                  <span style={{fontSize: '40px'}}>✍️</span>
-               </div>
-               <h2>Génération des paroles...</h2>
-               <p>L'IA écrit les paroles sur mesure.</p>
-            </div>
-          )}
+          {/* L'étape 4.5 de génération bloquante a été supprimée au profit du live typing dans l'étape 5 */}
 
           {/* ÉTAPE 5 : Paroles */}
           {step === 5 && !isGenerating && !isSuccess && (
@@ -419,19 +416,30 @@ const CreateTrackModal = ({ isOpen, onClose, onTrackCreated, userNotes, initialT
                     className="lyrics-title-input"
                     value={lyricsTitle}
                     onChange={(e) => setLyricsTitle(e.target.value)}
+                    disabled={isGeneratingLyrics}
                   />
                 </div>
                 
                 <div className="form-group">
                   <div className="flex justify-between items-center mb-2">
                     <label className="text-sm font-semibold text-stone-600 block">Paroles</label>
-                    <span className="text-xs text-blue-500 font-medium cursor-pointer">✏️ Éditer</span>
+                    <span className="text-xs text-blue-500 font-medium cursor-pointer">
+                      {isGeneratingLyrics ? (
+                        <span className="flex items-center gap-1 text-blue-500"><Loader2 size={12} className="animate-spin" /> Écriture en cours...</span>
+                      ) : "✏️ Éditer"}
+                    </span>
                   </div>
                   <textarea
                     className="lyrics-textarea"
                     value={lyricsText}
                     onChange={(e) => setLyricsText(e.target.value)}
                     rows={10}
+                    disabled={isGeneratingLyrics}
+                    style={{
+                       border: isGeneratingLyrics ? '2px solid #3b82f6' : '1px solid #e5e7eb',
+                       boxShadow: isGeneratingLyrics ? '0 0 0 3px rgba(59, 130, 246, 0.2)' : 'none',
+                       transition: 'all 0.3s ease'
+                    }}
                   />
                 </div>
               </div>
@@ -487,7 +495,7 @@ const CreateTrackModal = ({ isOpen, onClose, onTrackCreated, userNotes, initialT
         </div>
 
         {/* Bouton du bas */}
-        {!isGenerating && !isSuccess && !isGeneratingLyrics && (
+        {!isGenerating && !isSuccess && (
           <div className="wizard-footer">
             {error && (
               <div className="error-alert">
@@ -512,11 +520,11 @@ const CreateTrackModal = ({ isOpen, onClose, onTrackCreated, userNotes, initialT
               </button>
             ) : (
               <button 
-                className={`wizard-main-btn generate-btn ${isNextDisabled() ? 'disabled' : ''}`} 
+                className={`wizard-main-btn generate-btn ${isNextDisabled() || isGeneratingLyrics ? 'disabled opacity-50' : ''}`} 
                 onClick={handleGenerateFinal}
-                disabled={isNextDisabled()}
+                disabled={isNextDisabled() || isGeneratingLyrics}
               >
-                Créer la chanson (1 Note)
+                {isGeneratingLyrics ? 'L\'IA écrit vos paroles...' : 'Créer la chanson (1 Note)'}
               </button>
             )}
           </div>
