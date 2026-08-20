@@ -102,8 +102,14 @@ class MusicGenerationService {
               status = pollData.data.status;
               console.log(`[MusicService] Statut (essai ${pollCount}): ${status}`);
 
-              if (status === 'completed' && pollData.data.output && pollData.data.output.clips) {
-                const clips = Object.values(pollData.data.output.clips);
+              if (status === 'completed' && pollData.data.output) {
+                let clips = [];
+                if (Array.isArray(pollData.data.output)) {
+                  clips = pollData.data.output;
+                } else if (pollData.data.output.clips) {
+                  clips = Object.values(pollData.data.output.clips);
+                }
+                
                 if (clips.length > 0) {
                   generatedClips = clips;
                 }
