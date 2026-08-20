@@ -183,14 +183,8 @@ const CreateTrackModal = ({ isOpen, onClose, onTrackCreated, userNotes, initialT
     setProgress(0);
 
     try {
-      // 1. Déduire 1 Note
-      const { data: deductSuccess, error: deductError } = await supabase.rpc('deduct_note', { amount: 1 });
-      
-      if (deductError || !deductSuccess) {
-        setError("Erreur : Impossible de déduire une Note. Vérifiez votre solde.");
-        setIsGenerating(false);
-        return;
-      }
+      // La déduction de crédit (Note) se fait désormais uniquement et de façon sécurisée 
+      // côté serveur dans la Edge Function (piapi-proxy) au moment de lancer l'API.
 
       // 2. Générer via l'IA
       const styleName = STYLES.find(s => s.id === style)?.name || 'Afrobeat';

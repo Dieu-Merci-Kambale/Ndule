@@ -72,9 +72,10 @@ class MusicGenerationService {
         body: { action: 'create', payload: finalPayload }
       });
 
-      if (error || data?.error) {
-        console.error("Erreur API/Proxy:", error || data?.error);
-        throw new Error(data?.error || "Erreur lors de l'appel au service musical");
+      // PiAPI retourne souvent les erreurs sous forme { code: 401, message: "..." }
+      if (error || data?.error || (data?.code && data.code !== 200)) {
+        console.error("Erreur API/Proxy:", error || data?.error || data?.message);
+        throw new Error(data?.error || data?.message || "Erreur lors de l'appel au service musical");
       }
 
       console.log("[MusicService] Réponse Edge Function reçue:", data);
