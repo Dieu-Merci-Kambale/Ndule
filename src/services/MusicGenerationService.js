@@ -56,6 +56,7 @@ class MusicGenerationService {
       const finalPayload = {
         model: "suno",
         task_type: "music",
+        customMode: true,
         input: {
           prompt: prompt,
           tags: tags,
