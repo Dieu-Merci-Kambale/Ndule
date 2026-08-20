@@ -12,6 +12,7 @@ async function test() {
       tags: "pop",
       title: "Test",
       make_instrumental: false,
+      custom_mode: true,
       mv: "chirp-crow"
     }
   };
