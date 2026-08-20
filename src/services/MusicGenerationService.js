@@ -128,9 +128,10 @@ class MusicGenerationService {
       onProgress(100);
 
       if (generatedClips.length > 0) {
-        return generatedClips.map((clip, index) => ({
+        // Seulement retourner la première version pour économiser l'espace DB
+        return [generatedClips[0]].map((clip, index) => ({
           id: `track_${Date.now()}_${index}`,
-          title: params.title + (index > 0 ? ` (Version ${index + 1})` : ''),
+          title: params.title,
           style: params.style,
           audioUrl: clip.audio_url,
           coverUrl: clip.image_url,
