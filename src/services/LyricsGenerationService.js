@@ -34,39 +34,15 @@ Titre : [Nom de la chanson créatif]
   async generateLyrics(occasion, story, style) {
     try {
       const prompt = this.buildPrompt(occasion, story, style);
-      
-      if (!this.GEMINI_KEY) {
-        throw new Error("Clé API Gemini (VITE_GEMINI_API_KEY) manquante. Veuillez l'ajouter dans Vercel.");
-      }
-      
-      const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${this.GEMINI_KEY}`;
 
-      const payload = {
-        contents: [{ parts: [{ text: prompt }] }],
-        safetySettings: [
-          { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-          { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-          { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-          { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-        ],
-        generationConfig: {
-          temperature: 0.8,
-          maxOutputTokens: 8192,
-        }
-      };
-
-      const response = await fetch(GEMINI_API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
+      const { data, error } = await supabase.functions.invoke('gemini-proxy', {
+        body: { prompt }
       });
 
-      const data = await response.json();
-
-      if (!response.ok || data.error) {
-        throw new Error(data.error?.message || "Erreur Gemini API");
+      if (error || data?.error) {
+        console.error("Erreur Gemini Proxy:", error || data?.error);
+        const errMsg = data?.error?.message || error?.message || "Erreur inconnue";
+        throw new Error("ERREUR_API: " + errMsg);
       }
 
       if (data?.candidates && data.candidates.length > 0) {
@@ -76,8 +52,8 @@ Titre : [Nom de la chanson créatif]
       throw new Error("Réponse inattendue de Gemini");
 
     } catch (err) {
-      console.error("Erreur lors de la génération de paroles :", err);
-      return this.generateFallbackLyrics(occasion, story, style);
+      console.error("Erreur lors de la génération de paroles avec Gemini :", err);
+      return this.generateFallbackLyrics(err.message, story, style);
     }
   }
 
