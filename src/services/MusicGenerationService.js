@@ -81,8 +81,7 @@ class MusicGenerationService {
       console.log("[MusicService] Réponse Edge Function reçue:", data);
 
       // 2. Gestion asynchrone (Polling) pour PiAPI
-      let finalAudioUrl = null;
-      let finalCoverUrl = null;
+      let generatedClips = [];
 
       if (data?.data?.task_id) {
         const taskId = data.data.task_id;
@@ -106,8 +105,7 @@ class MusicGenerationService {
               if (status === 'completed' && pollData.data.output && pollData.data.output.clips) {
                 const clips = Object.values(pollData.data.output.clips);
                 if (clips.length > 0) {
-                  finalAudioUrl = clips[0].audio_url;
-                  finalCoverUrl = clips[0].image_url;
+                  generatedClips = clips;
                 }
               }
             }
@@ -121,48 +119,39 @@ class MusicGenerationService {
         }
       }
 
-      // Sauvegarde dans Supabase
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: dbTrack, error } = await supabase.from('tracks').insert([{
-          user_id: user.id,
-          title: params.title || 'Nouvelle Chanson',
-          style: params.style,
-          prompt_used: prompt,
-          audio_url: finalAudioUrl,
-          cover_url: finalCoverUrl,
-          duration: "2:00"
-        }]).select();
-
-        if (!error && dbTrack) {
-          console.log("[MusicService] Sauvegardé en DB:", dbTrack);
-        }
-      }
-
       onProgress(100);
 
-      // Si l'API n'a vraiment rien renvoyé (ex: pas de crédit), on met le fallback de sécurité
-      const safeAudioUrl = finalAudioUrl || 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
-      const safeCoverUrl = finalCoverUrl || 'https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?q=80&w=400&auto=format&fit=crop';
+      if (generatedClips.length > 0) {
+        return generatedClips.map((clip, index) => ({
+          id: `track_${Date.now()}_${index}`,
+          title: params.title + (index > 0 ? ` (Version ${index + 1})` : ''),
+          style: params.style,
+          audioUrl: clip.audio_url,
+          coverUrl: clip.image_url,
+          duration: clip.metadata?.duration ? Math.floor(clip.metadata.duration/60) + ':' + String(Math.floor(clip.metadata.duration%60)).padStart(2, '0') : '2:00',
+          createdAt: new Date().toISOString()
+        }));
+      }
 
-      return {
+      // Fallback
+      return [{
         id: `track_${Date.now()}`,
         title: params.title || 'Nouvelle Chanson IA',
         style: params.style,
-        audioUrl: safeAudioUrl,
-        coverUrl: safeCoverUrl,
+        audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+        coverUrl: 'https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?q=80&w=400&auto=format&fit=crop',
         duration: '3:45',
         createdAt: new Date().toISOString()
-      };
+      }];
 
     } catch (error) {
       console.error("[MusicService] Échec de la génération:", error);
 
       // FALLBACK SI PAS DE CREDITS PIAPI (Pour test de l'interface)
-      if (error.message.includes("insufficient credits") || error.message.includes("500")) {
+      if (error.message.includes("insufficient credits") || error.message.includes("500") || error.message.includes("Fonds insuffisants")) {
         console.warn("Utilisation d'une musique de secours (API Suno sans crédits).");
         onProgress(100);
-        return {
+        return [{
           id: `track_mock_${Date.now()}`,
           title: params.title || "Chanson Générée",
           audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
@@ -170,13 +159,13 @@ class MusicGenerationService {
           duration: "6:12",
           style: params.style,
           createdAt: new Date().toISOString()
-        };
+        }];
       }
 
       await new Promise(resolve => setTimeout(resolve, 3000));
       onProgress(100);
 
-      return {
+      return [{
         id: `track_error_mock_${Date.now()}`,
         title: `${params.title} (Généré hors-ligne)`,
         style: params.style,
@@ -184,7 +173,7 @@ class MusicGenerationService {
         coverUrl: 'https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?q=80&w=400&auto=format&fit=crop',
         duration: '2:30',
         createdAt: new Date().toISOString()
-      };
+      }];
     }
   }
 }

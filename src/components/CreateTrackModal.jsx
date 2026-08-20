@@ -187,38 +187,39 @@ const CreateTrackModal = ({ isOpen, onClose, onTrackCreated, userNotes, initialT
       // côté serveur dans la Edge Function (piapi-proxy) au moment de lancer l'API.
 
       // 2. Générer via l'IA
-      const styleName = STYLES.find(s => s.id === style)?.name || 'Afrobeat';
+      const styleName = STYLES.find(s => s.id === style)?.name || ALL_STYLES.find(s => s.id === style)?.name || style;
       const occasionName = OCCASIONS.find(o => o.id === occasion)?.name || 'Général';
       const voiceName = VOICES.find(v => v.id === voice)?.name || 'Standard';
       
-      // Génération de la musique
-      const trackData = await musicService.generateTrack(
+      // Génération de la musique (retourne maintenant un tableau de clips)
+      const tracksData = await musicService.generateTrack(
         { style: styleName, description: lyricsText, title: lyricsTitle, voice: voice }, 
         setProgress
       );
 
-      if (!trackData) {
+      if (!tracksData || tracksData.length === 0) {
         setError("La génération a échoué silencieusement.");
         setIsGenerating(false);
         return;
       }
 
-      // 3. Sauvegarder dans Supabase
+      // 3. Sauvegarder TOUTES LES VERSIONS dans Supabase
       const user = (await supabase.auth.getUser()).data.user;
       
-      const { data: savedTrack, error: saveError } = await supabase
+      const tracksToInsert = tracksData.map(t => ({
+        user_id: user.id,
+        title: t.title,
+        style: styleName,
+        prompt_used: lyricsText,
+        audio_url: t.audio_url || t.audioUrl,
+        cover_url: t.image_url || t.coverUrl,
+        duration: t.duration || '0:00'
+      }));
+
+      const { data: savedTracks, error: saveError } = await supabase
         .from('tracks')
-        .insert([{
-          user_id: user.id,
-          title: lyricsTitle,
-          style: styleName,
-          prompt_used: lyricsText,
-          audio_url: trackData.audio_url || trackData.audioUrl,
-          cover_url: trackData.image_url || trackData.coverUrl,
-          duration: trackData.duration || '0:00'
-        }])
-        .select()
-        .single();
+        .insert(tracksToInsert)
+        .select();
 
       if (saveError) {
         console.error("Erreur de sauvegarde Supabase:", saveError);
@@ -227,8 +228,9 @@ const CreateTrackModal = ({ isOpen, onClose, onTrackCreated, userNotes, initialT
         return;
       }
 
-      if (savedTrack) {
-        onTrackCreated(savedTrack);
+      if (savedTracks && savedTracks.length > 0) {
+        // Appeler onTrackCreated pour chaque piste pour l'UI
+        savedTracks.forEach(t => onTrackCreated(t));
         setIsGenerating(false);
         setIsSuccess(true);
       }
