@@ -42,7 +42,7 @@ const Explore = () => {
     try {
       let query = supabase
         .from('tracks')
-        .select('*, profiles(email)')
+        .select('*')
         .eq('is_public', true)
         .order('created_at', { ascending: false });
 
@@ -161,9 +161,8 @@ const Explore = () => {
           {tracks.map((track) => {
             const isCurrent = currentTrack?.id === track.id;
             
-            // Extract creator name from profile email, fallback to 'Créateur Ndule'
-            const creatorEmail = track.profiles?.email || '';
-            const creatorName = creatorEmail ? creatorEmail.split('@')[0] : 'Créateur Ndule';
+            // Extract creator name from track column
+            const creatorName = track.creator_name || 'Créateur Ndule';
             
             return (
               <div 

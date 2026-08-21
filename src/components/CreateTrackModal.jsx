@@ -216,6 +216,7 @@ const CreateTrackModal = ({ isOpen, onClose, onTrackCreated, userNotes, initialT
       
       const tracksToInsert = tracksData.map(t => ({
         user_id: user.id,
+        creator_name: user.email ? user.email.split('@')[0] : 'Créateur Ndule',
         title: t.title,
         style: styleName,
         prompt_used: lyricsText,
