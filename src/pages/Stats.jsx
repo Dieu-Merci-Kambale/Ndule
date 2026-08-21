@@ -1,10 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Play, Heart, Download, Clock, Music, TrendingUp, ChevronUp, BarChart2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabaseClient';
 import './Stats.css';
 
 const Stats = () => {
   const navigate = useNavigate();
+  const [tracks, setTracks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserStats = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        // Fetch user's tracks
+        const { data, error } = await supabase
+          .from('tracks')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+
+        if (!error && data) {
+          setTracks(data);
+        }
+      } catch (err) {
+        console.error("Erreur chargement stats:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserStats();
+  }, []);
 
   return (
     <div className="stats-content">
@@ -52,7 +81,7 @@ const Stats = () => {
             <Music size={14} className="text-stone-500" strokeWidth={2.5} />
             <span>Chansons</span>
           </div>
-          <div className="kpi-card-value">1</div>
+          <div className="kpi-card-value">{loading ? '...' : tracks.length}</div>
         </div>
       </div>
 
@@ -108,20 +137,28 @@ const Stats = () => {
             <h3>Vos chansons populaires</h3>
           </div>
           
-          <div className="popular-song-item">
-            <span className="song-rank">1</span>
-            <div className="song-cover">
-              <img src="https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?q=80&w=200&auto=format&fit=crop" alt="Cover" />
-            </div>
-            <div className="song-info">
-              <h4>Déborah, Mwasi Na Ngai</h4>
-              <span>CUSTOM</span>
-            </div>
-            <div className="song-stats">
-              <span className="stats-number">0</span>
-              <span className="stats-label">écoutes</span>
-            </div>
-          </div>
+          {loading ? (
+            <p className="text-stone-400 text-sm mt-4">Chargement...</p>
+          ) : tracks.length === 0 ? (
+            <p className="text-stone-400 text-sm mt-4">Vous n'avez pas encore généré de chanson.</p>
+          ) : (
+            tracks.slice(0, 5).map((track, idx) => (
+              <div key={track.id} className="popular-song-item">
+                <span className="song-rank">{idx + 1}</span>
+                <div className="song-cover">
+                  <img src={track.cover_url || "https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?q=80&w=200&auto=format&fit=crop"} alt={track.title} />
+                </div>
+                <div className="song-info">
+                  <h4>{track.title}</h4>
+                  <span>{track.style || 'Musique'}</span>
+                </div>
+                <div className="song-stats">
+                  <span className="stats-number">0</span>
+                  <span className="stats-label">écoutes</span>
+                </div>
+              </div>
+            ))
+          )}
         </div>
         
         <div className="recent-activity-section">
