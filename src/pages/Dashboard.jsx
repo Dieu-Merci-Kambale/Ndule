@@ -306,29 +306,7 @@ const Dashboard = () => {
                 </button>
               </div>
               
-              <div className="track-bottom-row">
-                <button className="bottom-btn remix-btn" onClick={() => {
-                  setTrackToRemix(track);
-                  handleOpenCreateModal();
-                }}>
-                  <Wand2 size={14} className="text-blue-500" /> {t.pages.myMusic.btnRemix}
-                </button>
-                {track.video_url ? (
-                  <button className="bottom-btn clip-btn" onClick={() => {
-                    // Pour le moment on ouvre l'url de la vidéo
-                    window.open(track.video_url, '_blank');
-                  }} style={{ backgroundColor: '#EEF2FF', color: '#4F46E5', borderColor: '#C7D2FE' }}>
-                    <Play size={14} className="fill-current" /> {t.pages.myMusic.btnViewShort}
-                  </button>
-                ) : (
-                  <button className="bottom-btn clip-btn" onClick={() => {
-                    setTrackForShort(track);
-                    setIsShortModalOpen(true);
-                  }}>
-                    <Video size={14} className="text-stone-500" /> {t.pages.myMusic.btnClipShort}
-                  </button>
-                )}
-              </div>
+              {/* Removed Remixer and Clip Short buttons as per user request */}
             </div>
           ))
         )}
