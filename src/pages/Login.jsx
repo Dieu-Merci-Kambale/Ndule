@@ -10,6 +10,11 @@ const Login = () => {
   const [error, setError] = useState(null);
 
   const handleOAuthLogin = async (provider) => {
+    if (provider === 'apple') {
+      setError("Désolé ! Cette fonctionnalité est en cours de développement. On va l'intégrer très bientôt lors d'une mise à jour.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
