@@ -147,10 +147,13 @@ const DashboardLayout = () => {
            <div className="topbar-right">
              <div className="topbar-notes-pill">
                <LinkIcon size={14} className="text-blue-500" />
-               <span className="font-medium text-stone-700 hidden-mobile">{notesBalance} Crédits</span>
+               <span className="font-medium text-stone-700" style={{fontSize: '12px'}}>{notesBalance} Crédits</span>
                <button className="plus-round-btn"><Plus size={14} /></button>
              </div>
-             <button className="icon-btn-round"><Bell size={18} className="text-stone-600" /></button>
+             <button className="icon-btn-round mobile-only" onClick={handleLogout}>
+               <LogOut size={16} className="text-red-500" />
+             </button>
+             <button className="icon-btn-round hidden-mobile"><Bell size={18} className="text-stone-600" /></button>
              <img 
                src={getAvatarUrl()} 
                alt="Avatar" 
