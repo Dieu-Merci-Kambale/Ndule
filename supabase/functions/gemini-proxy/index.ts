@@ -36,34 +36,63 @@ serve(async (req) => {
     }
 
     // Le backend de génération de paroles ne coûte pas de note utilisateur pour l'instant (optionnel)
-    const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+    const modelsToTry = [
+      'gemini-flash-latest',
+      'gemini-3.5-flash',
+      'gemini-2.5-flash',
+      'gemini-3.6-flash'
+    ];
 
-    const payload = {
-      contents: [{ parts: [{ text: prompt }] }],
-      safetySettings: [
-        { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-        { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-        { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-        { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-      ],
-      generationConfig: {
-        temperature: 0.8,
-        maxOutputTokens: 8192,
+    let lastError = null;
+
+    for (const model of modelsToTry) {
+      try {
+        const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+        
+        const payload = {
+          contents: [{ parts: [{ text: prompt }] }],
+          safetySettings: [
+            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+          ],
+          generationConfig: {
+            temperature: 0.8,
+            maxOutputTokens: 8192,
+          }
+        };
+
+        const response = await fetch(GEMINI_API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        
+        // If the model is overloaded, it returns an error object with status 503
+        if (data.error && (data.error.code === 503 || data.error.message?.includes('high demand') || data.error.message?.includes('not found'))) {
+          lastError = data.error;
+          console.warn(`Model ${model} failed:`, data.error.message);
+          continue; // Try next model
+        }
+
+        return new Response(JSON.stringify(data), { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
+
+      } catch (err) {
+        console.warn(`Network error with model ${model}:`, err);
+        lastError = err;
+        continue;
       }
-    };
+    }
 
-    const response = await fetch(GEMINI_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    });
-
-    const data = await response.json();
-    return new Response(JSON.stringify(data), { 
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-    });
+    // If all models failed
+    throw new Error(lastError?.message || "All Gemini models are currently overloaded. Please try again later.");
 
   } catch (error) {
     console.error("Server Error:", error);
