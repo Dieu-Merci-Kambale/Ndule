@@ -67,9 +67,9 @@ const Stats = () => {
         <div className="kpi-card">
           <div className="kpi-card-header">
             <Download size={14} className="text-stone-500" strokeWidth={2.5} />
-            <span>totalDownloads</span>
+            <span>Téléchargements</span>
           </div>
-          <div className="kpi-card-value">1</div>
+          <div className="kpi-card-value">0</div>
         </div>
         <div className="kpi-card">
           <div className="kpi-card-header">
