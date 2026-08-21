@@ -42,7 +42,7 @@ const Explore = () => {
     try {
       let query = supabase
         .from('tracks')
-        .select('*')
+        .select('*, profiles(email)')
         .eq('is_public', true)
         .order('created_at', { ascending: false });
 
@@ -161,6 +161,10 @@ const Explore = () => {
           {tracks.map((track) => {
             const isCurrent = currentTrack?.id === track.id;
             
+            // Extract creator name from profile email, fallback to 'Créateur Ndule'
+            const creatorEmail = track.profiles?.email || '';
+            const creatorName = creatorEmail ? creatorEmail.split('@')[0] : 'Créateur Ndule';
+            
             return (
               <div 
                 key={track.id} 
@@ -177,9 +181,9 @@ const Explore = () => {
                   {/* Badge */}
                   <div className="music-card-badge-row">
                     <div className="mc-avatar">
-                      {track.title ? track.title.substring(0, 2).toUpperCase() : 'ND'}
+                      {creatorName.substring(0, 2).toUpperCase()}
                     </div>
-                    <span className="mc-name">Créateur Ndule</span>
+                    <span className="mc-name">@{creatorName}</span>
                     <span className="mc-style">{track.style || 'Musique'}</span>
                   </div>
                   

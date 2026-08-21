@@ -94,7 +94,7 @@
 /* Card Design */
 .music-card {
   width: 100%;
-  max-width: 360px; /* Reduced from 420px */
+  max-width: 300px; /* Reduced further */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -160,19 +160,19 @@
 }
 
 .music-card-title {
-  font-size: 1.5rem;
+  font-size: 1.25rem; /* Reduced from 1.5rem */
   font-weight: 800;
   color: #111827;
   text-align: center;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   line-height: 1.2;
 }
 
 .music-card-subtitle {
-  font-size: 0.95rem;
+  font-size: 0.85rem; /* Reduced from 0.95rem */
   color: #9CA3AF;
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 /* Card Player Controls */
