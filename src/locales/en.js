@@ -17,7 +17,8 @@ export default {
     description: "Birthdays, Weddings, Baptisms, Tributes... Turn your messages into unforgettable songs with AI.",
     cta: "Create my song",
     socialProof: "Used by over",
-    users: "users"
+    users: "users",
+    ticker: ["ENCOURAGEMENT", "BIRTHDAY", "WEDDING", "BAPTISM", "DOWRY", "THANK YOU", "RECONCILIATION", "DECLARATION", "LOVE"]
   },
   playlist: {
     titlePrefix: "They created this with",

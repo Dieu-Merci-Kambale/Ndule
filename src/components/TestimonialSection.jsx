@@ -14,10 +14,10 @@ const TestimonialSection = () => {
       <div className="testimonial-container">
         <div className="testimonial-header">
           <h2 className="testimonial-title">
-            Ils ont marqué le <strong>coup</strong>
+            {t.testimonials.titlePrefix} <strong>{t.testimonials.titleHighlight}</strong>
           </h2>
           <p className="testimonial-subtitle">
-            Découvrez comment ils ont sublimé leurs événements avec une chanson unique.
+            {t.testimonials.subtitle}
           </p>
         </div>
 

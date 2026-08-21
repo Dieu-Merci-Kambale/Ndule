@@ -17,7 +17,8 @@ export default {
     description: "Anniversaires, Mariages, Baptêmes, Hommages... Transformez vos messages en chansons inoubliables grâce à l'IA.",
     cta: "Créer ma chanson",
     socialProof: "Utilisé par plus de",
-    users: "utilisateurs"
+    users: "utilisateurs",
+    ticker: ["ENCOURAGEMENT", "ANNIVERSAIRE", "MARIAGE", "BAPTÊME", "DOT", "REMERCIEMENTS", "RÉCONCILIATION", "DÉCLARATION", "AMOUR"]
   },
   playlist: {
     titlePrefix: "Ils ont créé ça avec",

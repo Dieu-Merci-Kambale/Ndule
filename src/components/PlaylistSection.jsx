@@ -50,10 +50,10 @@ const PlaylistSection = () => {
         
         <div className="playlist-header">
           <h2 className="playlist-title">
-            Ils ont créé ça avec <strong className="text-blue-600">Ndule</strong>
+            {t.playlist.titlePrefix} <strong className="text-blue-600">Ndule</strong>
           </h2>
           <p className="playlist-subtitle">
-            Écoutez des exemples de chansons personnalisées créées pour des moments uniques.
+            {t.playlist.subtitle}
           </p>
         </div>
 

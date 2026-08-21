@@ -8,7 +8,7 @@ const HeroSection = () => {
   const { t, lang } = useTranslation();
   const navigate = useNavigate();
   
-  const phrases = [
+  const phrases = t.hero.phrases || [
     "Pour un anniversaire",
     "pour dire je t'aime",
     "inoubliable",
@@ -31,32 +31,32 @@ const HeroSection = () => {
 
       <div className="badge badge-1">
         <div className="badge-dot"></div>
-        <span>Anniversaire 🎂</span>
+        <span>{t.hero.badge1}</span>
       </div>
       
       <div className="badge badge-2">
         <div className="badge-dot"></div>
-        <span>Baptême 👶</span>
+        <span>{t.hero.badge2}</span>
       </div>
 
       <div className="badge badge-3">
-        <span>Mariage 💍</span>
+        <span>{t.hero.badge3}</span>
       </div>
 
       <div className="hero-content">
         
         <div className="emotion-pill">
           <div className="badge-dot" style={{ animation: 'pulse-slow 2s infinite' }}></div>
-          <span className="emotion-text">L'émotion en musique</span>
+          <span className="emotion-text">{t.hero.pill}</span>
         </div>
         
         <p className="hero-subtitle">
-          Le n°1 de la création musicale par IA
+          {t.hero.subtitle}
         </p>
         
         <div className="hero-title-container">
           <span className="hero-title">
-            Créer une musique
+            {t.hero.titleLine1}
           </span>
           <span className="hero-title-en">
             {phrases.map((phrase, index) => (
@@ -68,11 +68,11 @@ const HeroSection = () => {
         </div>
         
         <p className="hero-paragraph">
-          Anniversaires, Mariages, Baptêmes, Hommages... Transformez vos messages en chansons inoubliables grâce à l'IA.
+          {t.hero.description}
         </p>
         
         <button className="cta-button" onClick={() => navigate(`/${lang || 'fr'}/dashboard`)}>
-          Créer ma chanson
+          {t.hero.cta}
           <ArrowRight size={20} />
         </button>
 
@@ -92,7 +92,7 @@ const HeroSection = () => {
               ))}
             </div>
             <p className="proof-text">
-              Utilisé par plus de <strong>140 182</strong> utilisateurs
+              {t.hero.socialProof} <strong>140 182</strong> {t.hero.users}
             </p>
           </div>
         </div>
@@ -103,15 +103,9 @@ const HeroSection = () => {
         <div className="ticker-content">
           {[...Array(2)].map((_, i) => (
             <React.Fragment key={i}>
-              <span className="ticker-item">ENCOURAGEMENT <span className="ticker-star">✦</span></span>
-              <span className="ticker-item">ANNIVERSAIRE <span className="ticker-star">✦</span></span>
-              <span className="ticker-item">MARIAGE <span className="ticker-star">✦</span></span>
-              <span className="ticker-item">BAPTÊME <span className="ticker-star">✦</span></span>
-              <span className="ticker-item">DOT <span className="ticker-star">✦</span></span>
-              <span className="ticker-item">REMERCIEMENTS <span className="ticker-star">✦</span></span>
-              <span className="ticker-item">RÉCONCILIATION <span className="ticker-star">✦</span></span>
-              <span className="ticker-item">DÉCLARATION <span className="ticker-star">✦</span></span>
-              <span className="ticker-item">AMOUR <span className="ticker-star">✦</span></span>
+              {(t.hero.ticker || []).map((item, idx) => (
+                <span key={idx} className="ticker-item">{item} <span className="ticker-star">✦</span></span>
+              ))}
             </React.Fragment>
           ))}
         </div>
