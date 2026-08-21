@@ -53,7 +53,9 @@ const Stats = () => {
             <Play size={14} className="text-stone-500" strokeWidth={2.5} />
             <span>Écoutes</span>
           </div>
-          <div className="kpi-card-value">0</div>
+          <div className="kpi-card-value">
+            {loading ? '...' : tracks.reduce((sum, t) => sum + (t.play_count || 0), 0)}
+          </div>
         </div>
         <div className="kpi-card">
           <div className="kpi-card-header">
@@ -142,7 +144,8 @@ const Stats = () => {
           ) : tracks.length === 0 ? (
             <p className="text-stone-400 text-sm mt-4">Vous n'avez pas encore généré de chanson.</p>
           ) : (
-            tracks.slice(0, 5).map((track, idx) => (
+            // Sort tracks by play_count descending
+            [...tracks].sort((a, b) => (b.play_count || 0) - (a.play_count || 0)).slice(0, 5).map((track, idx) => (
               <div key={track.id} className="popular-song-item">
                 <span className="song-rank">{idx + 1}</span>
                 <div className="song-cover">
@@ -153,7 +156,7 @@ const Stats = () => {
                   <span>{track.style || 'Musique'}</span>
                 </div>
                 <div className="song-stats">
-                  <span className="stats-number">0</span>
+                  <span className="stats-number">{track.play_count || 0}</span>
                   <span className="stats-label">écoutes</span>
                 </div>
               </div>

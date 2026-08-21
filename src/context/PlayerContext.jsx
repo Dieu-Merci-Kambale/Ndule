@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useRef, useEffect } from 'react';
+import { supabase } from '../lib/supabaseClient';
 
 const PlayerContext = createContext();
 
@@ -83,6 +84,13 @@ export const PlayerProvider = ({ children }) => {
     audio.play().then(() => {
       setCurrentTrack(track);
       setIsPlaying(true);
+      
+      // Increment play count in DB
+      if (track.id) {
+        supabase.rpc('increment_play_count', { track_id: track.id }).catch(err => {
+          console.error("Failed to increment play count:", err);
+        });
+      }
     }).catch(err => {
       console.error("Audio playback error:", err);
     });
