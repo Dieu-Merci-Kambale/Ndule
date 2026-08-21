@@ -125,8 +125,8 @@ const DashboardLayout = () => {
           </div>
           
           <button className="nav-item logout-btn" onClick={handleLogout}>
-            <LogOut size={18} />
-            <span className="nav-text">{t.dashboardMenu?.logout || 'Déconnexion'}</span>
+            <LogOut size={18} className="text-red-500" />
+            <span className="nav-text text-red-500">{t.dashboardMenu?.logout || 'Déconnexion'}</span>
           </button>
           
           <div 

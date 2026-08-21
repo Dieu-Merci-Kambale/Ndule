@@ -6,8 +6,10 @@ import { supabase } from '../lib/supabaseClient';
 import { usePlayer } from '../context/PlayerContext';
 import VideoModal from '../components/VideoModal';
 import { useLocation } from 'react-router-dom';
+import { useTranslation } from '../hooks/useTranslation';
 
 const DashboardHome = () => {
+  const { t, lang } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const { playTrack } = usePlayer();
@@ -130,10 +132,10 @@ const DashboardHome = () => {
       {/* Header section */}
       <div className="home-header">
         <h1 className="home-greeting">
-          {new Date().getHours() < 18 ? 'Bonjour' : 'Bonsoir'}, {userName} 👋
+          {new Date().getHours() < 18 ? t.pages.dashboardHome.greetingMorning : t.pages.dashboardHome.greetingEvening}, {userName} 👋
         </h1>
         <div className="home-subtitle-row">
-          <span className="text-stone-500 font-medium">Tableau de bord</span>
+          <span className="text-stone-500 font-medium">{t.pages.dashboardHome.dashboard}</span>
           <span className="live-badge-small">
             <span className="live-dot-small"></span> Live
           </span>
@@ -143,14 +145,14 @@ const DashboardHome = () => {
       {/* Main Banners */}
       <div className="home-banners">
         {/* Create Banner */}
-        <div className="create-banner cursor-pointer" onClick={() => navigate('/fr/dashboard', { state: { openCreateModal: true } })}>
+        <div className="create-banner cursor-pointer" onClick={() => navigate(`/${lang}/dashboard`, { state: { openCreateModal: true } })}>
           <div className="create-banner-left">
             <div className="create-banner-icon-bg">
               <Plus size={24} className="text-white" strokeWidth={3} />
             </div>
             <div className="create-banner-text">
-              <h3>Créer une chanson</h3>
-              <p>Afrobeat, Amapiano, R&B...</p>
+              <h3>{t.pages.dashboardHome.createSong}</h3>
+              <p>{t.pages.dashboardHome.createSongDesc}</p>
             </div>
           </div>
           <div className="create-banner-arrow text-blue-400 font-light text-2xl">→</div>
@@ -159,10 +161,10 @@ const DashboardHome = () => {
 
       {/* Recent Songs */}
       <div className="home-section">
-        <h2 className="section-title">Chansons récentes</h2>
+        <h2 className="section-title">{t.pages.dashboardHome.recentSongs}</h2>
         
         {recentTracks.length === 0 ? (
-          <p className="text-stone-500 text-sm">Aucune chanson générée pour le moment.</p>
+          <p className="text-stone-500 text-sm">{t.pages.dashboardHome.noSongs}</p>
         ) : (
           recentTracks.map(track => (
             <div key={track.id} className="recent-track-item cursor-pointer" onClick={() => playTrack(track, recentTracks)}>

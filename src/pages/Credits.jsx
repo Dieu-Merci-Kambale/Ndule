@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { X, Music, ChevronDown, Tag, Check, Star, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
+import { useTranslation } from '../hooks/useTranslation';
 import './Credits.css';
 
 const Credits = () => {
+  const { t, lang } = useTranslation();
   const [selectedPlan, setSelectedPlan] = useState('populaire');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -55,27 +57,16 @@ const Credits = () => {
 
   return (
     <div className="notes-content">
-      {/* Gift Banner */}
-      <div className="gift-banner relative mb-8">
-        <button className="gift-close-btn"><X size={14} /></button>
-        <div className="gift-icon-container">
-          <span className="gift-emoji">🎁</span>
-        </div>
-        <div className="gift-text-content">
-          <h3>On a un cadeau pour toi !</h3>
-          <p className="gift-subtext">Clique pour découvrir ta surprise</p>
-          <p className="gift-expire mt-1"><span className="text-red-500 font-bold mr-1">•</span>Expire dans 00:00 min</p>
-        </div>
-      </div>
+
 
       {/* Pricing Header */}
       <div className="pricing-header">
         <div className="pricing-header-left">
-          <h2>Acheter des Crédits</h2>
-          <p>1 chanson = 1 Crédit</p>
+          <h2>{t.pages.credits.title}</h2>
+          <p>{t.pages.credits.subtitle}</p>
         </div>
         <div className="currency-selector">
-          <span className="currency-text">US USD</span>
+          <span className="currency-text">{t.pages.credits.currency}</span>
           <span className="currency-badge">AUTO</span>
           <ChevronDown size={14} className="text-stone-400" />
         </div>
@@ -92,8 +83,8 @@ const Credits = () => {
               <Music size={20} className="text-indigo-900" strokeWidth={2.5} />
             </div>
             <div className="pricing-info">
-              <h4>Découverte</h4>
-              <span>2 Crédits</span>
+              <h4>{t.pages.credits.decouverte}</h4>
+              <span>2 {t.pages.credits.credits}</span>
             </div>
           </div>
           <div className="pricing-price">$0.22</div>
@@ -111,8 +102,8 @@ const Credits = () => {
               <Music size={20} className="text-blue-500" strokeWidth={2.5} />
             </div>
             <div className="pricing-info">
-              <h4 className="text-blue-500">Populaire</h4>
-              <span className="text-stone-500">5 Crédits</span>
+              <h4 className="text-blue-500">{t.pages.credits.populaire}</h4>
+              <span className="text-stone-500">5 {t.pages.credits.credits}</span>
             </div>
           </div>
           <div className="pricing-price text-blue-500">$0.22</div>
@@ -127,8 +118,8 @@ const Credits = () => {
               <Music size={20} className="text-indigo-900" strokeWidth={2.5} />
             </div>
             <div className="pricing-info">
-              <h4>Premium</h4>
-              <span>10 Crédits</span>
+              <h4>{t.pages.credits.premium}</h4>
+              <span>10 {t.pages.credits.credits}</span>
             </div>
           </div>
           <div className="pricing-price">$0.22</div>
@@ -137,7 +128,7 @@ const Credits = () => {
 
       <button className="promo-code-btn">
         <Tag size={14} className="mr-1 text-stone-500" />
-        J'ai un code promo
+        {t.pages.credits.promoCode}
         <ChevronDown size={14} className="ml-1 text-stone-400" />
       </button>
 
@@ -154,7 +145,7 @@ const Credits = () => {
             {[...Array(5)].map((_, i) => <Star key={i} size={14} fill="#3B82F6" className="text-blue-500" strokeWidth={0} />)}
             <span className="rating-score">4.8 / 5</span>
           </div>
-          <p>Utilisé par + de 171K utilisateurs</p>
+          <p>{t.pages.credits.socialProof}</p>
         </div>
       </div>
 
@@ -170,27 +161,27 @@ const Credits = () => {
         disabled={isLoading}
       >
         {isLoading ? (
-          <><Loader2 size={18} className="animate-spin mr-2" /> Préparation...</>
+          <><Loader2 size={18} className="animate-spin mr-2" /> {t.pages.credits.preparing}</>
         ) : (
-          <>Continuer <span className="ml-2 font-normal">→</span></>
+          <>{t.pages.credits.continue} <span className="ml-2 font-normal">→</span></>
         )}
       </button>
 
       {/* Info Block */}
       <div className="how-it-works-block">
-        <h3>Comment ça marche ?</h3>
+        <h3>{t.pages.credits.howItWorks}</h3>
         <ul className="info-list">
           <li>
             <Check size={16} className="text-emerald-500" strokeWidth={3} />
-            <span>Achetez des Crédits selon vos besoins</span>
+            <span>{t.pages.credits.point1}</span>
           </li>
           <li>
             <Check size={16} className="text-emerald-500" strokeWidth={3} />
-            <span>1 Crédit = 1 chanson personnalisée</span>
+            <span>{t.pages.credits.point2}</span>
           </li>
           <li>
             <Check size={16} className="text-emerald-500" strokeWidth={3} />
-            <span>Vos Crédits n'expirent jamais</span>
+            <span>{t.pages.credits.point3}</span>
           </li>
         </ul>
       </div>

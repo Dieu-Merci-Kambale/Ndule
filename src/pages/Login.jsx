@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { Music, Loader2 } from 'lucide-react';
+import { useTranslation } from '../hooks/useTranslation';
 import './Login.css';
 
 const Login = () => {
+  const { t, lang } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -15,13 +17,13 @@ const Login = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: provider,
         options: {
-          redirectTo: `${window.location.origin}/fr/dashboard`
+          redirectTo: `${window.location.origin}/${lang}/dashboard`
         }
       });
       
       if (error) throw error;
     } catch (err) {
-      setError(err.message || "Une erreur est survenue lors de la connexion.");
+      setError(err.message || t.pages.login.error);
       setLoading(false);
     }
   };
@@ -33,8 +35,8 @@ const Login = () => {
           <div className="login-logo">
             <Music size={28} className="text-white" />
           </div>
-          <h2>Bienvenue sur Ndule</h2>
-          <p>Le premier générateur de musique IA au monde</p>
+          <h2>{t.pages.login.title}</h2>
+          <p>{t.pages.login.subtitle}</p>
         </div>
 
         {error && <div className="login-error">{error}</div>}
@@ -48,7 +50,7 @@ const Login = () => {
             {loading ? <Loader2 className="animate-spin" size={20} /> : (
               <>
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="oauth-icon" />
-                Continuer avec Google
+                {t.pages.login.google}
               </>
             )}
           </button>

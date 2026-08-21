@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Play, Heart, Download, Clock, Music, TrendingUp, ChevronUp, BarChart2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
+import { useTranslation } from '../hooks/useTranslation';
 import './Stats.css';
 
 const Stats = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [tracks, setTracks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -35,15 +37,17 @@ const Stats = () => {
     fetchUserStats();
   }, []);
 
+  const totalPlays = tracks.reduce((sum, t) => sum + (t.play_count || 0), 0);
+
   return (
     <div className="stats-content">
       <div className="stats-header">
         <button onClick={() => navigate('/fr/dashboard')} className="stats-back-btn">
           <ArrowLeft size={16} className="text-stone-500" />
         </button>
-        <div className="stats-header-titles">
-          <h1 className="stats-title">Statistiques</h1>
-          <p className="stats-subtitle">Suivez les performances de vos créations</p>
+        <div className="stats-header-content">
+          <h1 className="stats-title">{t.pages.stats.title}</h1>
+          <p className="stats-subtitle">{t.pages.stats.subtitle}</p>
         </div>
       </div>
 
@@ -51,38 +55,32 @@ const Stats = () => {
         <div className="kpi-card">
           <div className="kpi-card-header">
             <Play size={14} className="text-stone-500" strokeWidth={2.5} />
-            <span>Écoutes</span>
+            <span>{t.pages.stats.listens}</span>
           </div>
           <div className="kpi-card-value">
-            {loading ? '...' : tracks.reduce((sum, t) => sum + (t.play_count || 0), 0)}
+            {loading ? '...' : totalPlays}
           </div>
         </div>
         <div className="kpi-card">
-          <div className="kpi-card-header">
-            <Heart size={14} className="text-stone-500" strokeWidth={2.5} />
-            <span>Likes</span>
-          </div>
+          <span className="kpi-card-title">{t.pages.stats.likes}</span>
           <div className="kpi-card-value">0</div>
         </div>
         <div className="kpi-card">
           <div className="kpi-card-header">
             <Download size={14} className="text-stone-500" strokeWidth={2.5} />
-            <span>Téléchargements</span>
+            <span>{t.pages.stats.downloads}</span>
           </div>
           <div className="kpi-card-value">0</div>
         </div>
         <div className="kpi-card">
           <div className="kpi-card-header">
             <Clock size={14} className="text-stone-500" strokeWidth={2.5} />
-            <span>Temps d'écoute</span>
+            <span>{t.pages.stats.listenTime}</span>
           </div>
           <div className="kpi-card-value">0s</div>
         </div>
         <div className="kpi-card">
-          <div className="kpi-card-header">
-            <Music size={14} className="text-stone-500" strokeWidth={2.5} />
-            <span>Chansons</span>
-          </div>
+          <span className="kpi-card-title">{t.pages.stats.songs}</span>
           <div className="kpi-card-value">{loading ? '...' : tracks.length}</div>
         </div>
       </div>
@@ -90,9 +88,11 @@ const Stats = () => {
       <div className="stats-chart-section">
         <div className="chart-header">
           <div className="chart-header-left">
-            <TrendingUp size={16} className="text-blue-500" strokeWidth={2.5} />
-            <h2 className="chart-title">Écoutes des 7 derniers jours</h2>
-            <span className="chart-subtitle">(0 écoutes)</span>
+            <TrendingUp size={16} className="text-blue-500" />
+            <div className="stats-main-chart">
+              <h2 className="chart-title">{t.pages.stats.listen7Days}</h2>
+              <span className="chart-placeholder">(0 écoutes)</span>
+            </div>
           </div>
           <button className="chart-collapse-btn">
             <ChevronUp size={16} className="text-stone-400" />
@@ -136,13 +136,13 @@ const Stats = () => {
         <div className="popular-songs-section">
           <div className="section-header-small">
             <BarChart2 size={16} className="text-blue-500" strokeWidth={2.5} />
-            <h3>Vos chansons populaires</h3>
+            <h3>{t.pages.stats.popularSongs}</h3>
           </div>
           
           {loading ? (
             <p className="text-stone-400 text-sm mt-4">Chargement...</p>
           ) : tracks.length === 0 ? (
-            <p className="text-stone-400 text-sm mt-4">Vous n'avez pas encore généré de chanson.</p>
+            <p className="text-stone-400 text-sm mt-4">{t.pages.stats.noSongs}</p>
           ) : (
             // Sort tracks by play_count descending
             [...tracks].sort((a, b) => (b.play_count || 0) - (a.play_count || 0)).slice(0, 5).map((track, idx) => (
@@ -156,8 +156,8 @@ const Stats = () => {
                   <span>{track.style || 'Musique'}</span>
                 </div>
                 <div className="song-stats">
-                  <span className="stats-number">{track.play_count || 0}</span>
-                  <span className="stats-label">écoutes</span>
+                  <span className="stats-value font-bold">{track.play_count || 0}</span>
+                  <span className="stats-label">{t.pages.stats.listens.toLowerCase()}</span>
                 </div>
               </div>
             ))
@@ -165,12 +165,13 @@ const Stats = () => {
         </div>
         
         <div className="recent-activity-section">
-          <div className="section-header-small">
-            <h3>Activité récente</h3>
-          </div>
-          
-          <div className="empty-activity">
-            Aucune activité récente
+          <div className="stats-recent-activity">
+            <h3>{t.pages.stats.recentActivity}</h3>
+            <div className="activity-list">
+              <div className="empty-activity">
+                {t.pages.stats.noActivity}
+              </div>
+            </div>
           </div>
         </div>
       </div>

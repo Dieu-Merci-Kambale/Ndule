@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { usePlayer } from '../context/PlayerContext';
+import { useTranslation } from '../hooks/useTranslation';
 import { 
-  ArrowLeft, Search, Play, Pause, SkipBack, SkipForward
+  ArrowLeft, Search, Play, Pause, SkipBack, SkipForward, Compass
 } from 'lucide-react';
 import './Explore.css';
 
@@ -11,6 +12,7 @@ const PAGE_SIZE = 10;
 
 const Explore = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { playTrack, currentTrack, isPlaying, togglePlay, progress, currentTime, duration, seek } = usePlayer();
   
   const [tracks, setTracks] = useState([]);
@@ -135,7 +137,7 @@ const Explore = () => {
             <ArrowLeft size={20} />
           </button>
           <div className="explore-logo flex items-center gap-1 text-blue-500 font-bold">
-            <span className="logo-icon-explore">🎵</span> Ndule Explorer
+            <Compass size={24} /> {t.pages.explore.title}
           </div>
           <div style={{width: 40}}></div> {/* Spacer for balance */}
         </div>
@@ -144,7 +146,7 @@ const Explore = () => {
           <Search size={18} className="text-stone-400" />
           <input 
             type="text" 
-            placeholder="Rechercher par titre ou style (ex: rumba)..." 
+            placeholder={t.pages.explore.searchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -154,7 +156,7 @@ const Explore = () => {
       {/* Feed Area */}
       {tracks.length === 0 && !isLoading ? (
         <div className="flex flex-col items-center justify-center h-full text-stone-400">
-          Aucune chanson trouvée.
+          {t.pages.explore.noTracks}
         </div>
       ) : (
         <>
@@ -189,7 +191,7 @@ const Explore = () => {
                   {/* Title & Subtitle */}
                   <h2 className="music-card-title">{track.title}</h2>
                   <p className="music-card-subtitle">
-                    Une création originale générée par IA
+                    {t.pages.explore.aiGenerated}
                   </p>
                   
                   {/* Player Controls inside Card */}

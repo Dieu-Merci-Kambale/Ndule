@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Globe, Heart, Music, Loader2 } from 'lucide-react';
+import { X, Globe, Heart, Share2, Loader2, Music } from 'lucide-react';
+import { useTranslation } from '../hooks/useTranslation';
 import './PublishModal.css';
 
 const PublishModal = ({ isOpen, onClose, onConfirm, track }) => {
+  const { t } = useTranslation();
   const [isPublishing, setIsPublishing] = useState(false);
 
   if (!isOpen || !track) return null;
@@ -22,9 +24,9 @@ const PublishModal = ({ isOpen, onClose, onConfirm, track }) => {
           <div className="globe-icon-container">
             <Globe size={36} color="white" strokeWidth={1.5} />
           </div>
-          <h2>Partager au monde</h2>
+          <h2>{t.pages.modals.publishTitle}</h2>
           <p className="publish-description">
-            Ta chanson sera visible par toute la communauté Ndule. Les autres utilisateurs pourront l'écouter et l'aimer.
+            "{track.title}" {t.pages.modals.publishDescription}
           </p>
         </div>
 
@@ -33,27 +35,27 @@ const PublishModal = ({ isOpen, onClose, onConfirm, track }) => {
             <div className="benefit-icon-wrapper blue-light">
               <Globe size={18} color="#3b82f6" />
             </div>
-            <span>Plus de visibilité</span>
+            <span>{t.pages.modals.visibility}</span>
           </div>
           
           <div className="benefit-item">
-            <div className="benefit-icon-wrapper blue-light">
-              <Heart size={18} color="#3b82f6" />
+            <div className="benefit-icon-wrapper red-light">
+              <Heart size={18} color="#ef4444" />
             </div>
-            <span>Reçois des likes</span>
+            <span>{t.pages.modals.getLikes}</span>
           </div>
           
           <div className="benefit-item">
             <div className="benefit-icon-wrapper blue-light">
               <Music size={18} color="#3b82f6" />
             </div>
-            <span>Inspire d'autres créateurs</span>
+            <span>{t.pages.modals.inspire}</span>
           </div>
         </div>
 
         <div className="publish-modal-actions">
           <button className="btn-later" onClick={onClose} disabled={isPublishing}>
-            Plus tard
+            {t.pages.modals.later}
           </button>
           <button className="btn-publish" onClick={handlePublish} disabled={isPublishing}>
             {isPublishing ? (
@@ -61,7 +63,7 @@ const PublishModal = ({ isOpen, onClose, onConfirm, track }) => {
             ) : (
               <Globe size={18} />
             )}
-            <span>Publier</span>
+            <span>{t.pages.modals.publishBtn}</span>
           </button>
         </div>
 

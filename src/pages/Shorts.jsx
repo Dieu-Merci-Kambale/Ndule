@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Video, Share2, Trash2, X, Play } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
+import { useTranslation } from '../hooks/useTranslation';
 import './Shorts.css';
 
 const Shorts = () => {
+  const { t } = useTranslation();
   const [shorts, setShorts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [videoToPlay, setVideoToPlay] = useState(null);
@@ -45,15 +47,15 @@ const Shorts = () => {
       try {
         await navigator.share({
           title: track.title,
-          text: `Regarde ce Clip Short "${track.title}" sur Ndule !`,
+          text: `${t.pages.shorts.shareText} "${track.title}" sur Ndule !`,
           url: track.video_url
         });
       } catch (err) {
         console.log("Erreur partage:", err);
       }
     } else {
-      navigator.clipboard.writeText(`Regarde ce Clip Ndule: ${track.video_url}`);
-      alert("Lien du Clip copié !");
+      navigator.clipboard.writeText(`${t.pages.shorts.shareTextLink}: ${track.video_url}`);
+      alert(t.pages.shorts.linkCopied);
     }
   };
 
@@ -75,7 +77,7 @@ const Shorts = () => {
     } catch (err) {
       console.error("Erreur suppression:", err);
       // On pourrait utiliser le Toast ici idéalement
-      alert("Erreur lors de la suppression du Short.");
+      alert(t.pages.shorts.deleteError);
     } finally {
       setIsDeleting(false);
     }
@@ -99,21 +101,19 @@ const Shorts = () => {
           <div className="studio-icon-container">
             <Video size={28} className="text-blue-500" strokeWidth={2.5} />
           </div>
-          <h1 className="studio-title">Studio Shorts</h1>
+          <h1 className="studio-title">{t.pages.shorts.title}</h1>
         </div>
         
         <p className="studio-description">
-          Transformez vos musiques en vidéos virales format vertical (9:16) pour
-          TikTok, Instagram Reels et YouTube Shorts. Sélectionnez une musique pour
-          commencer.
+          {t.pages.shorts.description}
         </p>
 
         <div className="studio-shorts-list">
           {isLoading ? (
-            <p className="text-stone-500">Chargement de vos Shorts...</p>
+            <p className="text-stone-500">{t.pages.shorts.loading}</p>
           ) : shorts.length === 0 ? (
             <p className="text-stone-500 bg-white p-6 rounded-2xl border border-stone-100 text-center shadow-sm">
-              Vous n'avez pas encore généré de Short. Allez dans le Tableau de Bord pour commencer !
+              {t.pages.shorts.noShorts}
             </p>
           ) : (
             shorts.map(track => (
@@ -140,15 +140,15 @@ const Shorts = () => {
                     className="btn-voir-short w-full"
                     onClick={() => setVideoToPlay(track)}
                   >
-                    <Video size={16} /> Voir Short
+                    <Video size={16} /> {t.pages.shorts.view}
                   </button>
                   
                   <div className="short-card-actions-row">
                     <button className="btn-partager-short" onClick={() => handleShare(track)}>
-                      <Share2 size={16} /> Partager
+                      <Share2 size={16} /> {t.pages.shorts.share}
                     </button>
                     <button className="btn-supprimer-short" onClick={() => setShortToDelete(track)}>
-                      <Trash2 size={16} /> Supprimer
+                      <Trash2 size={16} /> {t.pages.shorts.delete}
                     </button>
                   </div>
                 </div>
@@ -166,9 +166,11 @@ const Shorts = () => {
             
             {/* Header */}
             <div className="video-modal-header">
-              <div className="flex items-center gap-2">
-                <Video size={20} className="text-blue-500" />
-                <span className="font-bold text-stone-800 text-lg">Studio Short</span>
+              <div className="flex flex-col items-center">
+                <span className="font-bold text-stone-800 text-lg">{t.pages.shorts.title}</span>
+                <span className="text-stone-500 text-sm mt-2 text-center px-6 leading-relaxed">
+                  {t.pages.shorts.desc}
+                </span>
               </div>
               <button className="close-modal-icon-btn" onClick={() => setVideoToPlay(null)}>
                 <X size={20} className="text-stone-500" />
@@ -177,7 +179,7 @@ const Shorts = () => {
 
             {/* Success Banner */}
             <div className="video-modal-success-banner">
-              <span className="text-green-600">✓ Votre Short est prêt !</span>
+              <span className="text-green-600">{t.pages.shorts.isReady}</span>
             </div>
 
             {/* Player Container - Custom Visualizer */}

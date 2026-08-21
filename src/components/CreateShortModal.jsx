@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { X, Video, Loader2 } from 'lucide-react';
+import { X, Video, Play, Loader2, Link2, Download } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
+import { useTranslation } from '../hooks/useTranslation';
 import './CreateShortModal.css';
 
 const CreateShortModal = ({ isOpen, onClose, track, userNotes, onShortCreated }) => {
+  const { t } = useTranslation();
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -13,7 +15,7 @@ const CreateShortModal = ({ isOpen, onClose, track, userNotes, onShortCreated })
 
   const handleGenerate = async () => {
     if (userNotes < 1) {
-      setError("Vous n'avez pas assez de Notes pour générer un clip vidéo.");
+      setError(t.pages.modals.errorNotEnoughNotes);
       return;
     }
 
@@ -25,7 +27,7 @@ const CreateShortModal = ({ isOpen, onClose, track, userNotes, onShortCreated })
       const { data: deductSuccess, error: deductError } = await supabase.rpc('deduct_note', { amount: 1 });
       
       if (deductError || !deductSuccess) {
-        throw new Error("Impossible de déduire la Note. Vérifiez votre solde.");
+        throw new Error(t.pages.modals.errorDeductNote);
       }
 
       // 2. Simuler la création vidéo avec progression (10 à 15 secondes)
@@ -44,7 +46,7 @@ const CreateShortModal = ({ isOpen, onClose, track, userNotes, onShortCreated })
 
       if (updateError) {
         console.error("Erreur mise à jour vidéo:", updateError);
-        throw new Error("La vidéo a été générée mais n'a pas pu être sauvegardée.");
+        throw new Error(t.pages.modals.errorSaveVideo);
       }
 
       // Succès !
@@ -54,7 +56,7 @@ const CreateShortModal = ({ isOpen, onClose, track, userNotes, onShortCreated })
       onShortCreated(track.id, fakeVideoUrl);
       
     } catch (err) {
-      setError(err.message || "Une erreur inattendue s'est produite.");
+      setError(err.message || t.pages.modals.errorUnexpected);
       setIsGenerating(false);
       setProgress(0);
     }
@@ -80,12 +82,14 @@ const CreateShortModal = ({ isOpen, onClose, track, userNotes, onShortCreated })
         <div className="short-modal-content">
           {!isGenerating && !isSuccess ? (
             <>
-              <div className="short-icon-wrapper">
-                <Video size={32} className="text-white" />
+              <div className="short-header-title-container">
+                <div className="short-icon-circle">
+                  <Video size={20} className="text-blue-500" />
+                </div>
+                <h2 className="short-title">{t.pages.modals.createShortTitle}</h2>
               </div>
-              <h2 className="short-title">Créer un Clip Short</h2>
               <p className="short-desc">
-                Transformez <strong>{track.title}</strong> en une vidéo verticale parfaite pour TikTok, Instagram Reels ou YouTube Shorts.
+                {t.pages.modals.createShortDesc.replace('{title}', track.title)}
               </p>
               
               <div className="short-preview-box">
@@ -93,8 +97,8 @@ const CreateShortModal = ({ isOpen, onClose, track, userNotes, onShortCreated })
                   <div className="short-preview-overlay"></div>
                 </div>
                 <div className="short-preview-info">
-                  <span className="short-preview-badge">Format Vertical 9:16</span>
-                  <span className="short-preview-text">Paroles animées incluses</span>
+                  <span className="short-preview-badge">9:16</span>
+                  <span className="short-preview-text">{t.pages.modals.animatedLyrics}</span>
                 </div>
               </div>
 

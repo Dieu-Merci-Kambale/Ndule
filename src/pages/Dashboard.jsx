@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { RefreshCw, Heart, MoreVertical, Share2, Globe, Download, Plus, Wand2, Video, Loader2, Play, Pause } from 'lucide-react';
+import { RefreshCw, Heart, MoreVertical, Share2, Globe, Download, Plus, Wand2, Video, Loader2, Play, Pause, Music } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 import CreateTrackModal from '../components/CreateTrackModal';
 import CreateShortModal from '../components/CreateShortModal';
 import PublishModal from '../components/PublishModal';
 import Toast from '../components/Toast';
 import { usePlayer } from '../context/PlayerContext';
+import { useTranslation } from '../hooks/useTranslation';
 import './Dashboard.css';
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('toutes');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isNoNotesModalOpen, setIsNoNotesModalOpen] = useState(false);
@@ -99,9 +101,8 @@ const Dashboard = () => {
           t.id === track.id ? { ...t, is_favorite: !newFavoriteState } : t
         ));
         showToast("Erreur lors de la mise à jour des favoris.");
-      } else {
         if (newFavoriteState) {
-          showToast("Ajouté aux favoris !");
+          showToast(t.pages.myMusic.msgFavAdded);
         }
       }
     } catch (error) {
@@ -150,7 +151,7 @@ const Dashboard = () => {
       }
     } else {
       navigator.clipboard.writeText(`Écoute ma chanson Ndule: ${track.audio_url}`);
-      showToast("Lien copié dans le presse-papier !");
+      showToast(t.pages.myMusic.msgCopied);
     }
   };
 
@@ -162,7 +163,7 @@ const Dashboard = () => {
 
   const handlePublishClick = (track) => {
     if (track.is_public) {
-      showToast("Cette chanson est déjà publiée !");
+      showToast(t.pages.myMusic.msgAlreadyPublished);
       return;
     }
     setTrackToPublish(track);
@@ -179,40 +180,40 @@ const Dashboard = () => {
     if (!error) {
       // Mettre à jour l'état local
       setTracks(prev => prev.map(t => t.id === track.id ? { ...t, is_public: true } : t));
-      showToast("Félicitations ! Votre chanson a été publiée dans Explorer.", "success");
+      showToast(t.pages.myMusic.msgPublishSuccess, "success");
     } else {
       console.error("Erreur lors de la publication :", error);
-      showToast("Erreur lors de la publication. Veuillez réessayer.");
+      showToast(t.pages.myMusic.msgPublishError);
     }
   };
 
   return (
     <div className="dashboard-content">
       <div className="dashboard-header-title">
-        <div className="title-group flex items-center gap-3">
-          <h1 className="text-3xl font-extrabold text-black tracking-tight">Ma Musique</h1>
-          <span className="live-badge">
-            <span className="live-dot"></span> Live
-          </span>
+        <div className="flex items-center justify-between mb-8 pb-4 border-b border-stone-100">
+          <h1 className="text-3xl font-extrabold text-black tracking-tight">{t.pages.myMusic.title}</h1>
+          <button className="live-badge">
+            <span className="live-dot"></span> {t.pages.myMusic.live}
+          </button>
         </div>
         <button className="refresh-btn" onClick={fetchUserData} disabled={isLoading}>
           <RefreshCw size={18} className={isLoading ? "animate-spin" : ""} />
         </button>
       </div>
-      <p className="subtitle-text text-stone-500 mb-8 mt-1 text-sm font-medium">{tracks.length} Écoute(s)</p>
+      <p className="subtitle-text text-stone-500 mb-8 mt-1 text-sm font-medium">{tracks.length} {t.pages.myMusic.listensCount}</p>
 
       <div className="tabs-container">
         <button 
           className={`tab-btn ${activeTab === 'toutes' ? 'active' : ''}`}
           onClick={() => setActiveTab('toutes')}
         >
-          Toutes
+          {t.pages.myMusic.tabAll}
         </button>
         <button 
           className={`tab-btn ${activeTab === 'favoris' ? 'active' : ''}`}
           onClick={() => setActiveTab('favoris')}
         >
-          <Heart size={14} className="mr-1" /> Favoris
+          <Heart size={14} className="mr-1" /> {t.pages.myMusic.tabFav}
         </button>
       </div>
 
@@ -221,12 +222,12 @@ const Dashboard = () => {
         handleOpenCreateModal();
       }}>
         <div className="create-banner-left">
-          <div className="create-banner-icon-bg">
-            <Plus size={24} className="text-white" strokeWidth={3} />
-          </div>
-          <div className="create-banner-text">
-            <h3>Créer ma première chanson</h3>
-            <p>Afrobeat, Amapiano, R&B...</p>
+          <div className="text-center p-12 bg-stone-50 rounded-2xl border border-stone-100 mt-8">
+            <Music size={48} className="mx-auto text-stone-300 mb-4" />
+            <h3 className="text-lg font-bold text-stone-900 mb-2">{t.pages.myMusic.createFirst}</h3>
+            <p className="text-stone-500 mb-6 max-w-sm mx-auto">
+              {t.dashboard.recentTracks.noTracks}
+            </p>
           </div>
         </div>
         <div className="create-banner-arrow text-blue-400 font-light text-2xl">→</div>
@@ -240,8 +241,8 @@ const Dashboard = () => {
         ) : (activeTab === 'favoris' ? tracks.filter(t => t.is_favorite) : tracks).length === 0 ? (
           <div className="w-full text-center py-10 text-stone-500">
             {activeTab === 'favoris' 
-              ? "Vous n'avez pas encore de favoris." 
-              : "Vous n'avez pas encore généré de chanson. Cliquez sur \"Créer ma première chanson\" !"}
+              ? t.pages.myMusic.noFavs 
+              : t.pages.myMusic.noSongsDesc}
           </div>
         ) : (
           (activeTab === 'favoris' ? tracks.filter(t => t.is_favorite) : tracks).map((track) => (
@@ -292,13 +293,13 @@ const Dashboard = () => {
               
               <div className="track-actions-row">
                 <button className="action-btn share-btn" onClick={() => handleShare(track)}>
-                  <Share2 size={16} /> Partager
+                  <Share2 size={16} /> {t.pages.myMusic.btnShare}
                 </button>
                 <button 
                   className={`action-btn publish-btn ${track.is_public ? 'opacity-50 cursor-not-allowed' : ''}`}
                   onClick={() => handlePublishClick(track)}
                 >
-                  <Globe size={16} /> {track.is_public ? 'Publiée' : 'Publier'}
+                  <Globe size={16} /> {track.is_public ? t.pages.myMusic.btnPublished : t.pages.myMusic.btnPublish}
                 </button>
                 <button className="action-btn download-btn" onClick={() => handleDownload(track)}>
                   <Download size={16} />
@@ -310,21 +311,21 @@ const Dashboard = () => {
                   setTrackToRemix(track);
                   handleOpenCreateModal();
                 }}>
-                  <Wand2 size={14} className="text-blue-500" /> Remixer
+                  <Wand2 size={14} className="text-blue-500" /> {t.pages.myMusic.btnRemix}
                 </button>
                 {track.video_url ? (
                   <button className="bottom-btn clip-btn" onClick={() => {
                     // Pour le moment on ouvre l'url de la vidéo
                     window.open(track.video_url, '_blank');
                   }} style={{ backgroundColor: '#EEF2FF', color: '#4F46E5', borderColor: '#C7D2FE' }}>
-                    <Play size={14} className="fill-current" /> Voir le Short
+                    <Play size={14} className="fill-current" /> {t.pages.myMusic.btnViewShort}
                   </button>
                 ) : (
                   <button className="bottom-btn clip-btn" onClick={() => {
                     setTrackForShort(track);
                     setIsShortModalOpen(true);
                   }}>
-                    <Video size={14} className="text-stone-500" /> Clip Short (1 crédit)
+                    <Video size={14} className="text-stone-500" /> {t.pages.myMusic.btnClipShort}
                   </button>
                 )}
               </div>
@@ -366,25 +367,25 @@ const Dashboard = () => {
             <div className="no-notes-icon-wrapper">
               <span>💸</span>
             </div>
-            <h2 className="no-notes-title">Plus de crédits disponibles !</h2>
+            <h2 className="no-notes-title">{t.pages.myMusic.noCreditsTitle}</h2>
             <p className="no-notes-desc">
-              Vous n'avez plus de crédits pour générer de nouvelles chansons. Achetez des crédits pour continuer à créer vos chefs-d'œuvre musicaux.
+              {t.pages.myMusic.noCreditsDesc}
             </p>
             <div className="no-notes-actions">
               <button 
                 onClick={() => setIsNoNotesModalOpen(false)}
                 className="btn-cancel-notes"
               >
-                Annuler
+                {t.pages.myMusic.btnCancel}
               </button>
               <button 
                 onClick={() => {
                   setIsNoNotesModalOpen(false);
-                  navigate('/fr/credits');
+                  navigate(`/${lang}/credits`);
                 }}
                 className="btn-buy-notes"
               >
-                Acheter des crédits
+                {t.pages.myMusic.btnBuyCredits}
               </button>
             </div>
           </div>
