@@ -367,8 +367,8 @@ const Dashboard = () => {
             <div className="no-notes-icon-wrapper">
               <span>💸</span>
             </div>
-            <h2 className="no-notes-title">{t.pages.myMusic.noCreditsTitle}</h2>
-            <p className="no-notes-desc">
+            <h2 className="no-notes-title" style={{ color: '#ef4444' }}>{t.pages.myMusic.noCreditsTitle}</h2>
+            <p className="no-notes-desc" style={{ color: '#f87171' }}>
               {t.pages.myMusic.noCreditsDesc}
             </p>
             <div className="no-notes-actions">
