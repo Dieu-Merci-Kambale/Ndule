@@ -198,33 +198,7 @@ const DashboardHome = () => {
         )}
       </div>
 
-      {/* Quick Actions */}
-      <div className="home-section">
-        <h2 className="section-title">Actions rapides</h2>
-        
-        <div className="quick-actions-grid">
-          <div className="quick-action-card cursor-pointer hover:-translate-y-1 transition-transform">
-            <div className="quick-icon-bg bg-blue-500">
-              <Link size={24} className="text-white" strokeWidth={2.5} />
-            </div>
-            <span className="quick-action-label">Acheter des crédits</span>
-          </div>
-          
-          <div className="quick-action-card cursor-pointer hover:-translate-y-1 transition-transform" onClick={() => navigate('/fr/dashboard')}>
-            <div className="quick-icon-bg bg-stone-900">
-              <Music size={24} className="text-white" strokeWidth={2.5} />
-            </div>
-            <span className="quick-action-label">Ma bibliothèque</span>
-          </div>
-          
-          <div className="quick-action-card cursor-pointer hover:-translate-y-1 transition-transform">
-            <div className="quick-icon-bg bg-blue-600">
-              <Gift size={24} className="text-white" strokeWidth={2.5} />
-            </div>
-            <span className="quick-action-label">Offrir des Crédits</span>
-          </div>
-        </div>
-      </div>
+
 
       <VideoModal 
         isOpen={!!activeVideoTrack} 

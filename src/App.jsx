@@ -23,17 +23,17 @@ function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/fr" replace />} />
           
-          <Route path="/fr" element={<MainLayout />}>
+          <Route path="/:lang" element={<MainLayout />}>
             <Route index element={<Home />} />
             <Route path="privacy" element={<Privacy />} />
             <Route path="terms" element={<Terms />} />
             <Route path="contact" element={<Contact />} />
           </Route>
           
-          <Route path="/fr/login" element={<Login />} />
-          <Route path="/fr/explore" element={<Explore />} />
+          <Route path="/:lang/login" element={<Login />} />
+          <Route path="/:lang/explore" element={<Explore />} />
           
-          <Route path="/fr" element={<ProtectedRoute />}>
+          <Route path="/:lang" element={<ProtectedRoute />}>
             <Route element={<DashboardLayout />}>
               <Route path="accueil" element={<DashboardHome />} />
               <Route path="dashboard" element={<Dashboard />} />
@@ -43,17 +43,6 @@ function App() {
             </Route>
           </Route>
 
-          <Route path="/en" element={<MainLayout />}>
-            <Route index element={<Home />} />
-            <Route path="privacy" element={<Privacy />} />
-            <Route path="terms" element={<Terms />} />
-            <Route path="contact" element={<Contact />} />
-          </Route>
-          
-          <Route path="/en" element={<DashboardLayout />}>
-            <Route path="dashboard" element={<Dashboard />} />
-          </Route>
-          
           {/* Catch all to redirect back to FR */}
           <Route path="*" element={<Navigate to="/fr" replace />} />
         </Routes>
