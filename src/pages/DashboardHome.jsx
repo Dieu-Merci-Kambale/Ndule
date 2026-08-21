@@ -155,8 +155,6 @@ const DashboardHome = () => {
           </div>
           <div className="create-banner-arrow text-blue-400 font-light text-2xl">→</div>
         </div>
-
-        </div>
       </div>
 
       {/* Recent Songs */}
