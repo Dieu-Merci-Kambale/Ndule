@@ -67,11 +67,13 @@ serve(async (req) => {
       .from('transactions')
       .update({ status: pawaStatus })
       .eq('deposit_id', depositId)
-      .eq('status', 'pending') // Prevent race conditions
+      // We don't want to update and add credits if it was ALREADY a success.
+      // The strict eq('status', 'pending') was blocking intermediate statuses like ACCEPTED.
+      // So we use a looser condition: only update if it is not already COMPLETED/SUCCESS.
+      .not('status', 'in', '("COMPLETED","APPROVED","SUCCESS","SUCCESSFUL")')
       .select()
-      .single()
+      .maybeSingle()
 
-    // 4. If status is a success AND we actually updated it (it was pending before), add notes
     if (isSuccessStatus(pawaStatus) && updatedTx) {
       const { data: profile } = await supabase
         .from('profiles')

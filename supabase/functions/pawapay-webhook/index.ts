@@ -46,9 +46,9 @@ serve(async (req) => {
       .from('transactions')
       .update({ status: status })
       .eq('deposit_id', depositId)
-      .eq('status', 'pending') // Prevent race condition with pawapay-verify
+      .not('status', 'in', '("COMPLETED","APPROVED","SUCCESS","SUCCESSFUL")')
       .select()
-      .single()
+      .maybeSingle()
 
     // 4. If success AND we actually updated it, credit user
     if (isSuccessStatus(status) && updatedTx) {
