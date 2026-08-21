@@ -10,6 +10,7 @@ const DashboardLayout = () => {
   const [notesBalance, setNotesBalance] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
+  const [showDropdown, setShowDropdown] = useState(false);
 
   // Fonction pour générer l'URL de l'avatar de façon sécurisée (encodeURIComponent)
   const getAvatarUrl = () => {
@@ -88,7 +89,7 @@ const DashboardLayout = () => {
           
           <NavLink to="/fr/dashboard" className="nav-item" end>
             <Music size={20} />
-            <span className="nav-text">Ma Musique</span>
+            <span className="nav-text">Musiques</span>
           </NavLink>
           
           <NavLink to="/fr/shorts" className="nav-item">
@@ -148,17 +149,27 @@ const DashboardLayout = () => {
              <div className="topbar-notes-pill">
                <LinkIcon size={14} className="text-blue-500" />
                <span className="font-medium text-stone-700" style={{fontSize: '12px'}}>{notesBalance} Crédits</span>
-               <button className="plus-round-btn"><Plus size={14} /></button>
+               <button className="plus-round-btn" onClick={() => navigate('/fr/credits')}><Plus size={14} /></button>
              </div>
-             <button className="icon-btn-round mobile-only" onClick={handleLogout}>
-               <LogOut size={16} className="text-red-500" />
-             </button>
              <button className="icon-btn-round hidden-mobile"><Bell size={18} className="text-stone-600" /></button>
-             <img 
-               src={getAvatarUrl()} 
-               alt="Avatar" 
-               className="avatar-medium cursor-pointer" 
-             />
+             
+             <div style={{ position: 'relative' }}>
+               <img 
+                 src={getAvatarUrl()} 
+                 alt="Avatar" 
+                 className="avatar-medium cursor-pointer" 
+                 onClick={() => setShowDropdown(!showDropdown)}
+               />
+               
+               {showDropdown && (
+                 <div className="avatar-dropdown">
+                   <button onClick={handleLogout} className="dropdown-item">
+                     <LogOut size={16} className="text-red-500" />
+                     <span>Déconnexion</span>
+                   </button>
+                 </div>
+               )}
+             </div>
            </div>
         </header>
 
