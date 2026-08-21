@@ -126,11 +126,7 @@ const Credits = () => {
         </div>
       </div>
 
-      <button className="promo-code-btn">
-        <Tag size={14} className="mr-1 text-stone-500" />
-        {t.pages.credits.promoCode}
-        <ChevronDown size={14} className="ml-1 text-stone-400" />
-      </button>
+
 
       {/* Social Proof */}
       <div className="social-proof">
