@@ -11,7 +11,7 @@ import { useTranslation } from '../hooks/useTranslation';
 import './Dashboard.css';
 
 const Dashboard = () => {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
   const [activeTab, setActiveTab] = useState('toutes');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isNoNotesModalOpen, setIsNoNotesModalOpen] = useState(false);
@@ -381,7 +381,7 @@ const Dashboard = () => {
               <button 
                 onClick={() => {
                   setIsNoNotesModalOpen(false);
-                  navigate(`/${lang}/credits`);
+                  navigate(`/${lang || 'fr'}/credits`);
                 }}
                 className="btn-buy-notes"
               >
