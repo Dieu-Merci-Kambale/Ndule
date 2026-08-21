@@ -1,228 +1,257 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { usePlayer } from '../context/PlayerContext';
-import VideoModal from '../components/VideoModal';
 import { 
-  ArrowLeft, Search, Layers, Sun, SlidersHorizontal, 
-  Headphones, Play, Pause, SkipBack, SkipForward, 
-  Heart, Music, Volume2, Video
+  ArrowLeft, Search, Play, Pause, SkipBack, SkipForward
 } from 'lucide-react';
 import './Explore.css';
 
+const PAGE_SIZE = 10;
+
 const Explore = () => {
   const navigate = useNavigate();
-  const { playTrack, currentTrack, isPlaying, togglePlay } = usePlayer();
-  const [publicTracks, setPublicTracks] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeVideoTrack, setActiveVideoTrack] = useState(null);
+  const { playTrack, currentTrack, isPlaying, togglePlay, progress, currentTime, duration, seek } = usePlayer();
   
-  // Track currently expanded in the view (for details)
-  const [expandedTrack, setExpandedTrack] = useState(null);
+  const [tracks, setTracks] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  
+  // To handle typing debounce for search
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  // Refs for Intersection Observer
+  const observer = useRef(null);
+  const trackRefs = useRef({});
+  const scrubberRef = useRef(null);
 
   useEffect(() => {
-    const fetchPublicTracks = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('tracks')
-          .select('*')
-          .eq('is_public', true)
-          .order('created_at', { ascending: false });
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
-        if (!error && data) {
-          setPublicTracks(data);
-          if (data.length > 0) setExpandedTrack(data[0]);
+  // Fetch tracks
+  const fetchTracks = useCallback(async (pageNum, reset = false) => {
+    if (isLoading) return;
+    setIsLoading(true);
+    
+    try {
+      let query = supabase
+        .from('tracks')
+        .select('*')
+        .eq('is_public', true)
+        .order('created_at', { ascending: false });
+
+      if (debouncedSearch) {
+        // Recherche avancée : nom ou style
+        query = query.or(`title.ilike.%${debouncedSearch}%,style.ilike.%${debouncedSearch}%`);
+      }
+
+      const from = pageNum * PAGE_SIZE;
+      const to = from + PAGE_SIZE - 1;
+      
+      const { data, error } = await query.range(from, to);
+
+      if (!error && data) {
+        if (reset) {
+          setTracks(data);
         } else {
-          console.error("Supabase Error:", error);
+          setTracks(prev => [...prev, ...data]);
         }
-      } catch (err) {
-        console.error("Erreur chargement public tracks:", err);
-      } finally {
-        setIsLoading(false);
+        setHasMore(data.length === PAGE_SIZE);
+      }
+    } catch (err) {
+      console.error("Erreur chargement:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [debouncedSearch, isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Effect for initial load or search change
+  useEffect(() => {
+    setPage(0);
+    fetchTracks(0, true);
+  }, [debouncedSearch]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const loadMore = () => {
+    if (!isLoading && hasMore) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchTracks(nextPage, false);
+    }
+  };
+
+  // Intersection Observer to autoplay the track in view
+  useEffect(() => {
+    observer.current = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const trackId = entry.target.dataset.id;
+          const track = tracks.find(t => t.id === trackId);
+          if (track && currentTrack?.id !== track.id) {
+            playTrack(track, tracks);
+          }
+        }
+      });
+    }, {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.7 // Trigger when 70% of the item is visible
+    });
+
+    const currentRefs = trackRefs.current;
+    Object.values(currentRefs).forEach(node => {
+      if (node) observer.current.observe(node);
+    });
+
+    return () => {
+      if (observer.current) {
+        Object.values(currentRefs).forEach(node => {
+          if (node) observer.current.unobserve(node);
+        });
+        observer.current.disconnect();
       }
     };
-    
-    fetchPublicTracks();
-  }, []);
+  }, [tracks, currentTrack, playTrack]);
 
-  const filteredTracks = publicTracks.filter(t => 
-    t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    (t.style && t.style.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const handleScrubberClick = (e, isCurrentTrack) => {
+    if (!isCurrentTrack || !scrubberRef.current) return;
+    const rect = scrubberRef.current.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const percent = Math.max(0, Math.min(1, clickX / rect.width));
+    seek(percent);
+  };
 
   return (
     <div className="explore-container">
-      {/* Top Bar */}
-      <header className="explore-header">
-        <div className="explore-header-left">
+      {/* Fixed Header */}
+      <header className="explore-header-fixed">
+        <div className="explore-header-top">
           <button onClick={() => navigate('/fr/dashboard')} className="back-btn-transparent">
             <ArrowLeft size={20} />
           </button>
-          <div className="explore-logo flex items-center gap-1 text-blue-500 font-bold text-xl ml-2">
-            <span className="logo-icon-explore">🎵</span> Ndule
+          <div className="explore-logo flex items-center gap-1 text-blue-500 font-bold">
+            <span className="logo-icon-explore">🎵</span> Ndule Explorer
           </div>
-          <span className="font-bold ml-6 text-black">Explorer</span>
+          <div style={{width: 40}}></div> {/* Spacer for balance */}
         </div>
         
-        <div className="explore-search">
-          <Search size={18} className="search-icon" />
+        <div className="explore-search-bar">
+          <Search size={18} className="text-stone-400" />
           <input 
             type="text" 
-            placeholder="Rechercher une chanson..." 
-            className="search-input"
+            placeholder="Rechercher par titre ou style (ex: rumba)..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        
-        <div className="explore-header-right">
-          <button className="icon-btn-transparent"><Layers size={20} /></button>
-          <button className="icon-btn-transparent"><Sun size={20} /></button>
-          <button className="icon-btn-transparent"><SlidersHorizontal size={20} /></button>
-        </div>
       </header>
 
-      {/* Main Split Content */}
-      <main className="explore-main">
-        {/* Left: Player */}
-        <div className="explore-player-section">
-          {expandedTrack ? (
-            <>
-              <div className="player-stats text-stone-400">
-                <Headphones size={14} />
-                <span className="text-sm">Public</span>
-              </div>
-              
-              <div className="player-cover-large mt-4">
-                <img src={expandedTrack.cover_url || "https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?q=80&w=400&auto=format&fit=crop"} alt="Cover" />
-              </div>
-              
-              <div className="player-artist-badge mt-4">
-                <div className="artist-avatar bg-blue-500 text-white flex items-center justify-center font-bold text-xs uppercase" style={{width: '24px', height: '24px', borderRadius: '12px'}}>
-                  {expandedTrack.title ? expandedTrack.title.substring(0, 2) : 'N'}
-                </div>
-                <span className="artist-name text-sm font-medium text-stone-600">
-                  Créateur Ndule
-                </span>
-                <span className="style-badge">{expandedTrack.style || 'Musique'}</span>
-              </div>
-              
-              <div className="player-track-info mt-6 text-center">
-                <h2 className="text-xl font-bold text-black">{expandedTrack.title}</h2>
-                <p className="text-sm text-stone-400 mt-2 line-clamp-2 px-8">
-                  {expandedTrack.story || expandedTrack.occasion || "Une création originale générée par IA"}
-                </p>
-              </div>
-              
-              <div className="player-timeline mt-8">
-                <div className="timeline-bar bg-stone-200">
-                  <div className="timeline-progress bg-blue-500" style={{ width: currentTrack?.id === expandedTrack.id && isPlaying ? '50%' : '0%' }}></div>
-                  <div className="timeline-thumb bg-blue-600" style={{ left: currentTrack?.id === expandedTrack.id && isPlaying ? '50%' : '0%' }}></div>
-                </div>
-                <div className="timeline-times mt-2">
-                  <span>0:00</span>
-                  <span>{expandedTrack.duration || "0:00"}</span>
-                </div>
-              </div>
-              
-              <div className="player-main-controls mt-6">
-                <button className="control-btn text-stone-400"><SkipBack size={20} fill="currentColor" /></button>
-                <button className="play-circle-btn bg-blue-600 text-white border-0" onClick={() => {
-                  if (currentTrack?.id === expandedTrack.id) togglePlay();
-                  else playTrack(expandedTrack, publicTracks);
-                }}>
-                  {currentTrack?.id === expandedTrack.id && isPlaying ? <Pause size={28} fill="currentColor" /> : <Play size={28} className="ml-1" fill="currentColor" />}
-                </button>
-                <button className="control-btn text-stone-400"><SkipForward size={20} fill="currentColor" /></button>
-              </div>
-            </>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full text-stone-400">
-              {isLoading ? 'Chargement...' : 'Aucune chanson sélectionnée'}
-            </div>
-          )}
+      {/* Feed Area */}
+      {tracks.length === 0 && !isLoading ? (
+        <div className="flex flex-col items-center justify-center h-full text-stone-400">
+          Aucune chanson trouvée.
         </div>
-
-        {/* Middle: Lyrics / Details */}
-        <div className="explore-lyrics-section">
-          {expandedTrack ? (
-            <div className="lyrics-content scrollable">
-              <h3 className="font-bold text-lg mb-4 text-center">Paroles</h3>
-              {expandedTrack.lyrics ? (
-                expandedTrack.lyrics.split('\n').map((line, idx) => (
-                  <p key={idx} className={`lyric-line ${idx === 0 ? 'active-line' : ''}`}>
-                    {line}
+      ) : (
+        <>
+          {tracks.map((track) => {
+            const isCurrent = currentTrack?.id === track.id;
+            
+            return (
+              <div 
+                key={track.id} 
+                className="feed-snap-item"
+                data-id={track.id}
+                ref={el => trackRefs.current[track.id] = el}
+              >
+                <div className="music-card">
+                  {/* Cover */}
+                  <div className="music-card-cover">
+                    <img src={track.cover_url || "https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?q=80&w=400&auto=format&fit=crop"} alt={track.title} />
+                  </div>
+                  
+                  {/* Badge */}
+                  <div className="music-card-badge-row">
+                    <div className="mc-avatar">
+                      {track.title ? track.title.substring(0, 2).toUpperCase() : 'ND'}
+                    </div>
+                    <span className="mc-name">Créateur Ndule</span>
+                    <span className="mc-style">{track.style || 'Musique'}</span>
+                  </div>
+                  
+                  {/* Title & Subtitle */}
+                  <h2 className="music-card-title">{track.title}</h2>
+                  <p className="music-card-subtitle">
+                    Une création originale générée par IA
                   </p>
-                ))
-              ) : (
-                <p className="lyric-line text-stone-500">Pas de paroles disponibles pour cette chanson (Version Instrumentale ou non renseignée).</p>
-              )}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full text-stone-400">
-              Sélectionnez une chanson pour voir ses paroles
-            </div>
-          )}
-        </div>
-
-        {/* Right: Feed */}
-        <div className="explore-feed-section">
-          <h2 className="feed-title text-xl font-bold mb-6">Tendances Ndule</h2>
-          
-          <div className="feed-list">
-            {isLoading ? (
-              <p className="text-stone-400">Chargement des tendances...</p>
-            ) : filteredTracks.length === 0 ? (
-              <p className="text-stone-400">Aucune chanson publique trouvée.</p>
-            ) : (
-              filteredTracks.map((track, i) => (
-                <div 
-                  key={track.id} 
-                  className={`feed-track-item ${expandedTrack?.id === track.id ? 'active' : ''}`}
-                  onClick={() => setExpandedTrack(track)}
-                >
-                  <div className="feed-track-rank text-stone-300 font-bold">{i + 1}</div>
-                  <div className="feed-track-cover relative cursor-pointer" onClick={(e) => {
-                    e.stopPropagation();
-                    if (currentTrack?.id === track.id) togglePlay();
-                    else playTrack(track, publicTracks);
-                  }}>
-                    <img src={track.cover_url || "https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?q=80&w=200&auto=format&fit=crop"} alt={track.title} />
-                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded">
-                      {currentTrack?.id === track.id && isPlaying ? <Pause size={16} className="text-white fill-current" /> : <Play size={16} className="text-white fill-current ml-1" />}
+                  
+                  {/* Player Controls inside Card */}
+                  <div className="mc-player-container">
+                    <div 
+                      className="mc-progress-bar"
+                      ref={isCurrent ? scrubberRef : null}
+                      onClick={(e) => handleScrubberClick(e, isCurrent)}
+                    >
+                      <div 
+                        className="mc-progress-fill" 
+                        style={{ width: isCurrent ? `${progress}%` : '0%' }}
+                      >
+                        {isCurrent && <div className="mc-progress-thumb"></div>}
+                      </div>
+                    </div>
+                    
+                    <div className="mc-time-row">
+                      <span>{isCurrent ? currentTime : '0:00'}</span>
+                      <span>{isCurrent && duration !== '0:00' ? duration : (track.duration || '0:00')}</span>
+                    </div>
+                    
+                    <div className="mc-controls-row">
+                      <button className="mc-ctrl-btn">
+                        <SkipBack size={24} fill="currentColor" />
+                      </button>
+                      
+                      <button 
+                        className="mc-play-btn" 
+                        onClick={() => {
+                          if (isCurrent) togglePlay();
+                          else playTrack(track, tracks);
+                        }}
+                      >
+                        {isCurrent && isPlaying ? (
+                          <Pause size={32} fill="currentColor" />
+                        ) : (
+                          <Play size={32} fill="currentColor" className="ml-1" />
+                        )}
+                      </button>
+                      
+                      <button className="mc-ctrl-btn">
+                        <SkipForward size={24} fill="currentColor" />
+                      </button>
                     </div>
                   </div>
-                  <div className="feed-track-info flex-1">
-                    <h4 className="font-bold text-stone-800">{track.title}</h4>
-                    <p className="text-sm text-stone-500">Créateur Ndule</p>
-                  </div>
-                  <div className="feed-track-stats text-xs text-stone-400 flex items-center gap-3">
-                    {track.video_url && (
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); setActiveVideoTrack(track); }}
-                        className="p-1 hover:text-blue-400 transition-colors text-stone-400"
-                        title="Regarder le clip vidéo"
-                      >
-                        <Video size={16} />
-                      </button>
-                    )}
-                    <span className="flex items-center gap-1"><Heart size={14} /> 0</span>
-                    <span>{track.duration || "0:00"}</span>
-                  </div>
                 </div>
-              ))
+              </div>
+            );
+          })}
+          
+          {/* Pagination End */}
+          <div className="load-more-container">
+            {isLoading ? (
+              <div className="text-stone-400">Chargement...</div>
+            ) : hasMore ? (
+              <button className="load-more-btn" onClick={loadMore}>
+                Charger plus
+              </button>
+            ) : (
+              <div className="text-stone-400 text-sm">Vous avez vu toutes les musiques !</div>
             )}
           </div>
-        </div>
-      </main>
-
-      <VideoModal 
-        isOpen={!!activeVideoTrack} 
-        onClose={() => setActiveVideoTrack(null)} 
-        videoUrl={activeVideoTrack?.video_url} 
-        trackTitle={activeVideoTrack?.title} 
-      />
+        </>
+      )}
     </div>
   );
 };

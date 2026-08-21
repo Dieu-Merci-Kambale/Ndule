@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, X, ChevronDown, Heart, Wand2, Repeat } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import { usePlayer } from '../context/PlayerContext';
 import { supabase } from '../lib/supabaseClient';
 import './GlobalAudioPlayer.css';
@@ -26,6 +27,8 @@ const GlobalAudioPlayer = () => {
   const [isFavoriteLocally, setIsFavoriteLocally] = useState(false);
   const scrubberRef = useRef(null);
 
+  const location = useLocation();
+
   useEffect(() => {
     if (currentTrack) {
       setIsFavoriteLocally(currentTrack.is_favorite || false);
@@ -33,6 +36,7 @@ const GlobalAudioPlayer = () => {
   }, [currentTrack]);
 
   if (!currentTrack) return null;
+  if (location.pathname.includes('/explore')) return null;
 
   const toggleFavorite = async () => {
     if (!currentTrack) return;
