@@ -222,12 +222,12 @@ const Dashboard = () => {
         handleOpenCreateModal();
       }}>
         <div className="create-banner-left">
-          <div className="text-center p-12 bg-stone-50 rounded-2xl border border-stone-100 mt-8">
-            <Music size={48} className="mx-auto text-stone-300 mb-4" />
-            <h3 className="text-lg font-bold text-stone-900 mb-2">{t.pages.myMusic.createFirst}</h3>
-            <p className="text-stone-500 mb-6 max-w-sm mx-auto">
-              {t.dashboard.recentTracks.noTracks}
-            </p>
+          <div className="create-banner-icon-bg">
+            <Plus size={24} className="text-white" strokeWidth={3} />
+          </div>
+          <div className="create-banner-text">
+            <h3>{t.pages.dashboardHome.createSong}</h3>
+            <p>{t.pages.dashboardHome.createSongDesc}</p>
           </div>
         </div>
         <div className="create-banner-arrow text-blue-400 font-light text-2xl">→</div>
