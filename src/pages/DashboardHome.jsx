@@ -129,7 +129,9 @@ const DashboardHome = () => {
     <div className="dashboard-home-content">
       {/* Header section */}
       <div className="home-header">
-        <h1 className="home-greeting">Bonsoir, {userName} 👋</h1>
+        <h1 className="home-greeting">
+          {new Date().getHours() < 18 ? 'Bonjour' : 'Bonsoir'}, {userName} 👋
+        </h1>
         <div className="home-subtitle-row">
           <span className="text-stone-500 font-medium">Tableau de bord</span>
           <span className="live-badge-small">
@@ -154,17 +156,6 @@ const DashboardHome = () => {
           <div className="create-banner-arrow text-blue-400 font-light text-2xl">→</div>
         </div>
 
-        {/* Gift Banner */}
-        <div className="gift-banner relative">
-          <button className="gift-close-btn"><X size={14} /></button>
-          <div className="gift-icon-container">
-            <span className="gift-emoji">🎁</span>
-          </div>
-          <div className="gift-text-content">
-            <h3>On a un cadeau pour toi !</h3>
-            <p className="gift-subtext">Clique pour découvrir ta surprise</p>
-            <p className="gift-expire mt-1"><span className="text-red-500 font-bold mr-1">•</span>Expire dans 00:00 min</p>
-          </div>
         </div>
       </div>
 

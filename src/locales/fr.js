@@ -169,5 +169,15 @@ export default {
       ],
       downloadPdf: "Télécharger PDF"
     }
+  },
+  dashboardMenu: {
+    home: "Accueil",
+    create: "Créer",
+    explore: "Explorer",
+    music: "Musiques",
+    shorts: "Shorts",
+    stats: "Stats",
+    credits: "Crédits",
+    logout: "Déconnexion"
   }
 };

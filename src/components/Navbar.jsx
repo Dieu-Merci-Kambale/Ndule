@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { ArrowRight, ChevronDown, Menu, X } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './Navbar.css';
 
 const Navbar = () => {
   const { t, lang } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -27,10 +30,19 @@ const Navbar = () => {
 
         {/* Right Side (Desktop) */}
         <div className="navbar-right">
-          <button className="navbar-lang">
+          <button 
+            className="navbar-lang"
+            onClick={() => {
+              const newLang = lang === 'fr' ? 'en' : 'fr';
+              if (location.pathname === '/' || location.pathname === '') {
+                navigate(`/${newLang}`);
+              } else {
+                navigate(location.pathname.replace(/^\/(fr|en)/, `/${newLang}`));
+              }
+            }}
+          >
             <span className="navbar-lang-flag">{lang === 'fr' ? '🇫🇷' : '🇬🇧'}</span>
-            <span className="navbar-lang-text">{lang}</span>
-            <ChevronDown />
+            <span className="navbar-lang-text">{lang.toUpperCase()}</span>
           </button>
           
           <a href={`/${lang}/login`} className="navbar-login">{t.navbar.login}</a>
@@ -61,10 +73,20 @@ const Navbar = () => {
             
             <div className="navbar-mobile-divider"></div>
             
-            <button className="navbar-lang" style={{ alignSelf: 'flex-start' }}>
+            <button 
+              className="navbar-lang" 
+              style={{ alignSelf: 'flex-start' }}
+              onClick={() => {
+                const newLang = lang === 'fr' ? 'en' : 'fr';
+                if (location.pathname === '/' || location.pathname === '') {
+                  navigate(`/${newLang}`);
+                } else {
+                  navigate(location.pathname.replace(/^\/(fr|en)/, `/${newLang}`));
+                }
+              }}
+            >
               <span className="navbar-lang-flag">{lang === 'fr' ? '🇫🇷' : '🇬🇧'}</span>
-              <span className="navbar-lang-text">{lang}</span>
-              <ChevronDown />
+              <span className="navbar-lang-text">{lang.toUpperCase()}</span>
             </button>
             
             <a href={`/${lang}/login`} className="navbar-login" style={{ fontSize: '18px', padding: '12px 0' }}>{t.navbar.login}</a>

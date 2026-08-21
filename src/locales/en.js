@@ -163,11 +163,21 @@ export default {
       supportSent: "Message sent successfully! Our team will reply within 24h.",
       invoicesTitle: "Your Invoice History",
       invoices: [
-        { date: "Jul 12, 2026", amount: "$24.00", ref: "INV-2026-07" },
-        { date: "Jun 12, 2026", amount: "$24.00", ref: "INV-2026-06" },
-        { date: "May 12, 2026", amount: "$24.00", ref: "INV-2026-05" }
+        { date: "12 Jul 2026", amount: "€24.00", ref: "INV-2026-07" },
+        { date: "12 Jun 2026", amount: "€24.00", ref: "INV-2026-06" },
+        { date: "12 May 2026", amount: "€24.00", ref: "INV-2026-05" }
       ],
       downloadPdf: "Download PDF"
     }
+  },
+  dashboardMenu: {
+    home: "Home",
+    create: "Create",
+    explore: "Explore",
+    music: "My Music",
+    shorts: "Shorts",
+    stats: "Stats",
+    credits: "Credits",
+    logout: "Logout"
   }
 };

@@ -3,6 +3,7 @@ import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Home, PlusCircle, Compass, Music, Video, BarChart2, FileText, LogOut, Globe, Bell, Plus, Link as LinkIcon, ChevronLeft } from 'lucide-react';
 import GlobalAudioPlayer from '../components/GlobalAudioPlayer';
 import { supabase } from '../lib/supabaseClient';
+import { useTranslation } from '../hooks/useTranslation';
 import './DashboardLayout.css';
 
 const DashboardLayout = () => {
@@ -10,6 +11,7 @@ const DashboardLayout = () => {
   const [notesBalance, setNotesBalance] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
+  const { t, lang } = useTranslation();
   const [showDropdown, setShowDropdown] = useState(false);
 
   // Fonction pour générer l'URL de l'avatar de façon sécurisée (encodeURIComponent)
@@ -70,42 +72,42 @@ const DashboardLayout = () => {
         </div>
         
         <nav className="sidebar-nav">
-          <NavLink to="/fr/accueil" className="nav-item">
+          <NavLink to={`/${lang}/accueil`} className="nav-item">
             <Home size={20} />
-            <span className="nav-text">Accueil</span>
+            <span className="nav-text">{t.dashboardMenu?.home || 'Accueil'}</span>
           </NavLink>
           
           <div className="nav-create-wrapper">
-             <button className="nav-create-btn" onClick={() => navigate('/fr/dashboard', { state: { openCreateModal: true } })}>
+             <button className="nav-create-btn" onClick={() => navigate(`/${lang}/dashboard`, { state: { openCreateModal: true } })}>
                <PlusCircle size={20} className="create-icon" />
-               <span className="nav-text">Créer</span>
+               <span className="nav-text">{t.dashboardMenu?.create || 'Créer'}</span>
              </button>
           </div>
           
-          <NavLink to="/fr/explore" className="nav-item">
+          <NavLink to={`/${lang}/explore`} className="nav-item">
             <Compass size={20} />
-            <span className="nav-text">Explorer</span>
+            <span className="nav-text">{t.dashboardMenu?.explore || 'Explorer'}</span>
           </NavLink>
           
-          <NavLink to="/fr/dashboard" className="nav-item" end>
+          <NavLink to={`/${lang}/dashboard`} className="nav-item" end>
             <Music size={20} />
-            <span className="nav-text">Musiques</span>
+            <span className="nav-text">{t.dashboardMenu?.music || 'Musiques'}</span>
           </NavLink>
           
-          <NavLink to="/fr/shorts" className="nav-item">
+          <NavLink to={`/${lang}/shorts`} className="nav-item">
             <Video size={20} />
-            <span className="nav-text">Shorts</span>
+            <span className="nav-text">{t.dashboardMenu?.shorts || 'Shorts'}</span>
           </NavLink>
           
-          <NavLink to="/fr/stats" className="nav-item">
+          <NavLink to={`/${lang}/stats`} className="nav-item">
             <BarChart2 size={20} />
-            <span className="nav-text">Stats</span>
+            <span className="nav-text">{t.dashboardMenu?.stats || 'Stats'}</span>
           </NavLink>
           
-          <NavLink to="/fr/credits" className="nav-item">
+          <NavLink to={`/${lang}/credits`} className="nav-item">
             <FileText size={20} />
-            <span className="nav-text">Crédits</span>
-            <span className="badge-notes">{notesBalance} Crédits</span>
+            <span className="nav-text">{t.dashboardMenu?.credits || 'Crédits'}</span>
+            <span className="badge-notes">{notesBalance} {t.dashboardMenu?.credits || 'Crédits'}</span>
           </NavLink>
         </nav>
         
@@ -124,13 +126,16 @@ const DashboardLayout = () => {
           
           <button className="nav-item logout-btn" onClick={handleLogout}>
             <LogOut size={18} />
-            <span className="nav-text">Déconnexion</span>
+            <span className="nav-text">{t.dashboardMenu?.logout || 'Déconnexion'}</span>
           </button>
           
-          <div className="language-selector">
+          <div 
+            className="language-selector cursor-pointer" 
+            onClick={() => navigate(location.pathname.replace(/^\/(fr|en)/, `/${lang === 'fr' ? 'en' : 'fr'}`))}
+          >
             <Globe size={18} className="text-stone-400" />
-            <span className="text-stone-500">English</span>
-            <span className="lang-active">FR</span>
+            <span className={lang === 'en' ? "lang-active" : "text-stone-500"}>EN</span>
+            <span className={lang === 'fr' ? "lang-active" : "text-stone-500"}>FR</span>
           </div>
         </div>
       </aside>
@@ -148,8 +153,8 @@ const DashboardLayout = () => {
            <div className="topbar-right">
              <div className="topbar-notes-pill">
                <LinkIcon size={14} className="text-blue-500" />
-               <span className="font-medium text-stone-700" style={{fontSize: '12px'}}>{notesBalance} Crédits</span>
-               <button className="plus-round-btn" onClick={() => navigate('/fr/credits')}><Plus size={14} /></button>
+               <span className="font-medium text-stone-700" style={{fontSize: '12px'}}>{notesBalance} {t.dashboardMenu?.credits || 'Crédits'}</span>
+               <button className="plus-round-btn" onClick={() => navigate(`/${lang}/credits`)}><Plus size={14} /></button>
              </div>
              <button className="icon-btn-round hidden-mobile"><Bell size={18} className="text-stone-600" /></button>
              
@@ -165,7 +170,7 @@ const DashboardLayout = () => {
                  <div className="avatar-dropdown">
                    <button onClick={handleLogout} className="dropdown-item">
                      <LogOut size={16} className="text-red-500" />
-                     <span>Déconnexion</span>
+                     <span>{t.dashboardMenu?.logout || 'Déconnexion'}</span>
                    </button>
                  </div>
                )}
