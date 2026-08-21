@@ -6,53 +6,36 @@ import './Credits.css';
 
 const Credits = () => {
   const { t, lang } = useTranslation();
-  const currencies = [
-    { code: 'CDF', label: 'Franc Congolais', rate: 2850, symbol: 'FC' },
-    { code: 'XOF', label: 'Franc CFA (BCEAO)', rate: 600, symbol: 'F CFA' },
-    { code: 'XAF', label: 'Franc CFA (BEAC)', rate: 600, symbol: 'FCFA' },
-    { code: 'KES', label: 'Shilling Kényan', rate: 130, symbol: 'KSh' },
-    { code: 'USD', label: 'US Dollar', rate: 1, symbol: '$' }
-  ];
-
   const [selectedPlan, setSelectedPlan] = useState('populaire');
-  const [selectedCurrency, setSelectedCurrency] = useState(currencies[0]);
-  const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
   const plans = {
-    'decouverte': { id: 'decouverte', notes: 2, priceUsd: 1 },
-    'populaire': { id: 'populaire', notes: 5, priceUsd: 2 },
-    'premium': { id: 'premium', notes: 10, priceUsd: 3.5 }
-  };
-
-  const formatPrice = (priceUsd) => {
-    if (selectedCurrency.code === 'USD') return `$${priceUsd}`;
-    const localPrice = Math.round(priceUsd * selectedCurrency.rate);
-    return `${localPrice} ${selectedCurrency.symbol}`;
+    'decouverte': { id: 'decouverte', notes: 2, priceUsd: 0.22 },
+    'populaire': { id: 'populaire', notes: 5, priceUsd: 0.22 },
+    'premium': { id: 'premium', notes: 10, priceUsd: 0.22 }
   };
 
   const handleCheckout = async () => {
     setIsLoading(true);
     setError('');
-    
+
     try {
       const plan = plans[selectedPlan];
-      
+
       const { data, error: funcError } = await supabase.functions.invoke('pawapay-checkout', {
-        body: { 
-          planId: plan.id, 
-          notesAmount: plan.notes, 
-          priceUsd: plan.priceUsd,
-          currency: selectedCurrency.code
+        body: {
+          planId: plan.id,
+          notesAmount: plan.notes,
+          priceUsd: plan.priceUsd
         }
       });
 
       if (funcError) {
         let errorMsg = funcError.message;
         if (funcError.context && typeof funcError.context.json === 'function') {
-           const errBody = await funcError.context.json().catch(() => null);
-           if (errBody && errBody.error) errorMsg = errBody.error;
+          const errBody = await funcError.context.json().catch(() => null);
+          if (errBody && errBody.error) errorMsg = errBody.error;
         }
         throw new Error(errorMsg);
       }
@@ -82,28 +65,10 @@ const Credits = () => {
           <h2>{t.pages.credits.title}</h2>
           <p>{t.pages.credits.subtitle}</p>
         </div>
-        <div 
-          className="currency-selector relative" 
-          onClick={() => setShowCurrencyDropdown(!showCurrencyDropdown)}
-          style={{ cursor: 'pointer' }}
-        >
-          <span className="currency-text font-medium text-stone-700">{selectedCurrency.code}</span>
+        <div className="currency-selector">
+          <span className="currency-text">{t.pages.credits.currency}</span>
+          <span className="currency-badge">AUTO</span>
           <ChevronDown size={14} className="text-stone-400" />
-          
-          {showCurrencyDropdown && (
-            <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-stone-200 z-50 overflow-hidden">
-              {currencies.map(curr => (
-                <div 
-                  key={curr.code}
-                  className="px-4 py-3 hover:bg-stone-50 text-sm flex items-center justify-between cursor-pointer border-b border-stone-100 last:border-0"
-                  onClick={() => setSelectedCurrency(curr)}
-                >
-                  <span className="font-medium text-stone-700">{curr.label} ({curr.code})</span>
-                  {selectedCurrency.code === curr.code && <Check size={16} className="text-blue-500" />}
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
 
@@ -122,7 +87,7 @@ const Credits = () => {
               <span>2 {t.pages.credits.credits}</span>
             </div>
           </div>
-          <div className="pricing-price">{formatPrice(plans['decouverte'].priceUsd)}</div>
+          <div className="pricing-price">$0.22</div>
         </div>
 
         <div
@@ -141,7 +106,7 @@ const Credits = () => {
               <span className="text-stone-500">5 {t.pages.credits.credits}</span>
             </div>
           </div>
-          <div className="pricing-price text-blue-500">{formatPrice(plans['populaire'].priceUsd)}</div>
+          <div className="pricing-price text-blue-500">$0.22</div>
         </div>
 
         <div
@@ -157,7 +122,7 @@ const Credits = () => {
               <span>10 {t.pages.credits.credits}</span>
             </div>
           </div>
-          <div className="pricing-price">{formatPrice(plans['premium'].priceUsd)}</div>
+          <div className="pricing-price">$0.22</div>
         </div>
       </div>
 
@@ -186,8 +151,8 @@ const Credits = () => {
         </div>
       )}
 
-      <button 
-        className="continue-purchase-btn flex justify-center items-center" 
+      <button
+        className="continue-purchase-btn flex justify-center items-center"
         onClick={handleCheckout}
         disabled={isLoading}
       >

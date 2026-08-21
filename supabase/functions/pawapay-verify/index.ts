@@ -62,14 +62,17 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: "Invalid status from PawaPay" }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
 
-    // 3. Update transaction status
-    await supabase
+    // 3. Update transaction status ATOMICALLY to prevent double crediting
+    const { data: updatedTx } = await supabase
       .from('transactions')
       .update({ status: pawaStatus })
       .eq('deposit_id', depositId)
+      .eq('status', 'pending') // Prevent race conditions
+      .select()
+      .single()
 
-    // 4. If status is a success, add notes
-    if (isSuccessStatus(pawaStatus)) {
+    // 4. If status is a success AND we actually updated it (it was pending before), add notes
+    if (isSuccessStatus(pawaStatus) && updatedTx) {
       const { data: profile } = await supabase
         .from('profiles')
         .select('notes_balance')

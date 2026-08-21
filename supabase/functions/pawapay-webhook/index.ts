@@ -41,14 +41,17 @@ serve(async (req) => {
       return new Response(JSON.stringify({ success: true, message: "Already processed" }), { status: 200 })
     }
 
-    // 3. Update transaction status
-    await supabase
+    // 3. Update transaction status ATOMICALLY to prevent double crediting
+    const { data: updatedTx } = await supabase
       .from('transactions')
       .update({ status: status })
       .eq('deposit_id', depositId)
+      .eq('status', 'pending') // Prevent race condition with pawapay-verify
+      .select()
+      .single()
 
-    // 4. If success, credit user
-    if (isSuccessStatus(status)) {
+    // 4. If success AND we actually updated it, credit user
+    if (isSuccessStatus(status) && updatedTx) {
       const { data: profile } = await supabase
         .from('profiles')
         .select('notes_balance')

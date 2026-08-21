@@ -22,13 +22,13 @@ serve(async (req) => {
 
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) throw new Error('Missing Authorization header')
-    
+
     const token = authHeader.replace('Bearer ', '')
     const { data: { user }, error: authError } = await supabase.auth.getUser(token)
-    
+
     if (authError || !user) throw new Error('User not authenticated')
 
-    const { planId, notesAmount, priceUsd, currency = 'CDF' } = await req.json()
+    const { planId, notesAmount, priceUsd } = await req.json()
 
     // 1. Generate unique depositId
     const depositId = crypto.randomUUID()
@@ -51,26 +51,12 @@ serve(async (req) => {
     // PawaPay API strict validation blocks 'localhost', replacing it with 127.0.0.1
     origin = origin.replace('localhost', '127.0.0.1')
     const returnUrl = `${origin}/fr/dashboard?depositId=${depositId}`
-    
+
     // According to E-Facture working config, use v1 widget sessions
     const apiUrl = 'https://api.pawapay.cloud/v1/widget/sessions'
-    
-    // Currency exchange rates (approximate to USD)
-    const exchangeRates: Record<string, number> = {
-      'CDF': 2850,
-      'XOF': 600,
-      'XAF': 600,
-      'KES': 130,
-      'NGN': 1500,
-      'RWF': 1300,
-      'UGX': 3800,
-      'TZS': 2600,
-      'ZMW': 25,
-      'GHS': 15
-    };
 
-    const rate = exchangeRates[currency] || 2850;
-    const amountLocal = Math.round(Number(priceUsd) * rate).toString();
+    // Convert USD to CDF (roughly 2850)
+    const amountCdf = Math.round(Number(priceUsd) * 2850).toString()
 
     const pawapayResponse = await fetch(apiUrl, {
       method: 'POST',
@@ -80,14 +66,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         depositId: depositId,
-        amount: amountLocal,
-        // country is sometimes required, but we can rely on PawaPay's widget to handle it based on currency or we just don't pass country.
-        // Wait, PawaPay widget API accepts `returnUrl` and `amount` and `reason`.
-        // Let's pass currency in the payload if supported, or rely on amount and let user choose country in widget.
-        // Usually, PawaPay widget infers from amount and currency isn't strictly required in v1/widget/sessions if it's dynamic? No, actually, PawaPay widget requires amount, but what about currency? 
-        // Actually, PawaPay widget doesn't strictly need currency in the body if it's configured on the account, but standard is to pass `amount`. Wait, if we don't pass currency, how does PawaPay know it's XOF or CDF?
-        // Let's add currency field just in case.
-        currency: currency,
+        amount: amountCdf,
         returnUrl: returnUrl,
         reason: `Achat Pack ${planId} (${notesAmount} Crédits)`
       })
@@ -101,7 +80,7 @@ serve(async (req) => {
     }
 
     if (!pawapayData.redirectUrl) {
-       throw new Error(`Success response missing redirectUrl: ${JSON.stringify(pawapayData)}`)
+      throw new Error(`Success response missing redirectUrl: ${JSON.stringify(pawapayData)}`)
     }
 
     return new Response(JSON.stringify({ checkout_url: pawapayData.redirectUrl }), {
