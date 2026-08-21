@@ -126,7 +126,7 @@ const DashboardLayout = () => {
           
           <button className="nav-item logout-btn" onClick={handleLogout}>
             <LogOut size={18} className="text-red-500" />
-            <span className="nav-text text-red-500">{t.dashboardMenu?.logout || 'Déconnexion'}</span>
+            <span className="nav-text text-red-500 font-bold">{t.dashboardMenu?.logout || 'Déconnexion'}</span>
           </button>
           
           <div 
@@ -170,7 +170,7 @@ const DashboardLayout = () => {
                  <div className="avatar-dropdown">
                    <button onClick={handleLogout} className="dropdown-item">
                      <LogOut size={16} className="text-red-500" />
-                     <span>{t.dashboardMenu?.logout || 'Déconnexion'}</span>
+                     <span className="text-red-500 font-bold">{t.dashboardMenu?.logout || 'Déconnexion'}</span>
                    </button>
                  </div>
                )}
