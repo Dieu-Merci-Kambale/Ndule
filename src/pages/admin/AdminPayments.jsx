@@ -24,9 +24,12 @@ const AdminPayments = () => {
 
   const fetchBalance = async () => {
     try {
-      // TODO: Call Supabase Edge Function 'pawapay-balance'
-      // En attendant l'API officielle de PawaPay
-      setBalance({ available: 0, pending: 0 });
+      const { data, error } = await supabase.functions.invoke('pawapay-balance');
+      if (error) throw error;
+      
+      if (data && data.availableUsd !== undefined) {
+        setBalance({ available: data.availableUsd, pending: 0 }); // pending non géré par API pour le moment
+      }
     } catch (error) {
       console.error('Erreur lors du chargement du solde:', error);
     } finally {
@@ -64,25 +67,34 @@ const AdminPayments = () => {
     setMessage('');
     
     try {
-      // Insertion dans la base de données (Historique)
-      const { error: insertError } = await supabase
-        .from('withdrawals')
-        .insert({
-          amount: parseFloat(withdrawAmount),
+      // Appel à la fonction Supabase Edge pour initier le retrait PawaPay
+      const { data, error: funcError } = await supabase.functions.invoke('pawapay-payout', {
+        body: {
+          amount: withdrawAmount,
           network: network,
-          phone: phoneNumber,
-          status: 'PENDING'
-        });
+          phone: phoneNumber
+        }
+      });
 
-      if (insertError) {
-        throw new Error(insertError.message);
+      if (funcError) {
+        let errorMsg = funcError.message;
+        if (funcError.context && typeof funcError.context.json === 'function') {
+          const errBody = await funcError.context.json().catch(() => null);
+          if (errBody && errBody.error) errorMsg = errBody.error;
+        }
+        throw new Error(errorMsg);
+      }
+      
+      if (data && data.error) {
+        throw new Error(data.error);
       }
 
-      setMessage('Demande de retrait enregistrée avec succès. (Le virement PawaPay sera intégré dans la prochaine phase).');
+      setMessage('Demande de retrait initiée avec succès sur PawaPay !');
       setWithdrawAmount('');
       
-      // Rafraîchir l'historique
+      // Rafraîchir l'historique et le solde
       fetchHistory();
+      fetchBalance();
       
     } catch (error) {
       setMessage(`Erreur: ${error.message}`);
