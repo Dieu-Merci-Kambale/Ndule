@@ -118,6 +118,28 @@ const AdminPayments = () => {
     }
   };
 
+  const checkPayoutStatus = async (payoutId) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('pawapay-payout-status', {
+        body: { payoutId }
+      });
+      if (error) throw error;
+      if (data && data.error) throw new Error(data.error);
+      
+      // Update UI history and balance
+      fetchHistory();
+      fetchBalance();
+      
+      let msg = `Statut actuel: ${data.status}`;
+      if (data.failureReason) {
+        msg += `\nRaison: ${data.failureReason.failureMessage || JSON.stringify(data.failureReason)}`;
+      }
+      alert(msg);
+    } catch (err) {
+      alert(`Erreur de vérification: ${err.message}`);
+    }
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return '-';
     return new Date(dateString).toLocaleDateString('fr-FR', {
@@ -275,6 +297,14 @@ const AdminPayments = () => {
                         <span className={`badge ${w.status === 'COMPLETED' ? 'green' : w.status === 'FAILED' ? 'red' : 'yellow'}`}>
                           {w.status}
                         </span>
+                        {w.status !== 'COMPLETED' && w.status !== 'FAILED' && (
+                           <button 
+                             onClick={() => checkPayoutStatus(w.id)}
+                             style={{ marginLeft: '10px', fontSize: '10px', padding: '2px 5px', cursor: 'pointer' }}
+                           >
+                             Vérifier
+                           </button>
+                        )}
                       </td>
                       <td>{formatDate(w.created_at)}</td>
                     </tr>
