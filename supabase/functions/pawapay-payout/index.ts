@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1"
+import { v4 as uuidv4 } from "https://esm.sh/uuid"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -47,7 +48,7 @@ serve(async (req) => {
     }
     
     const correspondent = correspondentMap[network] || 'ORANGE_CD'
-    const payoutId = crypto.randomUUID()
+    const payoutId = uuidv4()
 
     const apiUrl = 'https://api.pawapay.io/v2/payouts'
     
