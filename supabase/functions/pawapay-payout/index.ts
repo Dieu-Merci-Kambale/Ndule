@@ -39,15 +39,14 @@ serve(async (req) => {
     // L'Admin entre directement le montant en CDF dans le formulaire
     const amountCdf = Math.round(Number(amount)).toString()
     
-    // Mapping des réseaux pour DRC
     const correspondentMap: Record<string, string> = {
-      'ORANGE': 'ORANGE_CD',
-      'MTN': 'MTN_MOMO_CD',
-      'AIRTEL': 'AIRTEL_OAPI_CD',
-      'MPESA': 'VODACOM_MPESA_CD'
+      'ORANGE': 'ORANGE_COD',
+      'MTN': 'MTN_MOMO_COD',
+      'AIRTEL': 'AIRTEL_COD',
+      'MPESA': 'VODACOM_MPESA_COD'
     }
     
-    const correspondent = correspondentMap[network] || 'ORANGE_CD'
+    const correspondent = correspondentMap[network] || 'ORANGE_COD'
     const payoutId = uuidv4()
 
     const apiUrl = 'https://api.pawapay.io/v2/payouts'
