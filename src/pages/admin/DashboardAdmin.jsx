@@ -144,7 +144,7 @@ const DashboardAdmin = () => {
                   recentUsers.map(user => (
                     <tr key={user.id}>
                       <td className="truncate-text" title={user.email}>{user.email || user.id.substring(0,8)+'...'}</td>
-                      <td><span className="badge blue">{user.credits}</span></td>
+                      <td><span className="badge blue">{user.notes_balance || 0}</span></td>
                       <td>{formatDate(user.created_at)}</td>
                     </tr>
                   ))
