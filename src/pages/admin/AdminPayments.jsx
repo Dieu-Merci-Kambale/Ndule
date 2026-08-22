@@ -4,7 +4,7 @@ import { Wallet, ArrowRightLeft, Clock, CheckCircle, XCircle } from 'lucide-reac
 import './Admin.css';
 
 const AdminPayments = () => {
-  const [balance, setBalance] = useState({ available: 0, pending: 0 });
+  const [balance, setBalance] = useState({ availableUsd: 0, availableCdf: 0, pending: 0, raw: null });
   const [loadingBalance, setLoadingBalance] = useState(true);
   
   const [withdrawAmount, setWithdrawAmount] = useState('');
@@ -37,7 +37,12 @@ const AdminPayments = () => {
       if (data && data.error) throw new Error(data.error);
       
       if (data && data.availableUsd !== undefined) {
-        setBalance({ available: data.availableUsd, pending: 0, raw: data.balances });
+        setBalance({ 
+          availableUsd: data.availableUsd, 
+          availableCdf: data.availableCdf || 0,
+          pending: 0, 
+          raw: data.balances 
+        });
       }
     } catch (error) {
       console.error('Erreur lors du chargement du solde:', error);
@@ -128,8 +133,8 @@ const AdminPayments = () => {
             <Wallet size={24} />
           </div>
           <div className="stat-content">
-            <h3>Solde PawaPay Disponible</h3>
-            <p className="stat-value">{loadingBalance ? '-' : `${balance.available.toLocaleString()} USD`}</p>
+            <h3>Solde PawaPay</h3>
+            <p className="stat-value">{loadingBalance ? '-' : `${balance.availableUsd} USD / ${balance.availableCdf} CDF`}</p>
           </div>
         </div>
         
@@ -213,6 +218,10 @@ const AdminPayments = () => {
                 )}
               </button>
             </form>
+            <div style={{ marginTop: '1rem', padding: '1rem', background: '#f1f5f9', borderRadius: '8px', fontSize: '12px', color: '#64748b', overflowX: 'auto' }}>
+              <strong>Debug PawaPay API :</strong>
+              <pre>{JSON.stringify(balance.raw, null, 2)}</pre>
+            </div>
           </div>
         </div>
 

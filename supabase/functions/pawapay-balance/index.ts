@@ -31,41 +31,72 @@ serve(async (req) => {
     const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single()
     if (!profile?.is_admin) throw new Error('Unauthorized: Admins only')
 
-    // Appeler l'API PawaPay pour le solde
-    const apiUrl = 'https://api.pawapay.io/wallet-balances'
+    // Tester plusieurs endpoints pour trouver le bon
+    const urlsToTest = [
+      'https://api.pawapay.io/wallet-balances',
+      'https://api.pawapay.cloud/wallet-balances',
+      'https://api.pawapay.io/v1/wallet-balances',
+      'https://api.pawapay.cloud/v1/wallet-balances',
+      'https://api.pawapay.io/v2/wallet-balances',
+      'https://api.pawapay.cloud/v2/wallet-balances',
+      'https://api.pawapay.io/v1/balances',
+      'https://api.pawapay.cloud/v1/balances'
+    ];
     
-    const pawapayResponse = await fetch(apiUrl, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${PAWAPAY_API_KEY}`
+    let successData = null;
+    let results = {};
+
+    for (const apiUrl of urlsToTest) {
+      try {
+        const pawapayResponse = await fetch(apiUrl, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${PAWAPAY_API_KEY}`
+          }
+        });
+
+        results[apiUrl] = pawapayResponse.status;
+
+        if (pawapayResponse.ok) {
+          successData = await pawapayResponse.json();
+          break; // On a trouvé le bon !
+        }
+      } catch (e) {
+        results[apiUrl] = 'Network Error';
       }
-    })
-
-    const pawapayData = await pawapayResponse.json()
-    console.log("PawaPay Balances:", pawapayData)
-
-    if (!pawapayResponse.ok) {
-      throw new Error(`PawaPay API Error: ${pawapayResponse.status}`)
     }
 
-    // PawaPay renvoie souvent un tableau par devise/wallet
-    // Exemple simplifié, à ajuster selon la structure de la réponse exacte de PawaPay
-    let available = 0
+    if (!successData) {
+      return new Response(JSON.stringify({ 
+        error: `Aucun endpoint n'a fonctionné. Résultats: ${JSON.stringify(results)}` 
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400,
+      })
+    }
+
+    let availableCdf = 0
+    let availableUsd = 0
     
-    if (Array.isArray(pawapayData)) {
-       // Convertir le total CDF en USD pour l'affichage (approx 2850 CDF = 1 USD)
-       pawapayData.forEach((wallet: any) => {
+    if (Array.isArray(successData)) {
+       successData.forEach((wallet: any) => {
           if (wallet.currency === 'CDF') {
-             available += (Number(wallet.balance) / 2850)
+             availableCdf += Number(wallet.balance || 0)
           } else if (wallet.currency === 'USD') {
-             available += Number(wallet.balance)
+             availableUsd += Number(wallet.balance || 0)
           }
        })
     }
+    
+    // Si on a des CDF, on ajoute leur équivalent en USD au total USD (approx 2850)
+    // Et inversement pour le total CDF global
+    let totalUsd = availableUsd + (availableCdf / 2850)
+    let totalCdf = availableCdf + (availableUsd * 2850)
 
     return new Response(JSON.stringify({ 
-      balances: pawapayData,
-      availableUsd: Math.round(available * 100) / 100
+      balances: successData,
+      availableUsd: Math.round(totalUsd * 100) / 100,
+      availableCdf: Math.round(totalCdf)
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
