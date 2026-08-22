@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
-import { Users, Music, Database, Activity } from 'lucide-react';
+import { Users, Music, Database, Activity, CreditCard, Play } from 'lucide-react';
 import './Admin.css';
 
 const DashboardAdmin = () => {
@@ -8,47 +8,79 @@ const DashboardAdmin = () => {
     usersCount: 0,
     tracksCount: 0,
     publicTracksCount: 0,
-    totalCredits: 0
+    totalCreditsUsed: 0,
+    totalRevenue: 0,
   });
+  
+  const [recentUsers, setRecentUsers] = useState([]);
+  const [recentTracks, setRecentTracks] = useState([]);
+  const [recentTransactions, setRecentTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchData = async () => {
       try {
-        // Obtenir le nombre d'utilisateurs
-        const { count: usersCount } = await supabase
-          .from('profiles')
-          .select('*', { count: 'exact', head: true });
-          
-        // Obtenir le nombre de chansons générées
-        const { count: tracksCount } = await supabase
-          .from('tracks')
-          .select('*', { count: 'exact', head: true });
-          
-        // Obtenir le nombre de chansons publiques
-        const { count: publicTracksCount } = await supabase
-          .from('tracks')
-          .select('*', { count: 'exact', head: true })
-          .eq('is_public', true);
+        // 1. Stats globales
+        const { count: usersCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
+        const { count: tracksCount } = await supabase.from('tracks').select('*', { count: 'exact', head: true });
+        const { count: publicTracksCount } = await supabase.from('tracks').select('*', { count: 'exact', head: true }).eq('is_public', true);
+        
+        // Revenus (Transactions complétées)
+        const { data: transactions } = await supabase.from('transactions').select('amount, status').eq('status', 'COMPLETED');
+        const revenue = transactions ? transactions.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0) : 0;
 
         setStats({
           usersCount: usersCount || 0,
           tracksCount: tracksCount || 0,
           publicTracksCount: publicTracksCount || 0,
-          totalCredits: 0 // Placeholder
+          totalCreditsUsed: (tracksCount || 0) * 10, // 10 crédits par chanson générée
+          totalRevenue: revenue
         });
+
+        // 2. Derniers inscrits
+        const { data: users } = await supabase
+          .from('profiles')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(5);
+        setRecentUsers(users || []);
+
+        // 3. Dernières chansons
+        const { data: tracks } = await supabase
+          .from('tracks')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(5);
+        setRecentTracks(tracks || []);
+
+        // 4. Dernières transactions
+        const { data: txs } = await supabase
+          .from('transactions')
+          .select('*, profiles(email)')
+          .order('created_at', { ascending: false })
+          .limit(5);
+        setRecentTransactions(txs || []);
+
       } catch (err) {
-        console.error("Erreur stats admin", err);
+        console.error("Erreur chargement admin", err);
       } finally {
         setLoading(false);
       }
     };
     
-    fetchStats();
+    fetchData();
   }, []);
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleDateString('fr-FR', {
+      day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+  };
 
   return (
     <div className="admin-dashboard">
+      {/* Ligne de Stats */}
       <div className="admin-stats-grid">
         <div className="admin-stat-card">
           <div className="stat-icon-wrapper blue">
@@ -71,32 +103,132 @@ const DashboardAdmin = () => {
         </div>
 
         <div className="admin-stat-card">
-          <div className="stat-icon-wrapper green">
-            <Activity size={24} />
-          </div>
-          <div className="stat-content">
-            <h3>Chansons Publiques</h3>
-            <p className="stat-value">{loading ? '-' : stats.publicTracksCount}</p>
-          </div>
-        </div>
-
-        <div className="admin-stat-card">
           <div className="stat-icon-wrapper orange">
             <Database size={24} />
           </div>
           <div className="stat-content">
             <h3>Crédits Utilisés</h3>
-            <p className="stat-value">Bientôt</p>
+            <p className="stat-value">{loading ? '-' : stats.totalCreditsUsed.toLocaleString()}</p>
+          </div>
+        </div>
+
+        <div className="admin-stat-card">
+          <div className="stat-icon-wrapper green">
+            <CreditCard size={24} />
+          </div>
+          <div className="stat-content">
+            <h3>Revenus Générés</h3>
+            <p className="stat-value">{loading ? '-' : `${stats.totalRevenue.toLocaleString()} XAF`}</p>
           </div>
         </div>
       </div>
       
-      <div className="admin-dashboard-widgets">
+      {/* Tableaux d'activité */}
+      <div className="admin-tables-grid">
+        {/* Derniers Utilisateurs */}
         <div className="admin-widget">
-          <h3>Dernières Activités</h3>
-          <p className="text-stone-400 text-sm mt-4">Module en cours de développement.</p>
+          <div className="admin-widget-header">
+            <h3>Derniers Inscrits</h3>
+          </div>
+          <div className="admin-table-container">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Email / ID</th>
+                  <th>Crédits Restants</th>
+                  <th>Date d'inscription</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? <tr><td colSpan="3">Chargement...</td></tr> : 
+                  recentUsers.map(user => (
+                    <tr key={user.id}>
+                      <td className="truncate-text" title={user.email}>{user.email || user.id.substring(0,8)+'...'}</td>
+                      <td><span className="badge blue">{user.credits}</span></td>
+                      <td>{formatDate(user.created_at)}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Derniers Paiements */}
+        <div className="admin-widget">
+          <div className="admin-widget-header">
+            <h3>Derniers Paiements (PawaPay)</h3>
+          </div>
+          <div className="admin-table-container">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Montant</th>
+                  <th>Statut</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? <tr><td colSpan="3">Chargement...</td></tr> : 
+                  recentTransactions.map(tx => (
+                    <tr key={tx.id}>
+                      <td className="font-semibold">{tx.amount} XAF</td>
+                      <td>
+                        <span className={`badge ${tx.status === 'COMPLETED' ? 'green' : tx.status === 'FAILED' ? 'red' : 'yellow'}`}>
+                          {tx.status}
+                        </span>
+                      </td>
+                      <td>{formatDate(tx.created_at)}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
+
+      {/* Dernières Chansons (Pleine largeur) */}
+      <div className="admin-widget mt-6">
+        <div className="admin-widget-header">
+          <h3>Dernières Chansons Générées</h3>
+        </div>
+        <div className="admin-table-container">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Titre</th>
+                <th>Style & Occasion</th>
+                <th>Créateur</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? <tr><td colSpan="5">Chargement...</td></tr> : 
+                recentTracks.map(track => (
+                  <tr key={track.id}>
+                    <td className="font-medium">{track.title || 'Sans titre'}</td>
+                    <td>{track.style} • {track.occasion || 'Général'}</td>
+                    <td>{track.creator_name || 'Inconnu'}</td>
+                    <td>{formatDate(track.created_at)}</td>
+                    <td>
+                      {track.audio_url ? (
+                        <a href={track.audio_url} target="_blank" rel="noreferrer" className="action-link">
+                          <Play size={16} /> Écouter
+                        </a>
+                      ) : (
+                        <span className="text-stone-500">En cours...</span>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
   );
 };
