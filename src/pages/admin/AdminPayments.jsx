@@ -127,7 +127,6 @@ const AdminPayments = () => {
   return (
     <div className="admin-dashboard">
       {/* Solde Header */}
-      <div className="admin-content-inner">
         <div className="admin-stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
           <div className="stat-card pawapay-stat">
             <div className="stat-icon" style={{ background: '#ecfdf5', color: '#10b981' }}>
