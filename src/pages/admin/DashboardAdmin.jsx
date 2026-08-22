@@ -33,6 +33,7 @@ const DashboardAdmin = () => {
         if (txError1) console.error("Error Revenue:", txError1);
         
         const planPrices = {
+          'decouverte': 1,
           'basique': 1,
           'populaire': 2,
           'premium': 3.5
@@ -78,10 +79,11 @@ const DashboardAdmin = () => {
           .limit(5);
         setRecentTracks(tracks || []);
 
-        // 4. Dernières transactions (sans la jointure profiles pour éviter l'erreur de Foreign Key)
+        // 4. Dernières transactions (seulement réussies)
         const { data: txs, error: txError2 } = await supabase
           .from('transactions')
           .select('*')
+          .in('status', ['COMPLETED', 'APPROVED', 'SUCCESS', 'SUCCESSFUL'])
           .order('created_at', { ascending: false })
           .limit(5);
         if (txError2) console.error("Error Recent Txs:", txError2);
@@ -106,6 +108,7 @@ const DashboardAdmin = () => {
   }, []);
 
   const planPrices = {
+    'decouverte': 1,
     'basique': 1,
     'populaire': 2,
     'premium': 3.5
@@ -197,7 +200,7 @@ const DashboardAdmin = () => {
         {/* Derniers Paiements */}
         <div className="admin-widget">
           <div className="admin-widget-header">
-            <h3>Derniers Paiements (PawaPay)</h3>
+            <h3>Derniers Paiements</h3>
           </div>
           <div className="admin-table-container">
             <table className="admin-table">
