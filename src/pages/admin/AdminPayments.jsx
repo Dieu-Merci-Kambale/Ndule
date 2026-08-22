@@ -134,7 +134,7 @@ const AdminPayments = () => {
             </div>
             <div className="stat-content">
               <h3>Solde (USD)</h3>
-              <p className="stat-value">{loadingBalance ? '-' : `${balance.availableUsd.toLocaleString()} USD`}</p>
+              <p className="stat-value">{loadingBalance ? '-' : `${Number(balance?.availableUsd || 0).toLocaleString()} USD`}</p>
             </div>
           </div>
           
@@ -144,7 +144,7 @@ const AdminPayments = () => {
             </div>
             <div className="stat-content">
               <h3>Solde (CDF)</h3>
-              <p className="stat-value">{loadingBalance ? '-' : `${balance.availableCdf.toLocaleString()} CDF`}</p>
+              <p className="stat-value">{loadingBalance ? '-' : `${Number(balance?.availableCdf || 0).toLocaleString()} CDF`}</p>
             </div>
           </div>
           
@@ -154,7 +154,7 @@ const AdminPayments = () => {
             </div>
             <div className="stat-content">
               <h3>En cours de traitement</h3>
-              <p className="stat-value">{loadingBalance ? '-' : `${balance.pending.toLocaleString()} USD`}</p>
+              <p className="stat-value">{loadingBalance ? '-' : `${Number(balance?.pending || 0).toLocaleString()} USD`}</p>
             </div>
           </div>
         </div>
