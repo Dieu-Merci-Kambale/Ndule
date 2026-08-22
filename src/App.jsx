@@ -16,6 +16,12 @@ import Contact from './pages/Contact';
 import ProtectedRoute from './components/ProtectedRoute';
 import { PlayerProvider } from './context/PlayerContext';
 
+// Admin Components
+import AdminLayout from './layouts/AdminLayout';
+import AdminProtectedRoute from './components/AdminProtectedRoute';
+import LoginAdmin from './pages/admin/LoginAdmin';
+import DashboardAdmin from './pages/admin/DashboardAdmin';
+
 function App() {
   return (
     <PlayerProvider>
@@ -32,6 +38,14 @@ function App() {
           
           <Route path="/:lang/login" element={<Login />} />
           <Route path="/:lang/explore" element={<Explore />} />
+          
+          {/* Admin Routes */}
+          <Route path="/login_admin" element={<LoginAdmin />} />
+          <Route path="/" element={<AdminProtectedRoute />}>
+            <Route element={<AdminLayout />}>
+              <Route path="dashboard_admin" element={<DashboardAdmin />} />
+            </Route>
+          </Route>
           
           <Route path="/:lang" element={<ProtectedRoute />}>
             <Route element={<DashboardLayout />}>
