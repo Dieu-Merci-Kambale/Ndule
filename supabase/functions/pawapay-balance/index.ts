@@ -88,15 +88,10 @@ serve(async (req) => {
       }
     })
     
-    // Si on a des CDF, on ajoute leur équivalent en USD au total USD (approx 2850)
-    // Et inversement pour le total CDF global
-    let totalUsd = availableUsd + (availableCdf / 2850)
-    let totalCdf = availableCdf + (availableUsd * 2850)
-
     return new Response(JSON.stringify({ 
       balances: successData,
-      availableUsd: Math.round(totalUsd * 100) / 100,
-      availableCdf: Math.round(totalCdf)
+      availableUsd: Math.round(availableUsd * 100) / 100,
+      availableCdf: Math.round(availableCdf)
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,

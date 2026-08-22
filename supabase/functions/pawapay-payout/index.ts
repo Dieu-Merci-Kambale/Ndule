@@ -36,8 +36,8 @@ serve(async (req) => {
       throw new Error("Missing required parameters (amount, network, phone)")
     }
 
-    // Convertir USD en CDF pour PawaPay
-    const amountCdf = Math.round(Number(amount) * 2850).toString()
+    // L'Admin entre directement le montant en CDF dans le formulaire
+    const amountCdf = Math.round(Number(amount)).toString()
     
     // Mapping des réseaux pour DRC
     const correspondentMap: Record<string, string> = {

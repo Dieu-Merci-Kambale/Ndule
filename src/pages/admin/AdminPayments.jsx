@@ -179,15 +179,15 @@ const AdminPayments = () => {
           <div className="admin-form-container">
             <form onSubmit={handleWithdraw} className="admin-form">
               <div className="admin-form-group">
-                <label>Montant (USD)</label>
+                <label>Montant (CDF)</label>
                 <input 
                   type="number" 
-                  step="0.01"
-                  min="1"
+                  step="1"
+                  min="500"
                   required
                   value={withdrawAmount}
                   onChange={(e) => setWithdrawAmount(e.target.value)}
-                  placeholder="Ex: 50"
+                  placeholder="Ex: 5000"
                   className="admin-input"
                 />
               </div>
@@ -269,7 +269,7 @@ const AdminPayments = () => {
                 ) : (
                   withdrawals.map(w => (
                     <tr key={w.id}>
-                      <td className="font-semibold">{w.amount} USD</td>
+                      <td className="font-semibold">{w.amount} CDF</td>
                       <td>{w.network} • {w.phone}</td>
                       <td>
                         <span className={`badge ${w.status === 'COMPLETED' ? 'green' : w.status === 'FAILED' ? 'red' : 'yellow'}`}>
