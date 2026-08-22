@@ -32,12 +32,20 @@ const DashboardAdmin = () => {
         const { data: transactions, error: txError1 } = await supabase.from('transactions').select('plan_id, status').in('status', ['COMPLETED', 'APPROVED', 'SUCCESS', 'SUCCESSFUL']);
         if (txError1) console.error("Error Revenue:", txError1);
         
-        // Calcul du revenu basé sur le plan_id (ex: plan_id vaut souvent '1$', '2$', etc.)
+        const planPrices = {
+          'basique': 1,
+          'populaire': 2,
+          'premium': 3.5
+        };
+
+        // Calcul du revenu basé sur le plan_id
         let revenue = 0;
         if (transactions) {
           transactions.forEach(tx => {
-            if (tx.plan_id) {
-              // Extract number from plan_id string, e.g., "3.5" from "3.5$"
+            if (tx.plan_id && planPrices[tx.plan_id] !== undefined) {
+              revenue += planPrices[tx.plan_id];
+            } else if (tx.plan_id) {
+              // Extract number from plan_id string if it contains digits
               const match = tx.plan_id.match(/[\d.]+/);
               if (match) {
                 revenue += parseFloat(match[0]);
@@ -96,6 +104,12 @@ const DashboardAdmin = () => {
     // Nettoyage de l'intervalle si on quitte la page
     return () => clearInterval(intervalId);
   }, []);
+
+  const planPrices = {
+    'basique': 1,
+    'populaire': 2,
+    'premium': 3.5
+  };
 
   const formatDate = (dateString) => {
     if (!dateString) return '-';
@@ -198,7 +212,7 @@ const DashboardAdmin = () => {
                 {loading ? <tr><td colSpan="3">Chargement...</td></tr> : 
                   recentTransactions.map(tx => (
                     <tr key={tx.id}>
-                      <td className="font-semibold">{tx.plan_id || '0'} USD</td>
+                      <td className="font-semibold">{planPrices[tx.plan_id] !== undefined ? planPrices[tx.plan_id] : (tx.plan_id || '0')} USD</td>
                       <td>
                         <span className={`badge ${['COMPLETED', 'APPROVED', 'SUCCESS', 'SUCCESSFUL'].includes(tx.status?.toUpperCase()) ? 'green' : tx.status?.toUpperCase() === 'FAILED' ? 'red' : 'yellow'}`}>
                           {tx.status}
