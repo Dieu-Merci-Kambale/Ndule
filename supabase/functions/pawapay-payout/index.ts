@@ -68,8 +68,7 @@ serve(async (req) => {
             phoneNumber: phone.replace('+', ''),
             provider: correspondent
           }
-        },
-        statementDescription: "Retrait Ndule Admin"
+        }
       })
     })
 
