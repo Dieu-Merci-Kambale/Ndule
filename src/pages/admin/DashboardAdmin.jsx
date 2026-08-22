@@ -20,8 +20,11 @@ const DashboardAdmin = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 1. Stats globales
-        const { count: usersCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
+        // 1. Stats globales (Comptage des emails distincts)
+        const { data: profilesList } = await supabase.from('profiles').select('email');
+        const uniqueEmails = new Set(profilesList?.map(p => p.email).filter(Boolean));
+        const usersCount = uniqueEmails.size;
+        
         const { count: tracksCount } = await supabase.from('tracks').select('*', { count: 'exact', head: true });
         const { count: publicTracksCount } = await supabase.from('tracks').select('*', { count: 'exact', head: true }).eq('is_public', true);
         
