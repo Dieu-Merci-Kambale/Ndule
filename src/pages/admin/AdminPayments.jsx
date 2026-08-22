@@ -4,7 +4,7 @@ import { Wallet, Clock, ArrowRightLeft } from 'lucide-react';
 import './Admin.css';
 
 const AdminPayments = () => {
-  const [balance, setBalance] = useState({ availableUsd: 0, availableCdf: 0, pending: 0, raw: null });
+  const [balance, setBalance] = useState({ availableUsd: 0, availableCdf: 0, pendingUsd: 0, pendingCdf: 0, raw: null });
   const [loadingBalance, setLoadingBalance] = useState(true);
   
   const [withdrawAmount, setWithdrawAmount] = useState('');
@@ -40,7 +40,8 @@ const AdminPayments = () => {
         setBalance({ 
           availableUsd: data.availableUsd, 
           availableCdf: data.availableCdf || 0,
-          pending: 0, 
+          pendingUsd: 0,
+          pendingCdf: 0,
           raw: data.balances 
         });
       }
@@ -153,8 +154,18 @@ const AdminPayments = () => {
               <Clock size={24} />
             </div>
             <div className="stat-content">
-              <h3>En cours de traitement</h3>
-              <p className="stat-value">{loadingBalance ? '-' : `${Number(balance?.pending || 0).toLocaleString()} USD`}</p>
+              <h3>En cours (USD)</h3>
+              <p className="stat-value">{loadingBalance ? '-' : `${Number(balance?.pendingUsd || 0).toLocaleString()} USD`}</p>
+            </div>
+          </div>
+          
+          <div className="stat-card">
+            <div className="stat-icon" style={{ background: '#f8fafc', color: '#64748b' }}>
+              <Clock size={24} />
+            </div>
+            <div className="stat-content">
+              <h3>En cours (CDF)</h3>
+              <p className="stat-value">{loadingBalance ? '-' : `${Number(balance?.pendingCdf || 0).toLocaleString()} CDF`}</p>
             </div>
           </div>
         </div>

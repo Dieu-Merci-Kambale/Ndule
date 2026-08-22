@@ -78,15 +78,15 @@ serve(async (req) => {
     let availableCdf = 0
     let availableUsd = 0
     
-    if (Array.isArray(successData)) {
-       successData.forEach((wallet: any) => {
-          if (wallet.currency === 'CDF') {
-             availableCdf += Number(wallet.balance || 0)
-          } else if (wallet.currency === 'USD') {
-             availableUsd += Number(wallet.balance || 0)
-          }
-       })
-    }
+    const walletsArray = Array.isArray(successData) ? successData : (successData.balances || [])
+    
+    walletsArray.forEach((wallet: any) => {
+      if (wallet.currency === 'CDF') {
+         availableCdf += Number(wallet.balance || 0)
+      } else if (wallet.currency === 'USD') {
+         availableUsd += Number(wallet.balance || 0)
+      }
+    })
     
     // Si on a des CDF, on ajoute leur équivalent en USD au total USD (approx 2850)
     // Et inversement pour le total CDF global
