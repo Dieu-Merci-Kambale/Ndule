@@ -1,7 +1,7 @@
 import React from 'react';
-import { Outlet, useNavigate, Link } from 'react-router-dom';
+import { Outlet, useNavigate, NavLink } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
-import { LayoutDashboard, Users, Music, Settings, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, Music, Settings, LogOut, Wallet } from 'lucide-react';
 import '../pages/admin/Admin.css';
 
 const AdminLayout = () => {
@@ -21,10 +21,14 @@ const AdminLayout = () => {
         </div>
         
         <nav className="admin-nav">
-          <Link to="/dashboard_admin" className="admin-nav-item active">
+          <NavLink to="/dashboard_admin" className={({isActive}) => isActive ? "admin-nav-item active" : "admin-nav-item"} end>
             <LayoutDashboard size={20} />
             <span>Tableau de bord</span>
-          </Link>
+          </NavLink>
+          <NavLink to="/dashboard_admin_payments" className={({isActive}) => isActive ? "admin-nav-item active" : "admin-nav-item"}>
+            <Wallet size={20} />
+            <span>Paiements</span>
+          </NavLink>
           <button className="admin-nav-item disabled" title="Prochainement">
             <Users size={20} />
             <span>Utilisateurs</span>

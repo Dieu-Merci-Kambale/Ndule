@@ -21,6 +21,7 @@ import AdminLayout from './layouts/AdminLayout';
 import AdminProtectedRoute from './components/AdminProtectedRoute';
 import LoginAdmin from './pages/admin/LoginAdmin';
 import DashboardAdmin from './pages/admin/DashboardAdmin';
+import AdminPayments from './pages/admin/AdminPayments';
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
           <Route path="/" element={<AdminProtectedRoute />}>
             <Route element={<AdminLayout />}>
               <Route path="dashboard_admin" element={<DashboardAdmin />} />
+              <Route path="dashboard_admin_payments" element={<AdminPayments />} />
             </Route>
           </Route>
           
