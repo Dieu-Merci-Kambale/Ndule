@@ -29,7 +29,7 @@ const DashboardAdmin = () => {
         const { count: publicTracksCount } = await supabase.from('tracks').select('*', { count: 'exact', head: true }).eq('is_public', true);
         
         // Revenus (Transactions complétées)
-        const { data: transactions } = await supabase.from('transactions').select('amount, status').eq('status', 'COMPLETED');
+        const { data: transactions } = await supabase.from('transactions').select('amount, status').in('status', ['COMPLETED', 'APPROVED', 'SUCCESS', 'SUCCESSFUL']);
         const revenue = transactions ? transactions.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0) : 0;
 
         setStats({
@@ -185,7 +185,7 @@ const DashboardAdmin = () => {
                     <tr key={tx.id}>
                       <td className="font-semibold">{tx.amount} USD</td>
                       <td>
-                        <span className={`badge ${tx.status === 'COMPLETED' ? 'green' : tx.status === 'FAILED' ? 'red' : 'yellow'}`}>
+                        <span className={`badge ${['COMPLETED', 'APPROVED', 'SUCCESS', 'SUCCESSFUL'].includes(tx.status?.toUpperCase()) ? 'green' : tx.status?.toUpperCase() === 'FAILED' ? 'red' : 'yellow'}`}>
                           {tx.status}
                         </span>
                       </td>
