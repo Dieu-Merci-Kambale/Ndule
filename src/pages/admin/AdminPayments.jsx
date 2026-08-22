@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
-import { Wallet, Clock } from 'lucide-react';
+import { Wallet, Clock, ArrowRightLeft } from 'lucide-react';
 import './Admin.css';
 
 const AdminPayments = () => {
