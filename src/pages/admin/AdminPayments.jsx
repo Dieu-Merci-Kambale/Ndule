@@ -25,13 +25,23 @@ const AdminPayments = () => {
   const fetchBalance = async () => {
     try {
       const { data, error } = await supabase.functions.invoke('pawapay-balance');
-      if (error) throw error;
+      if (error) {
+        let errorMsg = error.message;
+        if (error.context && typeof error.context.json === 'function') {
+          const errBody = await error.context.json().catch(() => null);
+          if (errBody && errBody.error) errorMsg = errBody.error;
+        }
+        throw new Error(errorMsg);
+      }
+      
+      if (data && data.error) throw new Error(data.error);
       
       if (data && data.availableUsd !== undefined) {
-        setBalance({ available: data.availableUsd, pending: 0 }); // pending non géré par API pour le moment
+        setBalance({ available: data.availableUsd, pending: 0, raw: data.balances });
       }
     } catch (error) {
       console.error('Erreur lors du chargement du solde:', error);
+      setMessage(`Erreur Solde: ${error.message}`);
     } finally {
       setLoadingBalance(false);
     }
