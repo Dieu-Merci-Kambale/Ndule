@@ -32,7 +32,7 @@ serve(async (req) => {
     if (!profile?.is_admin) throw new Error('Unauthorized: Admins only')
 
     // Appeler l'API PawaPay pour le solde
-    const apiUrl = 'https://api.pawapay.cloud/v1/balances'
+    const apiUrl = 'https://api.pawapay.io/wallet-balances'
     
     const pawapayResponse = await fetch(apiUrl, {
       method: 'GET',

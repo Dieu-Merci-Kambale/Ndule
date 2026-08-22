@@ -50,7 +50,7 @@ serve(async (req) => {
     const correspondent = correspondentMap[network] || 'ORANGE_CD'
     const payoutId = uuidv4()
 
-    const apiUrl = 'https://api.pawapay.cloud/v1/payouts'
+    const apiUrl = 'https://api.pawapay.io/v2/payouts'
     
     const pawapayResponse = await fetch(apiUrl, {
       method: 'POST',
