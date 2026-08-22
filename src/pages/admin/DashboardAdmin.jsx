@@ -72,6 +72,14 @@ const DashboardAdmin = () => {
     };
     
     fetchData();
+
+    // Auto-actualisation toutes les 5 secondes
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 5000);
+
+    // Nettoyage de l'intervalle si on quitte la page
+    return () => clearInterval(intervalId);
   }, []);
 
   const formatDate = (dateString) => {
