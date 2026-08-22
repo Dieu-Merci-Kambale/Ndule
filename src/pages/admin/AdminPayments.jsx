@@ -128,10 +128,10 @@ const AdminPayments = () => {
           <div className="admin-widget-header">
             <h3>Effectuer un Retrait</h3>
           </div>
-          <div className="p-6">
-            <form onSubmit={handleWithdraw} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-stone-700 mb-1">Montant (USD)</label>
+          <div className="admin-form-container">
+            <form onSubmit={handleWithdraw} className="admin-form">
+              <div className="admin-form-group">
+                <label>Montant (USD)</label>
                 <input 
                   type="number" 
                   step="0.01"
@@ -140,16 +140,16 @@ const AdminPayments = () => {
                   value={withdrawAmount}
                   onChange={(e) => setWithdrawAmount(e.target.value)}
                   placeholder="Ex: 50"
-                  className="w-full px-4 py-2 border border-stone-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  className="admin-input"
                 />
               </div>
               
-              <div>
-                <label className="block text-sm font-medium text-stone-700 mb-1">Réseau Mobile</label>
+              <div className="admin-form-group">
+                <label>Réseau Mobile</label>
                 <select 
                   value={network}
                   onChange={(e) => setNetwork(e.target.value)}
-                  className="w-full px-4 py-2 border border-stone-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  className="admin-input"
                 >
                   <option value="ORANGE">Orange Money</option>
                   <option value="MTN">MTN Mobile Money</option>
@@ -158,20 +158,20 @@ const AdminPayments = () => {
                 </select>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-stone-700 mb-1">Numéro de téléphone</label>
+              <div className="admin-form-group">
+                <label>Numéro de téléphone</label>
                 <input 
                   type="text" 
                   required
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                   placeholder="Ex: +243890000000"
-                  className="w-full px-4 py-2 border border-stone-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  className="admin-input"
                 />
               </div>
 
               {message && (
-                <div className={`p-3 rounded-lg text-sm ${message.includes('Erreur') ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
+                <div className={`admin-message ${message.includes('Erreur') ? 'error' : 'success'}`}>
                   {message}
                 </div>
               )}
@@ -179,7 +179,7 @@ const AdminPayments = () => {
               <button 
                 type="submit" 
                 disabled={withdrawLoading}
-                className="w-full mt-4 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-70"
+                className="admin-btn-primary"
               >
                 {withdrawLoading ? (
                   <span>Traitement en cours...</span>
