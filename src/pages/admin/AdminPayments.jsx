@@ -64,14 +64,25 @@ const AdminPayments = () => {
     setMessage('');
     
     try {
-      // TODO: Appeler PawaPay payout Edge Function
+      // Insertion dans la base de données (Historique)
+      const { error: insertError } = await supabase
+        .from('withdrawals')
+        .insert({
+          amount: parseFloat(withdrawAmount),
+          network: network,
+          phone: phoneNumber,
+          status: 'PENDING'
+        });
+
+      if (insertError) {
+        throw new Error(insertError.message);
+      }
+
+      setMessage('Demande de retrait enregistrée avec succès. (Le virement PawaPay sera intégré dans la prochaine phase).');
+      setWithdrawAmount('');
       
-      // Simulation pour le moment
-      setTimeout(() => {
-        setMessage('Demande de retrait initiée avec succès (Simulation). L\'API PawaPay Payout doit être configurée.');
-        setWithdrawAmount('');
-        setWithdrawLoading(false);
-      }, 1500);
+      // Rafraîchir l'historique
+      fetchHistory();
       
     } catch (error) {
       setMessage(`Erreur: ${error.message}`);
