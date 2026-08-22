@@ -62,10 +62,12 @@ serve(async (req) => {
         payoutId: payoutId,
         amount: amountCdf,
         currency: "CDF",
-        correspondent: correspondent,
         recipient: {
-          type: "MSISDN",
-          address: phone.replace('+', '') // S'assurer que le numéro est au format requis (sans le + ou avec, selon l'API PawaPay)
+          type: "MMO",
+          accountDetails: {
+            phoneNumber: phone.replace('+', ''),
+            provider: correspondent
+          }
         },
         statementDescription: "Retrait Ndule Admin"
       })
