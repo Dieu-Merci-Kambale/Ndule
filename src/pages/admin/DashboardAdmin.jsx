@@ -29,8 +29,22 @@ const DashboardAdmin = () => {
         const { count: publicTracksCount } = await supabase.from('tracks').select('*', { count: 'exact', head: true }).eq('is_public', true);
         
         // Revenus (Transactions complétées)
-        const { data: transactions } = await supabase.from('transactions').select('amount, status').in('status', ['COMPLETED', 'APPROVED', 'SUCCESS', 'SUCCESSFUL']);
-        const revenue = transactions ? transactions.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0) : 0;
+        const { data: transactions, error: txError1 } = await supabase.from('transactions').select('plan_id, status').in('status', ['COMPLETED', 'APPROVED', 'SUCCESS', 'SUCCESSFUL']);
+        if (txError1) console.error("Error Revenue:", txError1);
+        
+        // Calcul du revenu basé sur le plan_id (ex: plan_id vaut souvent '1$', '2$', etc.)
+        let revenue = 0;
+        if (transactions) {
+          transactions.forEach(tx => {
+            if (tx.plan_id) {
+              // Extract number from plan_id string, e.g., "3.5" from "3.5$"
+              const match = tx.plan_id.match(/[\d.]+/);
+              if (match) {
+                revenue += parseFloat(match[0]);
+              }
+            }
+          });
+        }
 
         setStats({
           usersCount: usersCount || 0,
@@ -56,12 +70,13 @@ const DashboardAdmin = () => {
           .limit(5);
         setRecentTracks(tracks || []);
 
-        // 4. Dernières transactions
-        const { data: txs } = await supabase
+        // 4. Dernières transactions (sans la jointure profiles pour éviter l'erreur de Foreign Key)
+        const { data: txs, error: txError2 } = await supabase
           .from('transactions')
-          .select('*, profiles(email)')
+          .select('*')
           .order('created_at', { ascending: false })
           .limit(5);
+        if (txError2) console.error("Error Recent Txs:", txError2);
         setRecentTransactions(txs || []);
 
       } catch (err) {
@@ -183,7 +198,7 @@ const DashboardAdmin = () => {
                 {loading ? <tr><td colSpan="3">Chargement...</td></tr> : 
                   recentTransactions.map(tx => (
                     <tr key={tx.id}>
-                      <td className="font-semibold">{tx.amount} USD</td>
+                      <td className="font-semibold">{tx.plan_id || '0'} USD</td>
                       <td>
                         <span className={`badge ${['COMPLETED', 'APPROVED', 'SUCCESS', 'SUCCESSFUL'].includes(tx.status?.toUpperCase()) ? 'green' : tx.status?.toUpperCase() === 'FAILED' ? 'red' : 'yellow'}`}>
                           {tx.status}
