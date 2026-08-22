@@ -127,27 +127,38 @@ const AdminPayments = () => {
   return (
     <div className="admin-dashboard">
       {/* Solde Header */}
-      <div className="admin-stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
-        <div className="admin-stat-card">
-          <div className="stat-icon-wrapper green">
-            <Wallet size={24} />
+      <div className="admin-content-inner">
+        <div className="admin-stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+          <div className="stat-card pawapay-stat">
+            <div className="stat-icon" style={{ background: '#ecfdf5', color: '#10b981' }}>
+              <Wallet size={24} />
+            </div>
+            <div className="stat-content">
+              <h3>Solde (USD)</h3>
+              <p className="stat-value">{loadingBalance ? '-' : `${balance.availableUsd.toLocaleString()} USD`}</p>
+            </div>
           </div>
-          <div className="stat-content">
-            <h3>Solde PawaPay</h3>
-            <p className="stat-value">{loadingBalance ? '-' : `${balance.availableUsd} USD / ${balance.availableCdf} CDF`}</p>
+          
+          <div className="stat-card pawapay-stat">
+            <div className="stat-icon" style={{ background: '#ecfdf5', color: '#10b981' }}>
+              <Wallet size={24} />
+            </div>
+            <div className="stat-content">
+              <h3>Solde (CDF)</h3>
+              <p className="stat-value">{loadingBalance ? '-' : `${balance.availableCdf.toLocaleString()} CDF`}</p>
+            </div>
+          </div>
+          
+          <div className="stat-card">
+            <div className="stat-icon" style={{ background: '#f8fafc', color: '#64748b' }}>
+              <Clock size={24} />
+            </div>
+            <div className="stat-content">
+              <h3>En cours de traitement</h3>
+              <p className="stat-value">{loadingBalance ? '-' : `${balance.pending.toLocaleString()} USD`}</p>
+            </div>
           </div>
         </div>
-        
-        <div className="admin-stat-card">
-          <div className="stat-icon-wrapper yellow">
-            <Clock size={24} />
-          </div>
-          <div className="stat-content">
-            <h3>En cours de traitement</h3>
-            <p className="stat-value">{loadingBalance ? '-' : `${balance.pending.toLocaleString()} USD`}</p>
-          </div>
-        </div>
-      </div>
       
       <div className="admin-tables-grid">
         {/* Formulaire de Retrait */}
