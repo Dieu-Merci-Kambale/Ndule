@@ -42,8 +42,8 @@ const AdminProtectedRoute = () => {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#09090b]">
-        <Loader2 className="animate-spin text-white" size={32} />
+      <div className="flex h-screen items-center justify-center bg-slate-50">
+        <Loader2 className="animate-spin text-blue-600" size={32} />
       </div>
     );
   }

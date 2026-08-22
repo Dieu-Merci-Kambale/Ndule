@@ -118,7 +118,7 @@ const DashboardAdmin = () => {
           </div>
           <div className="stat-content">
             <h3>Revenus Générés</h3>
-            <p className="stat-value">{loading ? '-' : `${stats.totalRevenue.toLocaleString()} XAF`}</p>
+            <p className="stat-value">{loading ? '-' : `${stats.totalRevenue.toLocaleString()} USD`}</p>
           </div>
         </div>
       </div>
@@ -172,7 +172,7 @@ const DashboardAdmin = () => {
                 {loading ? <tr><td colSpan="3">Chargement...</td></tr> : 
                   recentTransactions.map(tx => (
                     <tr key={tx.id}>
-                      <td className="font-semibold">{tx.amount} XAF</td>
+                      <td className="font-semibold">{tx.amount} USD</td>
                       <td>
                         <span className={`badge ${tx.status === 'COMPLETED' ? 'green' : tx.status === 'FAILED' ? 'red' : 'yellow'}`}>
                           {tx.status}
