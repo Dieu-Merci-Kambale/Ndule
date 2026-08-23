@@ -88,6 +88,7 @@ serve(async (req) => {
           type: "MSISDN",
           address: { value: msisdn }
         },
+        customerTimestamp: new Date().toISOString(),
         statementDescription: `Ndule Pack ${planId}`
       })
     })

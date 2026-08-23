@@ -20,31 +20,7 @@ const countries = [
   { code: 'NG', iso3: 'NGA', name: 'Nigéria', dialCode: '+234', currency: 'NGN', rate: 1500 }
 ];
 
-const detectOperator = (code, phone) => {
-  if (!phone) return null;
-  const cleanPhone = phone.replace(/\s+/g, '').replace(/^0+/, '');
-  if (code === 'CD') { // RDC
-    if (/^(81|82)/.test(cleanPhone)) return { name: 'Vodacom M-Pesa', id: 'VODACOM_MPESA_COD', color: '#ff0000', bg: '#ffe5e5', logo: 'V' };
-    if (/^(99|97)/.test(cleanPhone)) return { name: 'Airtel Money', id: 'AIRTEL_OAPI_COD', color: '#ff0000', bg: '#ffe5e5', logo: 'A' };
-    if (/^(89|85|84)/.test(cleanPhone)) return { name: 'Orange Money', id: 'ORANGE_COD', color: '#ff6600', bg: '#fff0e5', logo: 'O' };
-    if (/^(83)/.test(cleanPhone)) return { name: 'Africell', id: 'AFRICELL_COD', color: '#800080', bg: '#f2e5f2', logo: 'AF' };
-  }
-  if (code === 'CI') {
-    if (/^(07)/.test(cleanPhone)) return { name: 'Orange Money', id: 'ORANGE_CIV', color: '#ff6600', bg: '#fff0e5', logo: 'O' };
-    if (/^(05)/.test(cleanPhone)) return { name: 'MTN MoMo', id: 'MTN_CIV', color: '#ffcc00', bg: '#fffce5', logo: 'M' };
-    if (/^(01)/.test(cleanPhone)) return { name: 'Moov Money', id: 'MOOV_CIV', color: '#0055ff', bg: '#e5eeff', logo: 'MV' };
-  }
-  if (code === 'SN') {
-    if (/^(77|78)/.test(cleanPhone)) return { name: 'Orange Money', id: 'ORANGE_SEN', color: '#ff6600', bg: '#fff0e5', logo: 'O' };
-    if (/^(76)/.test(cleanPhone)) return { name: 'Free Money', id: 'FREE_SEN', color: '#ff0000', bg: '#ffe5e5', logo: 'F' };
-    if (/^(70)/.test(cleanPhone)) return { name: 'Expresso', id: 'EXPRESSO_SEN', color: '#0055ff', bg: '#e5eeff', logo: 'E' };
-  }
-  if (code === 'CM') {
-    if (/^(67|68|69)/.test(cleanPhone)) return { name: 'MTN MoMo', id: 'MTN_MOMO_CMR', color: '#ffcc00', bg: '#fffce5', logo: 'M' };
-    if (/^(65|66)/.test(cleanPhone)) return { name: 'Orange Money', id: 'ORANGE_CMR', color: '#ff6600', bg: '#fff0e5', logo: 'O' };
-  }
-  return null;
-};
+// Operator detection is now handled via PawaPay API
 
 const Credits = () => {
   const { t } = useTranslation();
@@ -59,6 +35,7 @@ const Credits = () => {
   const [searchCountry, setSearchCountry] = useState('');
   const [selectedCountry, setSelectedCountry] = useState(countries.find(c => c.code === 'CD'));
   const [detectedOperator, setDetectedOperator] = useState(null);
+  const [isDetecting, setIsDetecting] = useState(false);
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -70,6 +47,7 @@ const Credits = () => {
   const dropdownRef = useRef(null);
   const pollingTimerRef = useRef(null);
   const elapsedTimerRef = useRef(null);
+  const detectTimeoutRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -82,7 +60,58 @@ const Credits = () => {
   }, []);
 
   useEffect(() => {
-    setDetectedOperator(detectOperator(selectedCountry.code, phoneNumber));
+    if (detectTimeoutRef.current) clearTimeout(detectTimeoutRef.current);
+    
+    if (!phoneNumber || phoneNumber.length < 8) {
+      setDetectedOperator(null);
+      setIsDetecting(false);
+      return;
+    }
+
+    setIsDetecting(true);
+    detectTimeoutRef.current = setTimeout(async () => {
+      try {
+        const cleanPhone = phoneNumber.replace(/\s+/g, '').replace(/^0+/, '');
+        const msisdn = selectedCountry.dialCode.replace('+', '') + cleanPhone;
+        
+        const { data, error } = await supabase.functions.invoke('pawapay-predict', {
+          body: { msisdn }
+        });
+
+        if (data && (data.correspondent || data.provider)) {
+          const cid = data.correspondent || data.provider;
+          let color = '#3b82f6', bg = '#eff6ff', logo = cid.charAt(0);
+          
+          if (cid.includes('VODACOM') || cid.includes('AIRTEL') || cid.includes('FREE')) {
+            color = '#ff0000'; bg = '#ffe5e5';
+          } else if (cid.includes('ORANGE')) {
+            color = '#ff6600'; bg = '#fff0e5';
+          } else if (cid.includes('MTN')) {
+            color = '#ffcc00'; bg = '#fffce5';
+          } else if (cid.includes('AFRICELL')) {
+            color = '#800080'; bg = '#f2e5f2'; logo = 'AF';
+          }
+          
+          setDetectedOperator({
+            id: cid,
+            color,
+            bg,
+            logo
+          });
+        } else {
+          setDetectedOperator(null);
+        }
+      } catch (err) {
+        console.error("Detect operator error:", err);
+        setDetectedOperator(null);
+      } finally {
+        setIsDetecting(false);
+      }
+    }, 800);
+    
+    return () => {
+      if (detectTimeoutRef.current) clearTimeout(detectTimeoutRef.current);
+    };
   }, [phoneNumber, selectedCountry]);
 
   // Polling logic when in step 4
@@ -460,7 +489,12 @@ const Credits = () => {
               </div>
             </div>
 
-            {detectedOperator && (
+            {isDetecting ? (
+              <div className="detected-operator animate-fade-in justify-center items-center">
+                <Loader2 size={16} className="animate-spin text-stone-400 mr-2" />
+                <span className="text-stone-500 text-sm">Vérification de l'opérateur...</span>
+              </div>
+            ) : detectedOperator && (
               <div className="detected-operator animate-fade-in">
                 <div className="do-logo" style={{ backgroundColor: detectedOperator.bg, color: detectedOperator.color }}>
                   {detectedOperator.logo}
