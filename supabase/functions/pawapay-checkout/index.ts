@@ -52,8 +52,8 @@ serve(async (req) => {
     origin = origin.replace('localhost', '127.0.0.1')
     const returnUrl = `${origin}/fr/dashboard?depositId=${depositId}`
 
-    // Revert to v1 as v2 threw 404 NOT_FOUND for USD currency
-    const apiUrl = 'https://api.pawapay.cloud/v1/widget/sessions'
+    // Use V2 Payment Page as requested by user documentation screenshot
+    const apiUrl = 'https://api.pawapay.cloud/v2/paymentpage'
 
     const pawapayResponse = await fetch(apiUrl, {
       method: 'POST',
@@ -64,7 +64,6 @@ serve(async (req) => {
       body: JSON.stringify({
         depositId: depositId,
         amount: priceUsd.toString(),
-        currency: 'USD',
         returnUrl: returnUrl,
         reason: `Achat Pack ${planId} (${notesAmount} Crédits)`
       })
