@@ -190,9 +190,9 @@ const Credits = () => {
   };
 
   const plans = {
-    'decouverte': { id: 'decouverte', name: 'Découverte', notes: 4, priceUsd: 3.00 },
-    'populaire': { id: 'populaire', name: 'Populaire', notes: 10, priceUsd: 7.00 },
-    'premium': { id: 'premium', name: 'Premium', notes: 20, priceUsd: 15.00 }
+    'decouverte': { id: 'decouverte', name: 'Découverte', notes: 2, priceUsd: 3.00 },
+    'populaire': { id: 'populaire', name: 'Populaire', notes: 5, priceUsd: 7.00 },
+    'premium': { id: 'premium', name: 'Premium', notes: 10, priceUsd: 15.00 }
   };
 
   const currentPlan = plans[selectedPlan];
@@ -311,8 +311,7 @@ const Credits = () => {
         <>
           <div className="pricing-header">
             <div className="pricing-header-left">
-              <h2>Acheter des Notes</h2>
-              <p>1 chanson = 2 Notes</p>
+              <h2>Acheter des Crédits</h2>
             </div>
             <div className="currency-selector">
               <span className="currency-text">US USD</span>
@@ -339,7 +338,7 @@ const Credits = () => {
                   </div>
                   <div className="pricing-info">
                     <h4 className={plan.id === 'populaire' ? 'text-pop' : ''}>{plan.name}</h4>
-                    <span className="text-reg">{plan.notes} Notes</span>
+                    <span className="text-reg">{plan.notes} Crédits</span>
                   </div>
                 </div>
                 <div className={`pricing-price ${plan.id === 'populaire' ? 'text-pop' : ''}`}>
@@ -424,7 +423,7 @@ const Credits = () => {
             <div className="cs-left">
               <span className="cs-label">Pack sélectionné</span>
               <h4 className="cs-title">{currentPlan.name}</h4>
-              <span className="cs-notes">{currentPlan.notes} Notes</span>
+              <span className="cs-notes">{currentPlan.notes} Crédits</span>
             </div>
             <div className="cs-right">
               <span className="cs-price">{formatLocalPrice(currentPlan.priceUsd, selectedCountry.rate)} {selectedCountry.currency}</span>
