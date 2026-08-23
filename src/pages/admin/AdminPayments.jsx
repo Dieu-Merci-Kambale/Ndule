@@ -276,10 +276,6 @@ const AdminPayments = () => {
                 )}
               </button>
             </form>
-            <div style={{ marginTop: '1rem', padding: '1rem', background: '#f1f5f9', borderRadius: '8px', fontSize: '12px', color: '#64748b', overflowX: 'auto' }}>
-              <strong>Debug PawaPay API :</strong>
-              <pre>{JSON.stringify(balance.raw, null, 2)}</pre>
-            </div>
           </div>
         </div>
 
