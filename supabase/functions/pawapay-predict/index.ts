@@ -20,33 +20,34 @@ serve(async (req) => {
 
     if (!msisdn) throw new Error("msisdn is required");
 
-    // We first try the known prediction endpoint
-    let apiUrl = `https://api.pawapay.cloud/v1/widget/predict-correspondent?msisdn=${msisdn}`
-    let pawapayResponse = await fetch(apiUrl, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${PAWAPAY_API_KEY}`
+    let pawapayData = null;
+    let success = false;
+    let errors = [];
+
+    // URL 1 expects POST
+    try {
+      const url = 'https://api.pawapay.cloud/v1/predict-correspondent';
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${PAWAPAY_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ msisdn })
+      });
+      const text = await res.text();
+      if (res.ok) {
+        pawapayData = JSON.parse(text);
+        success = true;
+      } else {
+        errors.push(`URL ${url} Status ${res.status}: ${text}`);
       }
-    })
-
-    let pawapayData = await pawapayResponse.json()
-
-    // If endpoint doesn't exist (404), maybe try v2
-    if (pawapayResponse.status === 404) {
-      apiUrl = `https://api.pawapay.cloud/v2/predict-provider?phoneNumber=${msisdn}`
-      pawapayResponse = await fetch(apiUrl, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${PAWAPAY_API_KEY}`
-        }
-      })
-      pawapayData = await pawapayResponse.json()
+    } catch (e) {
+      errors.push(`POST Error: ${e.message}`);
     }
 
-    console.log("Predict Response:", pawapayData)
-
-    if (!pawapayResponse.ok) {
-      throw new Error(`PawaPay Predict Error: ${pawapayResponse.status} - ${JSON.stringify(pawapayData)}`)
+    if (!success) {
+      throw new Error(`PawaPay Predict Errors: ${errors.join(' | ')}`);
     }
 
     return new Response(JSON.stringify(pawapayData), {

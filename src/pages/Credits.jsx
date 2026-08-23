@@ -5,19 +5,24 @@ import { useTranslation } from '../hooks/useTranslation';
 import './Credits.css';
 
 const countries = [
-  { code: 'SN', iso3: 'SEN', name: 'Sénégal', dialCode: '+221', currency: 'FCFA', rate: 600 },
+  { code: 'BJ', iso3: 'BEN', name: 'Bénin', dialCode: '+229', currency: 'FCFA', rate: 600 },
   { code: 'BF', iso3: 'BFA', name: 'Burkina Faso', dialCode: '+226', currency: 'FCFA', rate: 600 },
-  { code: 'CI', iso3: 'CIV', name: 'Côte d\'Ivoire', dialCode: '+225', currency: 'FCFA', rate: 600 },
-  { code: 'ML', iso3: 'MLI', name: 'Mali', dialCode: '+223', currency: 'FCFA', rate: 600 },
   { code: 'CM', iso3: 'CMR', name: 'Cameroun', dialCode: '+237', currency: 'FCFA', rate: 600 },
+  { code: 'CG', iso3: 'COG', name: 'Congo', dialCode: '+242', currency: 'FCFA', rate: 600 },
   { code: 'CD', iso3: 'COD', name: 'R.D. Congo', dialCode: '+243', currency: 'CDF', rate: 2850 },
+  { code: 'CI', iso3: 'CIV', name: 'Côte d\'Ivoire', dialCode: '+225', currency: 'FCFA', rate: 600 },
   { code: 'GH', iso3: 'GHA', name: 'Ghana', dialCode: '+233', currency: 'GHS', rate: 15 },
   { code: 'KE', iso3: 'KEN', name: 'Kenya', dialCode: '+254', currency: 'KES', rate: 130 },
-  { code: 'RW', iso3: 'RWA', name: 'Rwanda', dialCode: '+250', currency: 'RWF', rate: 1350 },
-  { code: 'ZM', iso3: 'ZMB', name: 'Zambie', dialCode: '+260', currency: 'ZMW', rate: 27 },
+  { code: 'MW', iso3: 'MWI', name: 'Malawi', dialCode: '+265', currency: 'MWK', rate: 1740 },
+  { code: 'ML', iso3: 'MLI', name: 'Mali', dialCode: '+223', currency: 'FCFA', rate: 600 },
+  { code: 'MZ', iso3: 'MOZ', name: 'Mozambique', dialCode: '+258', currency: 'MZN', rate: 64 },
+  { code: 'NG', iso3: 'NGA', name: 'Nigéria', dialCode: '+234', currency: 'NGN', rate: 1500 },
   { code: 'UG', iso3: 'UGA', name: 'Ouganda', dialCode: '+256', currency: 'UGX', rate: 3800 },
+  { code: 'RW', iso3: 'RWA', name: 'Rwanda', dialCode: '+250', currency: 'RWF', rate: 1350 },
+  { code: 'SN', iso3: 'SEN', name: 'Sénégal', dialCode: '+221', currency: 'FCFA', rate: 600 },
+  { code: 'SL', iso3: 'SLE', name: 'Sierra Leone', dialCode: '+232', currency: 'SLE', rate: 25 },
   { code: 'TZ', iso3: 'TZA', name: 'Tanzanie', dialCode: '+255', currency: 'TZS', rate: 2600 },
-  { code: 'NG', iso3: 'NGA', name: 'Nigéria', dialCode: '+234', currency: 'NGN', rate: 1500 }
+  { code: 'ZM', iso3: 'ZMB', name: 'Zambie', dialCode: '+260', currency: 'ZMW', rate: 27 }
 ];
 
 // Operator detection is now handled via PawaPay API

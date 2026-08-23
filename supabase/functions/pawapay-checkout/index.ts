@@ -36,17 +36,22 @@ serve(async (req) => {
 
     // Calculate local amount based on exchange rates and detect correct currency
     const countryConfig: Record<string, { currency: string, rate: number }> = {
+      'BEN': { currency: 'XOF', rate: 600 },
       'SEN': { currency: 'XOF', rate: 600 },
       'BFA': { currency: 'XOF', rate: 600 },
       'CIV': { currency: 'XOF', rate: 600 },
       'MLI': { currency: 'XOF', rate: 600 },
       'CMR': { currency: 'XAF', rate: 600 },
+      'COG': { currency: 'XAF', rate: 600 },
       'COD': { currency: 'CDF', rate: 2850 },
       'GHA': { currency: 'GHS', rate: 15 },
       'KEN': { currency: 'KES', rate: 130 },
+      'MWI': { currency: 'MWK', rate: 1740 },
       'RWA': { currency: 'RWF', rate: 1350 },
       'ZMB': { currency: 'ZMW', rate: 27 },
+      'MOZ': { currency: 'MZN', rate: 64 },
       'UGA': { currency: 'UGX', rate: 3800 },
+      'SLE': { currency: 'SLE', rate: 25 },
       'TZA': { currency: 'TZS', rate: 2600 },
       'NGA': { currency: 'NGN', rate: 1500 }
     };
