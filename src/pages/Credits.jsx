@@ -354,6 +354,15 @@ const Credits = () => {
           >
             Continuer <span className="btn-arrow">→</span>
           </button>
+
+          <div className="how-it-works">
+            <h4>Comment ça marche ?</h4>
+            <ul>
+              <li><Check size={14} className="hiw-check" /> Achetez des Crédits selon vos besoins</li>
+              <li><Check size={14} className="hiw-check" /> 1 Crédit = 1 chanson personnalisée</li>
+              <li><Check size={14} className="hiw-check" /> Vos Crédits n'expirent jamais</li>
+            </ul>
+          </div>
         </>
       )}
 
