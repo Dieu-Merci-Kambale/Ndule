@@ -151,11 +151,9 @@ const Credits = () => {
       }, 1000);
 
       pollingTimerRef.current = setInterval(async () => {
-        const { data, error } = await supabase
-          .from('transactions')
-          .select('status')
-          .eq('deposit_id', depositId)
-          .single();
+        const { data, error } = await supabase.functions.invoke('pawapay-deposit-status', {
+          body: { depositId }
+        });
           
         if (data && data.status) {
           const status = data.status.toUpperCase();
@@ -165,7 +163,7 @@ const Credits = () => {
             handlePaymentError();
           }
         }
-      }, 3000); // poll every 3 seconds
+      }, 5000); // poll every 5 seconds to avoid rate limits
 
       return () => {
         if (pollingTimerRef.current) clearInterval(pollingTimerRef.current);
