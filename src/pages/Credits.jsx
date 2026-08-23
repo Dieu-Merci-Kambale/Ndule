@@ -190,9 +190,9 @@ const Credits = () => {
   };
 
   const plans = {
-    'decouverte': { id: 'decouverte', name: 'Découverte', notes: 2, priceUsd: 3.00 },
-    'populaire': { id: 'populaire', name: 'Populaire', notes: 5, priceUsd: 7.00 },
-    'premium': { id: 'premium', name: 'Premium', notes: 10, priceUsd: 15.00 }
+    'decouverte': { id: 'decouverte', name: 'Découverte', notes: 2, priceUsd: 2.85 },
+    'populaire': { id: 'populaire', name: 'Populaire', notes: 5, priceUsd: 6.65 },
+    'premium': { id: 'premium', name: 'Premium', notes: 10, priceUsd: 14.25 }
   };
 
   const currentPlan = plans[selectedPlan];
