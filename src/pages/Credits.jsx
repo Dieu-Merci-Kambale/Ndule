@@ -332,52 +332,30 @@ const Credits = () => {
               >
                 {plan.id === 'populaire' && (
                   <div className="popular-ribbon">
-                    <span className="text-xs">🔥</span> Populaire
+                    <span className="pop-icon">🔥</span> Populaire
                   </div>
                 )}
                 <div className="pricing-card-left">
-                  <div className={`pricing-icon ${plan.id === 'populaire' ? 'bg-orange-100 text-orange-500' : 'bg-indigo-50 text-indigo-900'}`}>
+                  <div className={`pricing-icon ${plan.id === 'populaire' ? 'icon-pop' : 'icon-reg'}`}>
                     <Music size={20} strokeWidth={2.5} />
                   </div>
                   <div className="pricing-info">
-                    <h4 className={plan.id === 'populaire' ? 'text-orange-500' : ''}>{plan.name}</h4>
-                    <span className="text-stone-500">{plan.notes} Notes</span>
+                    <h4 className={plan.id === 'populaire' ? 'text-pop' : ''}>{plan.name}</h4>
+                    <span className="text-reg">{plan.notes} Notes</span>
                   </div>
                 </div>
-                <div className={`pricing-price ${plan.id === 'populaire' ? 'text-orange-500' : ''}`}>
+                <div className={`pricing-price ${plan.id === 'populaire' ? 'text-pop' : ''}`}>
                   ${plan.priceUsd}
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="promo-section">
-            <Tag size={14} className="text-stone-400 mr-2" />
-            <span className="text-sm text-stone-600">J'ai un code promo</span>
-            <ChevronDown size={14} className="text-stone-400 ml-1" />
-          </div>
-
-          <div className="social-proof mt-6">
-            <div className="avatars-group">
-              <img src="https://ui-avatars.com/api/?name=User+1&background=random" alt="Avatar" className="avatar-overlap z-40" />
-              <img src="https://ui-avatars.com/api/?name=User+2&background=random" alt="Avatar" className="avatar-overlap z-30" />
-              <img src="https://ui-avatars.com/api/?name=User+3&background=random" alt="Avatar" className="avatar-overlap z-20" />
-              <img src="https://ui-avatars.com/api/?name=User+4&background=random" alt="Avatar" className="avatar-overlap z-10" />
-            </div>
-            <div className="reviews-info">
-              <div className="stars">
-                {[...Array(5)].map((_, i) => <Star key={i} size={14} fill="#f97316" className="text-orange-500" strokeWidth={0} />)}
-                <span className="rating-score">4.8 / 5</span>
-              </div>
-              <p>Utilisé par + de 182K utilisateurs</p>
-            </div>
-          </div>
-
           <button
-            className="continue-purchase-btn flex justify-center items-center mt-6"
+            className="continue-purchase-btn btn-spacing-top"
             onClick={handleNextStep1}
           >
-            Continuer <span className="ml-2 font-normal">→</span>
+            Continuer <span className="btn-arrow">→</span>
           </button>
         </>
       )}
@@ -395,18 +373,18 @@ const Credits = () => {
               className={`payment-method-card ${paymentMethod === 'mobile_money' ? 'selected' : ''}`}
               onClick={() => setPaymentMethod('mobile_money')}
             >
-              <div className="pm-icon-wrapper bg-orange-50">
-                <Smartphone className="text-orange-500" size={24} />
+              <div className="pm-icon-wrapper pm-icon-mm">
+                <Smartphone className="icon-mm" size={24} />
               </div>
               <div className="pm-info">
                 <h4>Mobile Money</h4>
                 <p>Orange, MTN, Wave, Moov...</p>
                 <div className="pm-logos">
-                  <div className="pm-logo bg-black text-white">W</div>
-                  <div className="pm-logo bg-yellow-400 text-blue-900">M</div>
-                  <div className="pm-logo bg-blue-500 text-white">T</div>
-                  <div className="pm-logo bg-orange-500 text-white">O</div>
-                  <div className="pm-logo bg-red-600 text-white">A</div>
+                  <div className="pm-logo logo-wave">W</div>
+                  <div className="pm-logo logo-mtn">M</div>
+                  <div className="pm-logo logo-tigo">T</div>
+                  <div className="pm-logo logo-orange">O</div>
+                  <div className="pm-logo logo-airtel">A</div>
                 </div>
               </div>
               {paymentMethod === 'mobile_money' && <Check className="pm-check" size={20} />}
@@ -416,8 +394,8 @@ const Credits = () => {
               className={`payment-method-card ${paymentMethod === 'card' ? 'selected' : ''}`}
               onClick={() => setPaymentMethod('card')}
             >
-              <div className="pm-icon-wrapper bg-blue-50">
-                <CreditCard className="text-blue-500" size={24} />
+              <div className="pm-icon-wrapper pm-icon-card">
+                <CreditCard className="icon-card" size={24} />
               </div>
               <div className="pm-info">
                 <h4>Carte bancaire</h4>
@@ -430,10 +408,10 @@ const Credits = () => {
           {error && <div className="error-msg">{error}</div>}
 
           <button
-            className="continue-purchase-btn mt-8"
+            className="continue-purchase-btn btn-spacing-top"
             onClick={handleNextStep2}
           >
-            Continuer <span className="ml-2 font-normal">→</span>
+            Continuer <span className="btn-arrow">→</span>
           </button>
         </div>
       )}
@@ -470,7 +448,7 @@ const Credits = () => {
             </div>
 
             <div className="form-group">
-              <label>Numéro de téléphone <span className="text-red-500">*</span></label>
+              <label>Numéro de téléphone <span className="required-asterisk">*</span></label>
               <div className="phone-input-group">
                 <div className="country-selector-wrapper" ref={dropdownRef}>
                   <button 
@@ -526,12 +504,12 @@ const Credits = () => {
             </div>
 
             {isDetecting ? (
-              <div className="detected-operator animate-fade-in justify-center items-center">
-                <Loader2 size={16} className="animate-spin text-stone-400 mr-2" />
-                <span className="text-stone-500 text-sm">Vérification de l'opérateur...</span>
+              <div className="detected-operator loading">
+                <Loader2 size={16} className="spin-icon" />
+                <span className="loading-text">Vérification de l'opérateur...</span>
               </div>
             ) : detectedOperator && (
-              <div className="detected-operator animate-fade-in">
+              <div className="detected-operator">
                 <div className="do-logo" style={{ backgroundColor: detectedOperator.bg, color: detectedOperator.color }}>
                   {detectedOperator.logo}
                 </div>
@@ -543,14 +521,14 @@ const Credits = () => {
           {error && <div className="error-msg">{error}</div>}
 
           <button
-            className="continue-purchase-btn flex justify-center items-center mt-6"
+            className="continue-purchase-btn btn-spacing-top"
             onClick={handleCheckout}
             disabled={isLoading}
           >
             {isLoading ? (
-              <><Loader2 size={18} className="animate-spin mr-2" /> Préparation...</>
+              <><Loader2 size={18} className="spin-icon-btn" /> Préparation...</>
             ) : (
-              <>Continuer <span className="ml-2 font-normal">→</span></>
+              <>Continuer <span className="btn-arrow">→</span></>
             )}
           </button>
         </div>
@@ -570,14 +548,14 @@ const Credits = () => {
             Un message a été envoyé sur votre téléphone. Veuillez saisir votre code PIN pour confirmer le paiement.
           </p>
           <div className="ws-phone">
-            <Smartphone size={16} className="text-stone-400 mr-2" />
+            <Smartphone size={16} className="ws-icon" />
             {selectedCountry.dialCode}{phoneNumber.replace(/\s+/g, '').replace(/^0+/, '')}
           </div>
 
           <div className="ws-loader-text">Vérification de votre paiement en cours...</div>
           
           <div className="ws-status">
-            <Loader2 size={16} className="animate-spin mr-2 text-orange-500" /> 
+            <Loader2 size={16} className="spin-icon-status" /> 
             En attente de confirmation...
           </div>
           

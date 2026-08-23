@@ -145,76 +145,7 @@
   box-shadow: 0 2px 4px rgba(255, 87, 34, 0.2);
 }
 
-/* Promo Code */
-.promo-code-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  background: none;
-  border: none;
-  color: #6B7280;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  margin: 0 auto 32px;
-}
 
-.promo-code-btn:hover {
-  color: #374151;
-}
-
-/* Social Proof */
-.social-proof {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.avatars-group {
-  display: flex;
-  align-items: center;
-}
-
-.avatar-overlap {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 2px solid white;
-  margin-left: -12px;
-}
-
-.avatar-overlap:first-child {
-  margin-left: 0;
-}
-
-.reviews-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.stars {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.rating-score {
-  font-size: 13px;
-  font-weight: 700;
-  color: #3B82F6;
-  margin-left: 6px;
-}
-
-.reviews-info p {
-  font-size: 11px;
-  color: #6B7280;
-  margin: 0;
-  font-weight: 500;
-}
 
 /* CTA Button */
 .continue-purchase-btn {
@@ -798,5 +729,129 @@
   color: #f97316;
   font-weight: 600;
   cursor: pointer;
+}
+.ws-cancel-btn:hover {
   text-decoration: underline;
+}
+
+/* --- Tailwind Replacement Classes --- */
+.btn-spacing-top {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-arrow {
+  margin-left: 8px;
+  font-weight: normal;
+}
+
+.pm-icon-mm {
+  background-color: #fff7ed;
+}
+
+.icon-mm {
+  color: #f97316;
+}
+
+.pm-icon-card {
+  background-color: #eff6ff;
+}
+
+.icon-card {
+  color: #3b82f6;
+}
+
+.logo-wave {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.logo-mtn {
+  background-color: #facc15;
+  color: #1e3a8a;
+}
+
+.logo-tigo {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+.logo-orange {
+  background-color: #f97316;
+  color: #ffffff;
+}
+
+.logo-airtel {
+  background-color: #dc2626;
+  color: #ffffff;
+}
+
+.required-asterisk {
+  color: #ef4444;
+}
+
+.detected-operator.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-text {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin-icon {
+  animation: spin 1s linear infinite;
+  color: #9ca3af;
+  margin-right: 8px;
+}
+
+.spin-icon-btn {
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+.ws-icon {
+  color: #9ca3af;
+  margin-right: 8px;
+}
+
+.spin-icon-status {
+  animation: spin 1s linear infinite;
+  color: #f97316;
+  margin-right: 8px;
+}
+
+.pop-icon {
+  font-size: 0.75rem;
+}
+
+.icon-pop {
+  background-color: #ffedd5;
+  color: #f97316;
+}
+
+.icon-reg {
+  background-color: #eef2ff;
+  color: #312e81;
+}
+
+.text-pop {
+  color: #f97316;
+}
+
+.text-reg {
+  color: #78716c;
 }
