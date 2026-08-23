@@ -72,10 +72,24 @@ serve(async (req) => {
     })
 
     const pawapayData = await pawapayResponse.json()
-    console.log("PawaPay Payout Response:", pawapayData)
-
+    
     if (!pawapayResponse.ok) {
       throw new Error(`PawaPay API Error: ${pawapayResponse.status} - ${JSON.stringify(pawapayData)}`)
+    }
+
+    if (pawapayData.status === 'REJECTED' || (pawapayData[0] && pawapayData[0].status === 'REJECTED')) {
+      const reason = pawapayData.failureReason || (pawapayData[0] && pawapayData[0].failureReason) || "Raison inconnue";
+      
+      // On l'enregistre quand même dans l'historique pour garder une trace
+      await supabase.from('withdrawals').insert({
+        id: payoutId,
+        amount: Number(amount),
+        network: network,
+        phone: phone,
+        status: 'REJECTED'
+      })
+
+      throw new Error(`PawaPay a rejeté la transaction: ${JSON.stringify(reason)}`)
     }
 
     // Enregistrer la transaction dans la table withdrawals
