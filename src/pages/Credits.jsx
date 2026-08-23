@@ -9,20 +9,6 @@ const Credits = () => {
   const [selectedPlan, setSelectedPlan] = useState('populaire');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  
-  const [showCountryModal, setShowCountryModal] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState('COD'); // Default RDC
-
-  const countries = [
-    { code: 'COD', name: 'R.D. Congo', flag: '🇨🇩' },
-    { code: 'SEN', name: 'Sénégal', flag: '🇸🇳' },
-    { code: 'CIV', name: 'Côte d\'Ivoire', flag: '🇨🇮' },
-    { code: 'CMR', name: 'Cameroun', flag: '🇨🇲' },
-    { code: 'ZMB', name: 'Zambie', flag: '🇿🇲' },
-    { code: 'GHA', name: 'Ghana', flag: '🇬🇭' },
-    { code: 'KEN', name: 'Kenya', flag: '🇰🇪' },
-    { code: 'RWA', name: 'Rwanda', flag: '🇷🇼' }
-  ];
 
   const plans = {
     'decouverte': { id: 'decouverte', notes: 2, priceUsd: 0.22 },
@@ -30,16 +16,7 @@ const Credits = () => {
     'premium': { id: 'premium', notes: 10, priceUsd: 0.22 }
   };
 
-  const handleCheckoutClick = () => {
-    setShowCountryModal(true);
-  };
-
-  const proceedToPay = async () => {
-    if (!selectedCountry) {
-      setError("Veuillez sélectionner un pays.");
-      return;
-    }
-    setShowCountryModal(false);
+  const handleCheckout = async () => {
     setIsLoading(true);
     setError('');
 
@@ -50,8 +27,7 @@ const Credits = () => {
         body: {
           planId: plan.id,
           notesAmount: plan.notes,
-          priceUsd: plan.priceUsd,
-          countryCode: selectedCountry
+          priceUsd: plan.priceUsd
         }
       });
 
@@ -177,7 +153,7 @@ const Credits = () => {
 
       <button
         className="continue-purchase-btn flex justify-center items-center"
-        onClick={handleCheckoutClick}
+        onClick={handleCheckout}
         disabled={isLoading}
       >
         {isLoading ? (
@@ -205,46 +181,6 @@ const Credits = () => {
           </li>
         </ul>
       </div>
-
-      {/* Country Selector Modal */}
-      {showCountryModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h3>Sélectionnez votre pays</h3>
-              <button onClick={() => setShowCountryModal(false)} className="modal-close-btn">
-                <X size={20} />
-              </button>
-            </div>
-            
-            <p className="modal-description">
-              PawaPay (Mobile Money) nécessite de connaître votre pays pour calculer le montant exact dans votre devise locale.
-            </p>
-
-            <div className="country-list">
-              {countries.map(country => (
-                <button
-                  key={country.code}
-                  onClick={() => setSelectedCountry(country.code)}
-                  className={`country-btn ${selectedCountry === country.code ? 'selected' : ''}`}
-                >
-                  <span className="country-flag">{country.flag}</span>
-                  <span className="country-name">{country.name}</span>
-                  {selectedCountry === country.code && <Check size={18} className="country-check" />}
-                </button>
-              ))}
-            </div>
-
-            <button 
-              onClick={proceedToPay}
-              className="modal-submit-btn"
-            >
-              Continuer vers PawaPay <span>→</span>
-            </button>
-          </div>
-        </div>
-      )}
-
     </div>
   );
 };

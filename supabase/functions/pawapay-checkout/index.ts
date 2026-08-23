@@ -28,11 +28,7 @@ serve(async (req) => {
 
     if (authError || !user) throw new Error('User not authenticated')
 
-    const { planId, notesAmount, priceUsd, countryCode } = await req.json()
-
-    if (!countryCode) {
-      throw new Error('Le pays doit être sélectionné.')
-    }
+    const { planId, notesAmount, priceUsd } = await req.json()
 
     // 1. Generate unique depositId
     const depositId = crypto.randomUUID()
@@ -59,24 +55,6 @@ serve(async (req) => {
     // Use V2 Payment Page
     const apiUrl = 'https://api.pawapay.cloud/v2/paymentpage'
 
-    // Exchange rates (approximations for demo purposes)
-    const rates = {
-      'COD': 2850, // RDC (CDF)
-      'SEN': 600,  // Sénégal (XOF)
-      'CIV': 600,  // Côte d'Ivoire (XOF)
-      'CMR': 600,  // Cameroun (XAF)
-      'ZMB': 27,   // Zambie (ZMW)
-      'GHA': 15,   // Ghana (GHS)
-      'KEN': 130,  // Kenya (KES)
-      'UGA': 3800, // Ouganda (UGX)
-      'TZA': 2600, // Tanzanie (TZS)
-      'RWA': 1350, // Rwanda (RWF)
-      'NGA': 1500  // Nigéria (NGN)
-    };
-
-    const rate = rates[countryCode] || 2850;
-    const amountLocal = Math.round(Number(priceUsd) * rate).toString()
-
     const pawapayResponse = await fetch(apiUrl, {
       method: 'POST',
       headers: {
@@ -85,8 +63,8 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         depositId: depositId,
-        amount: amountLocal,
-        country: countryCode,
+        amount: priceUsd.toString(),
+        currency: 'USD',
         returnUrl: returnUrl,
         reason: `Achat Pack ${planId} (${notesAmount} Crédits)`
       })
