@@ -312,6 +312,7 @@ const Credits = () => {
           <div className="pricing-header">
             <div className="pricing-header-left">
               <h2>Acheter des Crédits</h2>
+              <p style={{ color: '#ef4444', fontSize: '0.85rem', marginTop: '4px', fontWeight: '500' }}>1 Crédit = 1 chanson personnalisée</p>
             </div>
             <div className="currency-selector">
               <span className="currency-text">US USD</span>
