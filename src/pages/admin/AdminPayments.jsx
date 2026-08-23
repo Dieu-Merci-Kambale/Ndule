@@ -15,6 +15,8 @@ const AdminPayments = () => {
   
   const [withdrawals, setWithdrawals] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   // Pour le moment on va simuler les appels API PawaPay si la fonction n'est pas encore faite
   useEffect(() => {
@@ -60,7 +62,7 @@ const AdminPayments = () => {
         .from('withdrawals')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(10);
+        .limit(100);
         
       if (error) {
         console.warn("La table withdrawals n'existe peut-être pas encore.", error.message);
@@ -146,6 +148,19 @@ const AdminPayments = () => {
       day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
     });
   };
+
+  const getStatusColor = (status) => {
+    if (['COMPLETED', 'ACCEPTED'].includes(status)) return 'green';
+    if (['FAILED', 'REJECTED'].includes(status)) return 'red';
+    return 'yellow';
+  };
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentWithdrawals = withdrawals.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(withdrawals.length / itemsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div className="admin-dashboard">
@@ -286,18 +301,18 @@ const AdminPayments = () => {
               <tbody>
                 {loadingHistory ? (
                   <tr><td colSpan="4">Chargement...</td></tr>
-                ) : withdrawals.length === 0 ? (
+                ) : currentWithdrawals.length === 0 ? (
                   <tr><td colSpan="4" className="text-center py-8 text-stone-500">Aucun retrait effectué pour le moment</td></tr>
                 ) : (
-                  withdrawals.map(w => (
+                  currentWithdrawals.map(w => (
                     <tr key={w.id}>
                       <td className="font-semibold">{w.amount} CDF</td>
                       <td>{w.network} • {w.phone}</td>
                       <td>
-                        <span className={`badge ${w.status === 'COMPLETED' ? 'green' : w.status === 'FAILED' ? 'red' : 'yellow'}`}>
+                        <span className={`badge ${getStatusColor(w.status)}`}>
                           {w.status}
                         </span>
-                        {w.status !== 'COMPLETED' && w.status !== 'FAILED' && (
+                        {w.status !== 'COMPLETED' && w.status !== 'FAILED' && w.status !== 'ACCEPTED' && w.status !== 'REJECTED' && (
                            <button 
                              onClick={() => checkPayoutStatus(w.id)}
                              style={{ marginLeft: '10px', fontSize: '10px', padding: '2px 5px', cursor: 'pointer' }}
@@ -312,6 +327,26 @@ const AdminPayments = () => {
                 )}
               </tbody>
             </table>
+            
+            {totalPages > 1 && (
+              <div className="pagination-controls" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', borderTop: '1px solid #e2e8f0' }}>
+                <button 
+                  onClick={() => paginate(currentPage - 1)} 
+                  disabled={currentPage === 1}
+                  style={{ padding: '0.5rem 1rem', fontSize: '14px', borderRadius: '4px', border: '1px solid #cbd5e1', background: '#f8fafc', color: '#334155', cursor: currentPage === 1 ? 'not-allowed' : 'pointer', opacity: currentPage === 1 ? 0.5 : 1 }}
+                >
+                  Précédent
+                </button>
+                <span style={{ fontSize: '14px', color: '#64748b' }}>Page {currentPage} sur {totalPages}</span>
+                <button 
+                  onClick={() => paginate(currentPage + 1)} 
+                  disabled={currentPage === totalPages}
+                  style={{ padding: '0.5rem 1rem', fontSize: '14px', borderRadius: '4px', border: '1px solid #cbd5e1', background: '#f8fafc', color: '#334155', cursor: currentPage === totalPages ? 'not-allowed' : 'pointer', opacity: currentPage === totalPages ? 0.5 : 1 }}
+                >
+                  Suivant
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
