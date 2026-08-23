@@ -78,8 +78,16 @@ const Credits = () => {
     setIsDetecting(true);
     detectTimeoutRef.current = setTimeout(async () => {
       try {
-        const cleanPhone = phoneNumber.replace(/\s+/g, '').replace(/^0+/, '');
-        const msisdn = selectedCountry.dialCode.replace('+', '') + cleanPhone;
+        let cleanPhone = phoneNumber.replace(/[\s\-+]/g, '');
+        let msisdn = cleanPhone;
+        const dc = selectedCountry.dialCode.replace('+', '');
+        
+        if (cleanPhone.startsWith('0')) {
+          cleanPhone = cleanPhone.replace(/^0+/, '');
+          msisdn = dc + cleanPhone;
+        } else if (!cleanPhone.startsWith(dc)) {
+          msisdn = dc + cleanPhone;
+        }
         
         const { data, error } = await supabase.functions.invoke('pawapay-predict', {
           body: { msisdn }
@@ -212,8 +220,16 @@ const Credits = () => {
     setError('');
 
     try {
-      const cleanPhone = phoneNumber.replace(/\s+/g, '').replace(/^0+/, '');
-      const msisdn = selectedCountry.dialCode.replace('+', '') + cleanPhone;
+      let cleanPhone = phoneNumber.replace(/[\s\-+]/g, '');
+      let msisdn = cleanPhone;
+      const dc = selectedCountry.dialCode.replace('+', '');
+      
+      if (cleanPhone.startsWith('0')) {
+        cleanPhone = cleanPhone.replace(/^0+/, '');
+        msisdn = dc + cleanPhone;
+      } else if (!cleanPhone.startsWith(dc)) {
+        msisdn = dc + cleanPhone;
+      }
 
       const { data, error: funcError } = await supabase.functions.invoke('pawapay-checkout', {
         body: {
