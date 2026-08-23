@@ -16,7 +16,7 @@ const AdminPayments = () => {
   const [withdrawals, setWithdrawals] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 3;
 
   // Pour le moment on va simuler les appels API PawaPay si la fonction n'est pas encore faite
   useEffect(() => {
@@ -161,6 +161,10 @@ const AdminPayments = () => {
   const totalPages = Math.ceil(withdrawals.length / itemsPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  
+  const totalWithdrawnCdf = withdrawals
+    .filter(w => w.status === 'COMPLETED' || w.status === 'ACCEPTED')
+    .reduce((sum, w) => sum + Number(w.amount), 0);
 
   return (
     <div className="admin-dashboard">
@@ -197,12 +201,12 @@ const AdminPayments = () => {
           </div>
           
           <div className="stat-card">
-            <div className="stat-icon" style={{ background: '#f8fafc', color: '#64748b' }}>
-              <Clock size={24} />
+            <div className="stat-icon" style={{ background: '#ecfdf5', color: '#10b981' }}>
+              <Wallet size={24} />
             </div>
             <div className="stat-content">
-              <h3>En cours (CDF)</h3>
-              <p className="stat-value">{loadingBalance ? '-' : `${Number(balance?.pendingCdf || 0).toLocaleString()} CDF`}</p>
+              <h3>Montant retiré</h3>
+              <p className="stat-value">{loadingHistory ? '-' : `${totalWithdrawnCdf.toLocaleString()} CDF`}</p>
             </div>
           </div>
         </div>
