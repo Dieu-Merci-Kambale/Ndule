@@ -208,38 +208,38 @@ const Credits = () => {
 
       {/* Country Selector Modal */}
       {showCountryModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(15, 23, 42, 0.7)', backdropFilter: 'blur(4px)' }}>
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl animate-in fade-in zoom-in duration-200">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-slate-800">Sélectionnez votre pays</h3>
-              <button onClick={() => setShowCountryModal(false)} className="p-2 hover:bg-slate-100 rounded-full text-slate-500">
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>Sélectionnez votre pays</h3>
+              <button onClick={() => setShowCountryModal(false)} className="modal-close-btn">
                 <X size={20} />
               </button>
             </div>
             
-            <p className="text-sm text-slate-500 mb-4">
+            <p className="modal-description">
               PawaPay (Mobile Money) nécessite de connaître votre pays pour calculer le montant exact dans votre devise locale.
             </p>
 
-            <div className="space-y-2 max-h-[40vh] overflow-y-auto mb-6 p-1">
+            <div className="country-list">
               {countries.map(country => (
                 <button
                   key={country.code}
                   onClick={() => setSelectedCountry(country.code)}
-                  className={`w-full flex items-center p-3 rounded-xl border ${selectedCountry === country.code ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-200' : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'} transition-all`}
+                  className={`country-btn ${selectedCountry === country.code ? 'selected' : ''}`}
                 >
-                  <span className="text-2xl mr-3">{country.flag}</span>
-                  <span className={`font-medium ${selectedCountry === country.code ? 'text-blue-700' : 'text-slate-700'}`}>{country.name}</span>
-                  {selectedCountry === country.code && <Check size={18} className="ml-auto text-blue-600" />}
+                  <span className="country-flag">{country.flag}</span>
+                  <span className="country-name">{country.name}</span>
+                  {selectedCountry === country.code && <Check size={18} className="country-check" />}
                 </button>
               ))}
             </div>
 
             <button 
               onClick={proceedToPay}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-blue-200 transition-all flex justify-center items-center gap-2"
+              className="modal-submit-btn"
             >
-              Continuer vers PawaPay <span className="text-lg">→</span>
+              Continuer vers PawaPay <span>→</span>
             </button>
           </div>
         </div>
