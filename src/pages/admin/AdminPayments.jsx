@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
-import { Wallet, Clock, ArrowRightLeft } from 'lucide-react';
+import { Wallet, Clock, ArrowRightLeft, CreditCard } from 'lucide-react';
 import './Admin.css';
 
 const AdminPayments = () => {
@@ -18,11 +18,50 @@ const AdminPayments = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 3;
 
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  const [loadingTotalRevenue, setLoadingTotalRevenue] = useState(true);
+
   // Pour le moment on va simuler les appels API PawaPay si la fonction n'est pas encore faite
   useEffect(() => {
     fetchBalance();
     fetchHistory();
+    fetchTotalRevenue();
   }, []);
+
+  const fetchTotalRevenue = async () => {
+    try {
+      const { data: transactions } = await supabase
+        .from('transactions')
+        .select('plan_id')
+        .in('status', ['COMPLETED', 'APPROVED', 'SUCCESS', 'SUCCESSFUL']);
+        
+      const planPrices = {
+        'decouverte': 1,
+        'basique': 1,
+        'populaire': 2,
+        'premium': 3.5
+      };
+
+      let revenue = 0;
+      if (transactions) {
+        transactions.forEach(tx => {
+          if (tx.plan_id && planPrices[tx.plan_id] !== undefined) {
+            revenue += planPrices[tx.plan_id];
+          } else if (tx.plan_id) {
+            const match = tx.plan_id.match(/[\d.]+/);
+            if (match) {
+              revenue += parseFloat(match[0]);
+            }
+          }
+        });
+      }
+      setTotalRevenue(revenue);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingTotalRevenue(false);
+    }
+  };
 
   const fetchBalance = async () => {
     try {
@@ -191,12 +230,12 @@ const AdminPayments = () => {
           </div>
           
           <div className="stat-card">
-            <div className="stat-icon" style={{ background: '#f8fafc', color: '#64748b' }}>
-              <Clock size={24} />
+            <div className="stat-icon" style={{ background: '#eff6ff', color: '#3b82f6' }}>
+              <CreditCard size={24} />
             </div>
             <div className="stat-content">
-              <h3>En cours (USD)</h3>
-              <p className="stat-value">{loadingBalance ? '-' : `${Number(balance?.pendingUsd || 0).toLocaleString()} USD`}</p>
+              <h3>Revenus générés</h3>
+              <p className="stat-value">{loadingTotalRevenue ? '-' : `${totalRevenue.toLocaleString()} USD`}</p>
             </div>
           </div>
           
