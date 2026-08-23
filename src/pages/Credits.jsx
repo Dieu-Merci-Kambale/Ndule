@@ -93,6 +93,18 @@ const Credits = () => {
           body: { msisdn }
         });
 
+        if (error) {
+           let errBody = null;
+           if (error.context && typeof error.context.json === 'function') {
+             errBody = await error.context.json().catch(() => null);
+           }
+           if (errBody && errBody.isUnconfigured) {
+              setDetectedOperator(null);
+              setError(errBody.error); // Show the specific "not configured" error
+              return;
+           }
+        }
+
         if (data && (data.correspondent || data.provider)) {
           const cid = data.correspondent || data.provider;
           let color = '#3b82f6', bg = '#eff6ff', logo = cid.charAt(0);
@@ -113,6 +125,7 @@ const Credits = () => {
             bg,
             logo
           });
+          setError(''); // clear error if success
         } else {
           setDetectedOperator(null);
         }

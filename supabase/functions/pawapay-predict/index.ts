@@ -23,6 +23,7 @@ serve(async (req) => {
     let pawapayData = null;
     let success = false;
     let errors = [];
+    let isUnconfigured = false;
 
     // URL 1 expects POST
     try {
@@ -40,6 +41,9 @@ serve(async (req) => {
         pawapayData = JSON.parse(text);
         success = true;
       } else {
+        if (text.includes("is not configured for this merchant")) {
+          isUnconfigured = true;
+        }
         errors.push(`URL ${url} Status ${res.status}: ${text}`);
       }
     } catch (e) {
@@ -47,6 +51,9 @@ serve(async (req) => {
     }
 
     if (!success) {
+      if (isUnconfigured) {
+         return new Response(JSON.stringify({ error: "Ce pays n'est pas encore activé sur votre compte marchand PawaPay.", isUnconfigured: true }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      }
       throw new Error(`PawaPay Predict Errors: ${errors.join(' | ')}`);
     }
 
