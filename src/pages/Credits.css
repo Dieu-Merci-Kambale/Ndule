@@ -584,7 +584,11 @@
 }
 
 .toast-notification.error {
-  border-left: 4px solid #2563EB;
+  border-left: 4px solid #ef4444;
+}
+
+.toast-notification.error .toast-msg {
+  color: #ef4444;
 }
 
 .toast-notification.success {
@@ -726,7 +730,7 @@
 .ws-cancel-btn {
   background: none;
   border: none;
-  color: #3B82F6;
+  color: #ef4444;
   font-weight: 600;
   cursor: pointer;
 }
