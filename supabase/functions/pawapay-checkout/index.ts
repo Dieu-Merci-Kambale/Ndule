@@ -28,7 +28,31 @@ serve(async (req) => {
 
     if (authError || !user) throw new Error('User not authenticated')
 
-    const { planId, notesAmount, priceUsd } = await req.json()
+    const body = await req.json()
+    console.log("Received payload:", body)
+    const { planId, notesAmount, priceUsd, countryIso3, msisdn, correspondent } = body
+
+    if (!correspondent) throw new Error(`Correspondent is missing. Received payload: ${JSON.stringify(body)}`);
+
+    // Calculate local amount based on exchange rates and detect correct currency
+    const countryConfig: Record<string, { currency: string, rate: number }> = {
+      'SEN': { currency: 'XOF', rate: 600 },
+      'BFA': { currency: 'XOF', rate: 600 },
+      'CIV': { currency: 'XOF', rate: 600 },
+      'MLI': { currency: 'XOF', rate: 600 },
+      'CMR': { currency: 'XAF', rate: 600 },
+      'COD': { currency: 'CDF', rate: 2850 },
+      'GHA': { currency: 'GHS', rate: 15 },
+      'KEN': { currency: 'KES', rate: 130 },
+      'RWA': { currency: 'RWF', rate: 1350 },
+      'ZMB': { currency: 'ZMW', rate: 27 },
+      'UGA': { currency: 'UGX', rate: 3800 },
+      'TZA': { currency: 'TZS', rate: 2600 },
+      'NGA': { currency: 'NGN', rate: 1500 }
+    };
+    
+    const config = countryConfig[countryIso3] || { currency: 'USD', rate: 1 };
+    const amountLocal = Math.round(priceUsd * config.rate).toString();
 
     // 1. Generate unique depositId
     const depositId = crypto.randomUUID()
@@ -46,14 +70,8 @@ serve(async (req) => {
 
     if (dbError) throw new Error(`DB Error: ${dbError.message}`)
 
-    // 3. Call PawaPay Payment Page API
-    let origin = req.headers.get('origin') || 'http://127.0.0.1:5173'
-    // PawaPay API strict validation blocks 'localhost', replacing it with 127.0.0.1
-    origin = origin.replace('localhost', '127.0.0.1')
-    const returnUrl = `${origin}/fr/dashboard?depositId=${depositId}`
-
-    // Use V2 Payment Page as requested by user documentation screenshot
-    const apiUrl = 'https://api.pawapay.cloud/v2/paymentpage'
+    // 3. Call PawaPay Deposits API for direct USSD Push
+    const apiUrl = 'https://api.pawapay.cloud/v1/deposits'
 
     const pawapayResponse = await fetch(apiUrl, {
       method: 'POST',
@@ -63,9 +81,14 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         depositId: depositId,
-        amount: priceUsd.toString(),
-        returnUrl: returnUrl,
-        reason: `Achat Pack ${planId} (${notesAmount} Crédits)`
+        amount: amountLocal,
+        currency: config.currency,
+        correspondent: correspondent,
+        payer: {
+          type: "MSISDN",
+          address: { value: msisdn }
+        },
+        statementDescription: `Ndule Pack ${planId}`
       })
     })
 
@@ -76,11 +99,7 @@ serve(async (req) => {
       throw new Error(`PawaPay API Error: ${pawapayResponse.status} - ${JSON.stringify(pawapayData)}`)
     }
 
-    if (!pawapayData.redirectUrl) {
-      throw new Error(`Success response missing redirectUrl: ${JSON.stringify(pawapayData)}`)
-    }
-
-    return new Response(JSON.stringify({ checkout_url: pawapayData.redirectUrl }), {
+    return new Response(JSON.stringify({ depositId: depositId, status: pawapayData.status || 'PENDING' }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     })
   } catch (error) {
