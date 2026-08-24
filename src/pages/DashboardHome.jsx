@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, X, Heart, Play, Music, Gift, Link, Video } from 'lucide-react';
 import './DashboardHome.css';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabaseClient';
+import { supabase, recordTrackEvent } from '../lib/supabaseClient';
 import { usePlayer } from '../context/PlayerContext';
 import VideoModal from '../components/VideoModal';
 import { useLocation } from 'react-router-dom';
@@ -36,6 +36,29 @@ const DashboardHome = () => {
     };
     fetchRecent();
   }, []);
+
+  const toggleFavorite = async (e, track) => {
+    e.stopPropagation();
+    const newState = !track.is_favorite;
+    
+    setRecentTracks(prev => prev.map(t => t.id === track.id ? { ...t, is_favorite: newState } : t));
+    
+    try {
+      const { error } = await supabase
+        .from('tracks')
+        .update({ is_favorite: newState })
+        .eq('id', track.id);
+        
+      if (error) {
+        setRecentTracks(prev => prev.map(t => t.id === track.id ? { ...t, is_favorite: !newState } : t));
+      } else if (newState) {
+        recordTrackEvent(track.id, 'like');
+      }
+    } catch (err) {
+      console.error(err);
+      setRecentTracks(prev => prev.map(t => t.id === track.id ? { ...t, is_favorite: !newState } : t));
+    }
+  };
 
   useEffect(() => {
     // Background sync for ANY pending transactions (in case user closed page before redirect or webhook failed)
@@ -190,7 +213,12 @@ const DashboardHome = () => {
                     <Video size={16} />
                   </button>
                 )}
-                <Heart size={16} className="cursor-pointer hover:text-red-500 transition-colors" />
+                <button 
+                  onClick={(e) => toggleFavorite(e, track)}
+                  className={`p-1 transition-colors ${track.is_favorite ? 'text-red-500' : 'text-stone-400 hover:text-red-500'}`}
+                >
+                  <Heart size={16} className={track.is_favorite ? 'fill-current' : ''} />
+                </button>
                 <span className="text-sm font-medium ml-2">{track.duration}</span>
               </div>
             </div>
