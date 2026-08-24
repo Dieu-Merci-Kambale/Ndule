@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
+import { Link } from 'react-router-dom';
 import { Music, Loader2, Play, Sparkles } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import './Login.css';
@@ -112,7 +113,7 @@ const Login = () => {
             </div>
             
             <div className="login-footer">
-              En continuant, vous acceptez nos <a href="#">Conditions d'utilisation</a> et notre <a href="#">Politique de confidentialité</a>.
+              En continuant, vous acceptez nos <Link to={`/${lang}/terms`}>Conditions d'utilisation</Link> et notre <Link to={`/${lang}/privacy`}>Politique de confidentialité</Link>.
             </div>
           </div>
         </div>
