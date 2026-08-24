@@ -215,7 +215,7 @@ const DashboardHome = () => {
                 )}
                 <button 
                   onClick={(e) => toggleFavorite(e, track)}
-                  className={`p-1 transition-colors ${track.is_favorite ? 'text-red-500' : 'text-stone-400 hover:text-red-500'}`}
+                  className={`p-1 transition-colors ${track.is_favorite ? 'text-blue-500' : 'text-stone-400 hover:text-blue-500'}`}
                 >
                   <Heart size={16} className={track.is_favorite ? 'fill-current' : ''} />
                 </button>

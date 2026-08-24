@@ -39,8 +39,8 @@ const PublishModal = ({ isOpen, onClose, onConfirm, track }) => {
           </div>
           
           <div className="benefit-item">
-            <div className="benefit-icon-wrapper red-light">
-              <Heart size={18} color="#ef4444" />
+            <div className="benefit-icon-wrapper blue-light">
+              <Heart size={18} color="#3b82f6" />
             </div>
             <span>{t.pages.modals.getLikes}</span>
           </div>

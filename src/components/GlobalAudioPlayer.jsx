@@ -145,7 +145,7 @@ const GlobalAudioPlayer = () => {
         <button 
           className="widget-sec-btn" 
           onClick={toggleFavorite}
-          style={{ color: isFavoriteLocally ? '#ef4444' : undefined }}
+          style={{ color: isFavoriteLocally ? '#3b82f6' : undefined }}
         >
           <Heart size={20} className={isFavoriteLocally ? "fill-current" : ""} />
         </button>

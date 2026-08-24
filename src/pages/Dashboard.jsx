@@ -287,9 +287,9 @@ const Dashboard = () => {
                     <span className="flex items-center gap-1">⏱ {track.duration || "0:00"}</span>
                     <button 
                       onClick={() => toggleFavorite(track)}
-                      className={`heart-btn transition-colors ${track.is_favorite ? 'text-red-500' : 'text-stone-400 hover:text-red-500'}`}
+                      className={`heart-btn transition-colors ${track.is_favorite ? 'text-blue-500' : 'text-stone-400 hover:text-blue-500'}`}
                     >
-                      <Heart size={16} className={track.is_favorite ? 'fill-current text-red-500' : ''} />
+                      <Heart size={16} className={track.is_favorite ? 'fill-current text-blue-500' : ''} />
                     </button>
                   </div>
                 </div>
