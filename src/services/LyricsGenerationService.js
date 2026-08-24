@@ -24,7 +24,7 @@ class LyricsGenerationService {
           action: 'generate_lyrics', 
           payload: {
             model: "suno",
-            task_type: "generate_lyrics",
+            task_type: "lyrics",
             input: { prompt }
           }
         }
