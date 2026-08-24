@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { RefreshCw, Heart, MoreVertical, Share2, Globe, Download, Plus, Wand2, Video, Loader2, Play, Pause, Music } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
+import { supabase, recordTrackEvent } from '../lib/supabaseClient';
 import CreateTrackModal from '../components/CreateTrackModal';
 import CreateShortModal from '../components/CreateShortModal';
 import PublishModal from '../components/PublishModal';
@@ -131,7 +131,11 @@ const Dashboard = () => {
       a.download = `${track.title.replace(/\s+/g, '_')}_Ndules.mp3`;
       document.body.appendChild(a);
       a.click();
+      document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
+      
+      // Enregistrer l'événement de téléchargement
+      recordTrackEvent(track.id, 'download');
     } catch (err) {
       // Fallback en cas de blocage CORS
       window.open(track.audio_url, '_blank');

@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, X, ChevronDown, Heart, Wand2, Repeat } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { usePlayer } from '../context/PlayerContext';
-import { supabase } from '../lib/supabaseClient';
+import { supabase, recordTrackEvent } from '../lib/supabaseClient';
 import './GlobalAudioPlayer.css';
 
 const GlobalAudioPlayer = () => {
@@ -32,6 +32,8 @@ const GlobalAudioPlayer = () => {
   useEffect(() => {
     if (currentTrack) {
       setIsFavoriteLocally(currentTrack.is_favorite || false);
+      // Log the play event
+      recordTrackEvent(currentTrack.id, 'play');
     }
   }, [currentTrack]);
 
@@ -55,6 +57,9 @@ const GlobalAudioPlayer = () => {
       } else {
         // Mettre à jour l'objet en mémoire pour le contexte
         currentTrack.is_favorite = newState;
+        if (newState) {
+          recordTrackEvent(currentTrack.id, 'like');
+        }
       }
     } catch (err) {
       setIsFavoriteLocally(!newState);

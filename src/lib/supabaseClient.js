@@ -4,3 +4,15 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://mock-project.s
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'mock-anon-key';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+export const recordTrackEvent = async (trackId, eventType) => {
+  if (!trackId) return;
+  try {
+    await supabase.rpc('increment_track_stat', { 
+      track_uuid: trackId, 
+      stat_type: eventType 
+    });
+  } catch (error) {
+    console.error(`Failed to record ${eventType} for track ${trackId}:`, error);
+  }
+};
