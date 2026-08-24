@@ -24,10 +24,10 @@ export default {
     titlePrefix: "They created this with",
     subtitle: "Listen to examples of personalized songs created for unique moments.",
     items: [
-      { category: "Birthday", category2: "Party", title: "Happy Birthday Ketsia", style: "Ivorian Style", img: "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=500&h=500&fit=crop" },
-      { category: "Love", category2: "Romance", title: "For my wife Déborah", style: "Rumba Style", img: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=500&h=500&fit=crop" },
-      { category: "Tribute", category2: "Memory", title: "Tribute to Papa Mukendi", style: "Acoustic Style", img: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=500&h=500&fit=crop" },
-      { category: "Diploma", category2: "Success", title: "Congratulations Gloire", style: "Amapiano Style", img: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&h=500&fit=crop" }
+      { category: "Birthday", category2: "Party", title: "Joyeux Anniversaire Rodrigez", style: "Rumba", img: "https://cdn2.suno.ai/image_3e1be834-fc58-4e19-91e7-bbf12febbe4b.jpeg", audio_url: "https://cdn1.suno.ai/3e1be834-fc58-4e19-91e7-bbf12febbe4b.mp3" },
+      { category: "Love", category2: "Romance", title: "Pour ma femme Déborah", style: "Style Roumba", img: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=500&h=500&fit=crop", audio_url: "https://cdn1.suno.ai/0cd32548-7db0-45fc-b179-805909e83908.mp3" },
+      { category: "Tribute", category2: "Love", title: "Bolingo ya Seko", style: "Rumba Congolaise", img: "https://cdn2.suno.ai/image_780812a2-b26e-4c14-9194-a579fb235127.jpeg", audio_url: "https://cdn1.suno.ai/780812a2-b26e-4c14-9194-a579fb235127.mp3" },
+      { category: "Victory", category2: "Success", title: "Le Triomphe de Dieu Merci", style: "Amapiano", img: "https://cdn2.suno.ai/image_91d39720-9688-40df-964f-724bdfc57e83.jpeg", audio_url: "https://cdn1.suno.ai/91d39720-9688-40df-964f-724bdfc57e83.mp3" }
     ]
   },
   testimonials: {
