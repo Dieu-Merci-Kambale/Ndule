@@ -128,7 +128,7 @@ const Dashboard = () => {
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;
-      a.download = `${track.title.replace(/\s+/g, '_')}_Ndule.mp3`;
+      a.download = `${track.title.replace(/\s+/g, '_')}_Ndules.mp3`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -143,14 +143,14 @@ const Dashboard = () => {
       try {
         await navigator.share({
           title: track.title,
-          text: `Écoute ma nouvelle chanson "${track.title}" créée sur Ndule !`,
+          text: `Écoute ma nouvelle chanson "${track.title}" créée sur Ndules !`,
           url: track.audio_url
         });
       } catch (err) {
         console.log("Erreur partage:", err);
       }
     } else {
-      navigator.clipboard.writeText(`Écoute ma chanson Ndule: ${track.audio_url}`);
+      navigator.clipboard.writeText(`Écoute ma chanson Ndules: ${track.audio_url}`);
       showToast(t.pages.myMusic.msgCopied);
     }
   };

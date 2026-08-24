@@ -66,7 +66,7 @@ const DashboardLayout = () => {
         <div className="sidebar-header">
           <div className="sidebar-logo">
              <span className="logo-icon">🎵</span>
-             <span className="logo-text">Ndule</span>
+             <span className="logo-text">Ndules</span>
           </div>
           <button className="back-btn"><ChevronLeft size={18} /></button>
         </div>
@@ -119,7 +119,7 @@ const DashboardLayout = () => {
               className="avatar-small" 
             />
             <div className="user-info">
-              <span className="user-name">{user?.user_metadata?.full_name || 'Membre Ndule'}</span>
+              <span className="user-name">{user?.user_metadata?.full_name || 'Membre Ndules'}</span>
               <span className="user-email">{user?.email || 'Chargement...'}</span>
             </div>
           </div>
@@ -147,7 +147,7 @@ const DashboardLayout = () => {
            {/* Mobile Logo */}
            <div className="topbar-left mobile-only">
              <span className="logo-icon" style={{fontSize: '24px'}}>🎵</span>
-             <span className="logo-text" style={{fontSize: '20px', fontWeight: 800, color: 'var(--blue-600)'}}>Ndule</span>
+             <span className="logo-text" style={{fontSize: '20px', fontWeight: 800, color: 'var(--blue-600)'}}>Ndules</span>
            </div>
            
            <div className="topbar-right">

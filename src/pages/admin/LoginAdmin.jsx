@@ -30,7 +30,7 @@ const LoginAdmin = () => {
         <div className="admin-login-header">
           <ShieldCheck size={48} className="admin-shield-icon" />
           <h2>Accès Restreint</h2>
-          <p>Panel d'Administration Ndule</p>
+          <p>Panel d'Administration Ndules</p>
         </div>
 
         {error && <div className="admin-login-error">{error}</div>}

@@ -47,7 +47,7 @@ const Shorts = () => {
       try {
         await navigator.share({
           title: track.title,
-          text: `${t.pages.shorts.shareText} "${track.title}" sur Ndule !`,
+          text: `${t.pages.shorts.shareText} "${track.title}" sur Ndules !`,
           url: track.video_url
         });
       } catch (err) {

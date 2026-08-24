@@ -9,7 +9,7 @@ const VideoModal = ({ isOpen, onClose, videoUrl, trackTitle }) => {
     // Basic download trigger
     const a = document.createElement('a');
     a.href = videoUrl;
-    a.download = `${trackTitle || 'Ndule_Video'}.mp4`;
+    a.download = `${trackTitle || 'Ndules_Video'}.mp4`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -34,7 +34,7 @@ const VideoModal = ({ isOpen, onClose, videoUrl, trackTitle }) => {
             src={videoUrl} 
             controls 
             autoPlay 
-            className="ndule-video-player"
+            className="ndules-video-player"
             playsInline
           >
             Votre navigateur ne supporte pas la lecture de vidéos.

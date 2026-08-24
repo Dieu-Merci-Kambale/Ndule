@@ -81,7 +81,7 @@
 }
 
 .wizard-progress-dots .dot.active {
-  background: #3b82f6; /* Bleu Ndule */
+  background: #3b82f6; /* Bleu Ndules */
   width: 24px;
   border-radius: 4px;
 }
@@ -330,7 +330,7 @@
 
 .wizard-main-btn {
   width: 100%;
-  background: #3b82f6; /* Bleu Ndule uni ou léger dégradé */
+  background: #3b82f6; /* Bleu Ndules uni ou léger dégradé */
   color: white;
   border: none;
   padding: 1.25rem;

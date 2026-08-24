@@ -164,7 +164,7 @@ const Explore = () => {
             const isCurrent = currentTrack?.id === track.id;
             
             // Extract creator name from track column
-            const creatorName = track.creator_name || 'Créateur Ndule';
+            const creatorName = track.creator_name || 'Créateur Ndules';
             
             return (
               <div 

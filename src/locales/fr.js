@@ -42,7 +42,7 @@ export default {
   },
   faq: {
     title: "Questions fréquentes",
-    subtitle: "Tout ce que vous devez savoir sur Ndule.",
+    subtitle: "Tout ce que vous devez savoir sur Ndules.",
     items: [
       { q: "Puis-je citer des prénoms dans la chanson ?", a: "Absolument ! L'IA est entraînée pour intégrer naturellement les prénoms dans les paroles de votre chanson." },
       { q: "Pour quelles occasions puis-je créer une chanson ?", a: "Toutes les occasions sont bonnes : mariages, anniversaires, départs en retraite, déclarations d'amour, ou juste pour le fun." },
@@ -53,14 +53,14 @@ export default {
   footer: {
     privacy: "Confidentialité",
     terms: "CGU",
-    contact: "contact@ndule.com",
-    copyright: "Ndule. La musique pour tout le monde."
+    contact: "contact@ndules.com",
+    copyright: "Ndules. La musique pour tout le monde."
   },
   privacyPage: {
     title: "Politique de Confidentialité",
     lastUpdated: "Dernière mise à jour :",
     section1Title: "1. Collecte des données",
-    section1Text: "Nous collectons les informations que vous nous fournissez directement lorsque vous utilisez Ndule, notamment les textes, prénoms et descriptions que vous soumettez pour générer une chanson.",
+    section1Text: "Nous collectons les informations que vous nous fournissez directement lorsque vous utilisez Ndules, notamment les textes, prénoms et descriptions que vous soumettez pour générer une chanson.",
     section2Title: "2. Utilisation de l'Intelligence Artificielle",
     section2Text: "Les données que vous soumettez sont traitées par nos algorithmes d'intelligence artificielle pour générer des œuvres musicales. Ces données ne sont pas utilisées pour entraîner nos modèles d'IA sans votre consentement explicite.",
     section3Title: "3. Partage des données",
@@ -72,13 +72,13 @@ export default {
     title: "Conditions Générales d'Utilisation",
     lastUpdated: "Dernière mise à jour :",
     section1Title: "1. Objet",
-    section1Text: "Les présentes Conditions Générales d'Utilisation régissent l'accès et l'utilisation du service Ndule, un générateur de musique par Intelligence Artificielle.",
+    section1Text: "Les présentes Conditions Générales d'Utilisation régissent l'accès et l'utilisation du service Ndules, un générateur de musique par Intelligence Artificielle.",
     section2Title: "2. Propriété Intellectuelle",
-    section2Text: "Les utilisateurs conservent tous les droits d'exploitation sur les chansons générées via la plateforme Ndule, sous réserve du respect des droits des tiers (notamment l'interdiction d'utiliser des textes protégés par le droit d'auteur).",
+    section2Text: "Les utilisateurs conservent tous les droits d'exploitation sur les chansons générées via la plateforme Ndules, sous réserve du respect des droits des tiers (notamment l'interdiction d'utiliser des textes protégés par le droit d'auteur).",
     section3Title: "3. Utilisation acceptable",
-    section3Text: "Vous vous engagez à ne pas utiliser Ndule pour générer des contenus haineux, discriminatoires, illégaux ou incitant à la violence. Tout manquement à cette règle entraînera la suspension immédiate du compte.",
+    section3Text: "Vous vous engagez à ne pas utiliser Ndules pour générer des contenus haineux, discriminatoires, illégaux ou incitant à la violence. Tout manquement à cette règle entraînera la suspension immédiate du compte.",
     section4Title: "4. Limitation de responsabilité",
-    section4Text: "Ndule est fourni \"en l'état\". Bien que nous nous efforcions de fournir un service de haute qualité, nous ne pouvons garantir que les œuvres générées correspondront exactement à vos attentes subjectives."
+    section4Text: "Ndules est fourni \"en l'état\". Bien que nous nous efforcions de fournir un service de haute qualité, nous ne pouvons garantir que les œuvres générées correspondront exactement à vos attentes subjectives."
   },
   dashboard: {
     welcome: "Bienvenue sur votre espace, Créateur",
@@ -157,7 +157,7 @@ export default {
         { title: "2. Précisez les instruments", text: "Mentionnez par exemple : guitare acoustique douce, saxophone, percussions africaines." },
         { title: "3. Ajoutez du contexte", text: "Dites à l'IA à qui est destinée la chanson (anniversaire de maman, mariage, hommage)." }
       ],
-      supportTitle: "Contacter le support Ndule",
+      supportTitle: "Contacter le support Ndules",
       supportSubject: "Sujet de votre demande",
       supportMessage: "Votre message...",
       supportSend: "Envoyer le message",
@@ -245,7 +245,7 @@ export default {
       subtitle: "Générateur Vidéo IA",
       desc: "Transformez vos chansons en clips vidéo pour les réseaux sociaux.",
       shareText: "Regarde ce Clip Short",
-      shareTextLink: "Regarde ce Clip Ndule",
+      shareTextLink: "Regarde ce Clip Ndules",
       linkCopied: "Lien du Clip copié !",
       deleteError: "Erreur lors de la suppression du Short.",
       description: "Transformez vos musiques en vidéos virales format vertical (9:16) pour TikTok, Instagram Reels et YouTube Shorts. Sélectionnez une musique pour commencer.",
@@ -274,7 +274,7 @@ export default {
       point3: "Vos Crédits n'expirent jamais"
     },
     login: {
-      title: "Bienvenue sur Ndule",
+      title: "Bienvenue sur Ndules",
       subtitle: "Le premier générateur de musique IA au monde",
       google: "Continuer avec Google",
       error: "Une erreur est survenue lors de la connexion."

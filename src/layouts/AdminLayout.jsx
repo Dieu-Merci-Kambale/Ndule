@@ -17,7 +17,7 @@ const AdminLayout = () => {
       {/* Sidebar */}
       <aside className="admin-sidebar">
         <div className="admin-logo">
-          <h2>NDULE <span>ADMIN</span></h2>
+          <h2>NDULES <span>ADMIN</span></h2>
         </div>
         
         <nav className="admin-nav">

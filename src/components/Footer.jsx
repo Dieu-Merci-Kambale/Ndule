@@ -12,7 +12,7 @@ const Footer = () => {
         
         <Link to={`/${lang}`} className="footer-logo">
           <span style={{fontSize: '24px', marginRight: '4px'}}>🎵</span>
-          <span style={{fontWeight: 800, fontSize: '1.25rem', color: '#2563eb'}}>Ndule</span>
+          <span style={{fontWeight: 800, fontSize: '1.25rem', color: '#2563eb'}}>Ndules</span>
         </Link>
         
         <div className="footer-links">

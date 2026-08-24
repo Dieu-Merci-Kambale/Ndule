@@ -35,7 +35,7 @@ const PlaylistSection = () => {
         
         <div className="playlist-header">
           <h2 className="playlist-title">
-            {t.playlist.titlePrefix} <strong className="text-blue-600">Ndule</strong>
+            {t.playlist.titlePrefix} <strong className="text-blue-600">Ndules</strong>
           </h2>
           <p className="playlist-subtitle">
             {t.playlist.subtitle}

@@ -21,8 +21,8 @@ const Contact = () => {
         },
         body: JSON.stringify({
           access_key: '92544cee-4713-4afe-91d9-f628581f1b1b',
-          subject: 'Nouveau message depuis Ndule',
-          from_name: 'Ndule Contact',
+          subject: 'Nouveau message depuis Ndules',
+          from_name: 'Ndules Contact',
           name: formData.name,
           email: formData.email,
           phone: formData.phone,

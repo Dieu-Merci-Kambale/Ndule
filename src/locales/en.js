@@ -42,7 +42,7 @@ export default {
   },
   faq: {
     title: "Frequently Asked Questions",
-    subtitle: "Everything you need to know about Ndule.",
+    subtitle: "Everything you need to know about Ndules.",
     items: [
       { q: "Can I mention names in the song?", a: "Absolutely! The AI is trained to naturally integrate names into the lyrics of your song." },
       { q: "For what occasions can I create a song?", a: "All occasions are good: weddings, birthdays, retirements, declarations of love, or just for fun." },
@@ -53,14 +53,14 @@ export default {
   footer: {
     privacy: "Privacy Policy",
     terms: "Terms of Service",
-    contact: "contact@ndule.com",
-    copyright: "Ndule. Music for everyone."
+    contact: "contact@ndules.com",
+    copyright: "Ndules. Music for everyone."
   },
   privacyPage: {
     title: "Privacy Policy",
     lastUpdated: "Last updated:",
     section1Title: "1. Data Collection",
-    section1Text: "We collect the information you provide directly to us when you use Ndule, including the texts, first names, and descriptions you submit to generate a song.",
+    section1Text: "We collect the information you provide directly to us when you use Ndules, including the texts, first names, and descriptions you submit to generate a song.",
     section2Title: "2. Use of Artificial Intelligence",
     section2Text: "The data you submit is processed by our artificial intelligence algorithms to generate musical works. This data is not used to train our AI models without your explicit consent.",
     section3Title: "3. Data Sharing",
@@ -72,13 +72,13 @@ export default {
     title: "Terms of Service",
     lastUpdated: "Last updated:",
     section1Title: "1. Purpose",
-    section1Text: "These Terms of Service govern the access and use of the Ndule service, an Artificial Intelligence music generator.",
+    section1Text: "These Terms of Service govern the access and use of the Ndules service, an Artificial Intelligence music generator.",
     section2Title: "2. Intellectual Property",
-    section2Text: "Users retain all exploitation rights on the songs generated via the Ndule platform, subject to compliance with the rights of third parties (including the prohibition of using texts protected by copyright).",
+    section2Text: "Users retain all exploitation rights on the songs generated via the Ndules platform, subject to compliance with the rights of third parties (including the prohibition of using texts protected by copyright).",
     section3Title: "3. Acceptable Use",
-    section3Text: "You agree not to use Ndule to generate hateful, discriminatory, illegal content or content inciting violence. Any breach of this rule will result in the immediate suspension of the account.",
+    section3Text: "You agree not to use Ndules to generate hateful, discriminatory, illegal content or content inciting violence. Any breach of this rule will result in the immediate suspension of the account.",
     section4Title: "4. Limitation of Liability",
-    section4Text: "Ndule is provided \"as is\". Although we strive to provide a high quality service, we cannot guarantee that the generated works will exactly match your subjective expectations."
+    section4Text: "Ndules is provided \"as is\". Although we strive to provide a high quality service, we cannot guarantee that the generated works will exactly match your subjective expectations."
   },
   dashboard: {
     welcome: "Welcome to your space, Creator",
@@ -157,7 +157,7 @@ export default {
         { title: "2. Specify the instruments", text: "Mention for example: soft acoustic guitar, saxophone, tribal beats." },
         { title: "3. Add context", text: "Tell the AI who the song is for (mom's birthday, wedding, tribute)." }
       ],
-      supportTitle: "Contact Ndule Support",
+      supportTitle: "Contact Ndules Support",
       supportSubject: "Subject of your request",
       supportMessage: "Your message...",
       supportSend: "Send message",
@@ -245,7 +245,7 @@ export default {
       subtitle: "AI Video Generator",
       desc: "Turn your songs into video clips for social media.",
       shareText: "Watch this Short Clip",
-      shareTextLink: "Watch this Ndule Clip",
+      shareTextLink: "Watch this Ndules Clip",
       linkCopied: "Clip link copied!",
       deleteError: "Error deleting the Short.",
       description: "Turn your music into viral vertical videos (9:16) for TikTok, Instagram Reels, and YouTube Shorts. Select a song to get started.",
@@ -274,7 +274,7 @@ export default {
       point3: "Your Credits never expire"
     },
     login: {
-      title: "Welcome to Ndule",
+      title: "Welcome to Ndules",
       subtitle: "The world's first AI music generator",
       google: "Continue with Google",
       error: "An error occurred during login."

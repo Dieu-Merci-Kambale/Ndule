@@ -216,7 +216,7 @@ const CreateTrackModal = ({ isOpen, onClose, onTrackCreated, userNotes, initialT
       
       const tracksToInsert = tracksData.map(t => ({
         user_id: user.id,
-        creator_name: user.email ? user.email.split('@')[0] : 'Créateur Ndule',
+        creator_name: user.email ? user.email.split('@')[0] : 'Créateur Ndules',
         title: t.title,
         style: styleName,
         occasion: occasionName,
@@ -474,7 +474,7 @@ const CreateTrackModal = ({ isOpen, onClose, onTrackCreated, userNotes, initialT
                       ></div>
                     </div>
                     <p className="text-xs text-stone-500 mt-3 text-center">
-                      Ndule génère la musique. Cela prend environ 2 à 3 minutes.
+                      Ndules génère la musique. Cela prend environ 2 à 3 minutes.
                       Veuillez patienter sans fermer cette fenêtre.
                     </p>
                   </div>

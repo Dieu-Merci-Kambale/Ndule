@@ -119,7 +119,7 @@ const CreateShortModal = ({ isOpen, onClose, track, userNotes, onShortCreated })
                   <Video size={32} className="text-blue-500" />
                </div>
                <h2 className="text-xl font-bold mb-2">Génération en cours...</h2>
-               <p className="text-stone-500 mb-8 text-center">L'IA de Ndule synchronise vos paroles avec la vidéo.</p>
+               <p className="text-stone-500 mb-8 text-center">L'IA de Ndules synchronise vos paroles avec la vidéo.</p>
                
                <div className="w-full bg-stone-100 rounded-full h-3 mb-2 overflow-hidden">
                  <div className="bg-blue-500 h-3 rounded-full transition-all duration-300" style={{width: `${progress}%`}}></div>

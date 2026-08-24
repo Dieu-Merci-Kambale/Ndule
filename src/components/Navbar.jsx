@@ -17,7 +17,7 @@ const Navbar = () => {
         {/* Logo */}
         <a href="/" className="navbar-logo">
           <span style={{fontSize: '28px', marginRight: '4px'}}>🎵</span>
-          <span style={{fontWeight: 800, fontSize: '1.5rem', color: '#2563eb'}}>Ndule</span>
+          <span style={{fontWeight: 800, fontSize: '1.5rem', color: '#2563eb'}}>Ndules</span>
         </a>
 
         {/* Center Links in Pill (Desktop) */}
