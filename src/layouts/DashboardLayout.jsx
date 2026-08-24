@@ -13,6 +13,7 @@ const DashboardLayout = () => {
   const location = useLocation();
   const { t, lang } = useTranslation();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
 
   // Fonction pour générer l'URL de l'avatar de façon sécurisée (encodeURIComponent)
   const getAvatarUrl = () => {
@@ -94,10 +95,10 @@ const DashboardLayout = () => {
             <span className="nav-text">{t.dashboardMenu?.music || 'Musiques'}</span>
           </NavLink>
           
-          <NavLink to={`/${lang}/shorts`} className="nav-item">
+          <div className="nav-item disabled-nav-item" onClick={() => setShowPremiumModal(true)} style={{ cursor: 'pointer' }}>
             <Video size={20} />
             <span className="nav-text">{t.dashboardMenu?.shorts || 'Shorts'}</span>
-          </NavLink>
+          </div>
           
           <NavLink to={`/${lang}/stats`} className="nav-item">
             <BarChart2 size={20} />
@@ -185,6 +186,24 @@ const DashboardLayout = () => {
       </div>
 
       <GlobalAudioPlayer />
+
+      {/* Premium Modal for Shorts */}
+      {showPremiumModal && (
+        <div className="premium-modal-overlay">
+          <div className="premium-modal">
+            <div className="premium-icon-wrapper">
+              <span style={{ fontSize: '36px' }}>👑</span>
+            </div>
+            <h3 className="premium-title">Fonctionnalité Premium</h3>
+            <p className="premium-desc">
+              La fonctionnalité Shorts (génération de vidéos) est temporairement réservée à nos clients Premium.
+            </p>
+            <button className="premium-close-btn" onClick={() => setShowPremiumModal(false)}>
+              J'ai compris
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
