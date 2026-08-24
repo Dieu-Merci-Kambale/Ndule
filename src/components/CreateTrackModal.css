@@ -354,40 +354,113 @@
   transform: none;
 }
 
-/* GENERATING STATE */
-.generating-step {
+/* GENERATING STATE (PREMIUM) */
+.generating-step-premium {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100%;
   text-align: center;
-  padding-bottom: 2rem;
+  padding: 0 2rem;
 }
 
-.generating-icon-pulse {
+.premium-progress-container {
   position: relative;
-  width: 100px;
-  height: 100px;
-  background: #f1f5f9;
-  border-radius: 50%;
+  width: 160px;
+  height: 160px;
+  margin-bottom: 2.5rem;
+}
+
+.premium-circular-progress {
+  transform: rotate(-90deg);
+  width: 100%;
+  height: 100%;
+}
+
+.premium-progress-bg {
+  fill: none;
+  stroke: #f1f5f9;
+  stroke-width: 8;
+}
+
+.premium-progress-fill {
+  fill: none;
+  stroke: #3b82f6; /* Bleu Ndules */
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 440;
+  transition: stroke-dashoffset 0.5s ease;
+  filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.4));
+}
+
+.premium-progress-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-bottom: 2rem;
 }
 
-.pulse-ring {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+.premium-progress-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1;
+}
+
+.premium-progress-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+.premium-generating-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 1rem;
+}
+
+.premium-generating-subtitle {
+  color: #64748b;
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 400px;
+  margin: 0 auto 2rem auto;
+}
+
+.premium-generating-warning {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 0.75rem 1.25rem;
+  border-radius: 9999px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.warning-dot {
+  width: 8px;
+  height: 8px;
+  background: #2563eb;
   border-radius: 50%;
-  border: 4px solid #3b82f6;
-  animation: pulseOut 2s infinite ease-out;
+  animation: pulseDot 1.5s infinite;
 }
 
-@keyframes pulseOut {
+@keyframes pulseDot {
   0% { transform: scale(1); opacity: 1; }
-  100% { transform: scale(1.5); opacity: 0; }
+  50% { transform: scale(1.5); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 @keyframes slideUp {

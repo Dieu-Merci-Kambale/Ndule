@@ -268,16 +268,19 @@ const CreateTrackModal = ({ isOpen, onClose, onTrackCreated, userNotes, initialT
       <div className="modal-content create-wizard-modal">
         {/* Ligne du haut (Fermer, Retour) */}
         <div className="wizard-topbar">
-          {step > 1 && !isGenerating ? (
+          {step > 1 && !isGenerating && !isGeneratingLyrics ? (
             <button className="wizard-icon-btn" onClick={handleBack}>
               <ChevronLeft size={24} />
             </button>
           ) : (
             <div></div> // Espaceur
           )}
-          <button className="wizard-icon-btn" onClick={resetModal} disabled={isGenerating}>
-            <X size={24} />
-          </button>
+          
+          {!isGenerating && !isGeneratingLyrics && (
+            <button className="wizard-icon-btn" onClick={resetModal}>
+              <X size={24} />
+            </button>
+          )}
         </div>
 
         {/* Indicateur de progression (Points) */}
@@ -452,33 +455,34 @@ const CreateTrackModal = ({ isOpen, onClose, onTrackCreated, userNotes, initialT
             </div>
           )}
 
-          {/* ÉTAPE DE LANCEMENT */}
+          {/* ÉTAPE DE LANCEMENT (Design Premium) */}
           {isGenerating && (
-            <div className="wizard-step generating-step">
-               <div className="generating-icon-pulse">
-                  <div className="pulse-ring"></div>
-                  <span style={{fontSize: '40px'}}>✨</span>
-               </div>
-               <h2>Création en cours...</h2>
-               
-                {progress > 0 && (
-                  <div className="w-64 mt-6">
-                    <div className="flex justify-between text-xs text-stone-400 mb-2">
-                      <span>Progression</span>
-                      <span>{progress}%</span>
-                    </div>
-                    <div className="w-full rounded-full h-2" style={{ backgroundColor: '#292524' }}>
-                      <div 
-                        className="h-2 rounded-full transition-all duration-500" 
-                        style={{ width: `${progress}%`, backgroundColor: '#3b82f6' }}
-                      ></div>
-                    </div>
-                    <p className="text-xs text-stone-500 mt-3 text-center">
-                      Ndules génère la musique. Cela prend environ 2 à 3 minutes.
-                      Veuillez patienter sans fermer cette fenêtre.
-                    </p>
+            <div className="wizard-step generating-step-premium">
+               <div className="premium-progress-container">
+                  <svg className="premium-circular-progress" viewBox="0 0 160 160">
+                     <circle className="premium-progress-bg" cx="80" cy="80" r="70" />
+                     <circle 
+                        className="premium-progress-fill" 
+                        cx="80" cy="80" r="70" 
+                        style={{ strokeDashoffset: 440 - (440 * progress) / 100 }} 
+                     />
+                  </svg>
+                  <div className="premium-progress-content">
+                     <span className="premium-progress-value">{progress}%</span>
+                     <span className="premium-progress-label">Création</span>
                   </div>
-                )}
+               </div>
+               
+               <h2 className="premium-generating-title">La magie opère...</h2>
+               
+               <p className="premium-generating-subtitle">
+                  Ndules compose votre chef-d'œuvre. L'intelligence artificielle génère actuellement les voix, les instruments et réalise le mixage final.
+               </p>
+               
+               <div className="premium-generating-warning">
+                  <span className="warning-dot"></span>
+                  Veuillez patienter sans fermer cette fenêtre.
+               </div>
             </div>
           )}
 
