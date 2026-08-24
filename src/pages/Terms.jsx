@@ -7,14 +7,15 @@ const Terms = () => {
 
   return (
     <div className="page-section">
-      <div className="page-container">
+      <div className="page-header">
         <h1 className="page-title">{t.termsPage.title}</h1>
-        
+        <p className="page-last-updated">
+          {t.termsPage.lastUpdated} {new Date().toLocaleDateString()}
+        </p>
+      </div>
+      
+      <div className="page-container">
         <div className="page-content">
-          <p className="page-last-updated">
-            {t.termsPage.lastUpdated} {new Date().toLocaleDateString()}
-          </p>
-
           <h2>{t.termsPage.section1Title}</h2>
           <p>{t.termsPage.section1Text}</p>
 
@@ -26,6 +27,10 @@ const Terms = () => {
 
           <h2>{t.termsPage.section4Title}</h2>
           <p>{t.termsPage.section4Text}</p>
+
+          <div className="page-contact">
+            Pour toute question, veuillez nous contacter à : <a href="mailto:contact@ndules.com">contact@ndules.com</a>
+          </div>
         </div>
       </div>
     </div>
