@@ -85,6 +85,8 @@ class LyricsGenerationService {
 
     } catch (err) {
       console.error("Erreur lors de la génération de paroles :", err);
+      // Afficher l'erreur pour comprendre pourquoi ça échoue
+      alert("Erreur Lyrics: " + err.message);
       return this.generateFallbackLyrics(occasion, story, style);
     }
   }
