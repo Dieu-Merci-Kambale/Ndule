@@ -1,102 +1,95 @@
 /**
  * LyricsGenerationService.js
  * 
- * Ce service se connecte à une API LLM (Google Gemini ou OpenAI ChatGPT) pour générer 
- * des paroles de chanson structurées de qualité professionnelle.
+ * Ce service se connecte à PiAPI (Suno) pour générer des paroles
+ * via leur modèle interne spécialisé (facturé $0.02 par génération).
  */
 
 import { supabase } from '../lib/supabaseClient';
 
 class LyricsGenerationService {
-  constructor() {
-    this.GEMINI_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-    this.OPENAI_KEY = import.meta.env.VITE_OPENAI_API_KEY;
-  }
-
   buildPrompt(occasion, story, style) {
-    return `Tu es un auteur-compositeur expert et récompensé. Ta mission est d'écrire les paroles complètes d'une chanson exceptionnelle de style "${style}" pour l'occasion suivante : "${occasion}".
-L'histoire ou le sujet de la chanson est : "${story}".
-
-RÈGLES IMPORTANTES : 
-1. LONGUEUR OPTIMALE : La chanson DOIT contenir environ 150 à 200 mots (idéal pour l'IA musicale).
-2. STRUCTURE DIRECTE : Commence IMMÉDIATEMENT par un [Verse 1]. N'utilise JAMAIS de balise [Intro] ou [Outro], car cela force l'IA à créer un instrumental.
-3. BALISES EN ANGLAIS : Utilise uniquement [Verse 1], [Chorus], [Verse 2], [Chorus], [Bridge].
-4. LANGUE : La chanson DOIT être DANS LA MÊME LANGUE que l'histoire (Français, Lingala, Swahili, etc.). Si l'histoire mélange deux langues, fais de même.
-5. STRICTEMENT AUCUN COMMENTAIRE : Tu es un générateur de texte brut. Ne mets aucun texte d'introduction (ex: "Voici votre chanson"). Commence IMMÉDIATEMENT ta réponse par "Titre : ". Tout mot qui n'est pas une parole de la chanson fera planter le système.
-Format de réponse attendu :
-Titre : [Nom de la chanson créatif]
-
-[Verse 1]
-...
-`;
+    return `Style: ${style}. Occasion: ${occasion}. Sujet: ${story}.`;
   }
 
   async generateLyrics(occasion, story, style) {
     try {
       const prompt = this.buildPrompt(occasion, story, style);
+      
+      console.log("Demande de paroles via PiAPI...", { prompt });
 
-      // Priorité à OpenAI (GPT-4o-mini) car c'est ultra-rapide (comme demandé par l'utilisateur)
-      if (this.OPENAI_KEY && this.OPENAI_KEY !== 'votre_cle_openai') {
-        try {
-          const response = await fetch("https://api.openai.com/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${this.OPENAI_KEY}`
-            },
-            body: JSON.stringify({
-              model: "gpt-4o-mini",
-              messages: [{ role: "user", content: prompt }],
-              temperature: 0.8,
-              max_tokens: 600
-            })
-          });
-
-          const data = await response.json();
-          if (response.ok && data.choices && data.choices.length > 0) {
-            return data.choices[0].message.content;
+      // 1. Initialiser la tâche PiAPI via notre proxy
+      const { data: initData, error: initError } = await supabase.functions.invoke('piapi-proxy', {
+        body: { 
+          action: 'generate_lyrics', 
+          payload: {
+            model: "suno",
+            task_type: "generate_lyrics",
+            input: { prompt }
           }
-        } catch (e) {
-          console.warn("Échec d'OpenAI, tentative avec Gemini Proxy...", e);
         }
-      }
-
-      // Fallback sur le proxy Gemini si OpenAI échoue ou n'est pas configuré
-      const { data, error } = await supabase.functions.invoke('gemini-proxy', {
-        body: { prompt }
       });
 
-      if (error) {
-        let errorMsg = error.message;
-        if (error.context && typeof error.context.json === 'function') {
-           const errBody = await error.context.json().catch(() => null);
+      if (initError) {
+        let errorMsg = initError.message;
+        if (initError.context && typeof initError.context.json === 'function') {
+           const errBody = await initError.context.json().catch(() => null);
            if (errBody && errBody.error) errorMsg = errBody.error;
         }
-        console.error("Erreur Gemini Proxy:", errorMsg);
-        throw new Error("ERREUR_API: " + errorMsg);
+        throw new Error("ERREUR_API_PIAPI: " + errorMsg);
       }
 
-      if (data?.error) {
-        console.error("Erreur Gemini Proxy:", data?.error);
-        const errMsg = data?.error?.message || data?.error || "Erreur inconnue";
-        throw new Error("ERREUR_API: " + errMsg);
+      if (initData?.error || (initData?.code && initData.code !== 200)) {
+        throw new Error("ERREUR_API_PIAPI: " + (initData?.error || initData?.message || "Erreur inconnue"));
       }
 
-      if (data?.candidates && data.candidates.length > 0) {
-        return data.candidates[0].content.parts[0].text;
+      const taskId = initData?.data?.task_id;
+      if (!taskId) {
+        throw new Error("ERREUR_API_PIAPI: Aucun task_id retourné par PiAPI");
       }
-      
-      throw new Error("Réponse inattendue du LLM");
+
+      // 2. Polling (attendre que PiAPI génère les paroles)
+      let status = 'pending';
+      let pollCount = 0;
+      let lyricsResult = null;
+
+      while (status !== 'completed' && status !== 'failed' && pollCount < 20) { // Max ~40s
+        await new Promise(r => setTimeout(r, 2000)); // Poll every 2 seconds
+        pollCount++;
+
+        try {
+          const { data: pollData, error: pollError } = await supabase.functions.invoke('piapi-proxy', {
+            body: { action: 'get', taskId }
+          });
+
+          if (!pollError && pollData?.data) {
+            status = pollData.data.status;
+            
+            if (status === 'completed' && pollData.data.output) {
+              // PiAPI renvoie les paroles générées (soit dans 'text', soit 'title' et 'text')
+              const output = pollData.data.output;
+              let title = output.title ? `Titre : ${output.title}\n\n` : '';
+              lyricsResult = `${title}${output.text || ''}`;
+            }
+          }
+        } catch (e) {
+          console.warn("Erreur de polling PiAPI (Paroles):", e);
+        }
+      }
+
+      if (lyricsResult) {
+        return lyricsResult;
+      }
+
+      throw new Error("ERREUR_API_PIAPI: Délai d'attente dépassé ou génération échouée.");
 
     } catch (err) {
-      console.error("Erreur lors de la génération de paroles avec Gemini :", err);
-      // BUG FIX: On passe occasion, et non err.message
+      console.error("Erreur lors de la génération de paroles :", err);
       return this.generateFallbackLyrics(occasion, story, style);
     }
   }
 
   generateFallbackLyrics(occasion, story, style) {
-    // Si l'utilisateur n'a pas encore configuré sa clé API, on fournit un texte robuste
     const cleanStory = story.length > 30 ? story.substring(0, 50) + "..." : story;
     
     return `Titre : Magie de l'Instant (${occasion})

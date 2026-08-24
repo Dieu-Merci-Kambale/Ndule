@@ -64,6 +64,24 @@ serve(async (req) => {
       });
     } 
     
+    // ACTION: GENERATE LYRICS
+    else if (action === 'generate_lyrics') {
+      // Pour les paroles (0.02$), on ne déduit pas de Note entière (ou on pourrait gérer un système séparé)
+      const response = await fetch(SUNO_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUNO_API_KEY}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+      return new Response(JSON.stringify(data), { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      });
+    }
+
     // ACTION: GET (Polling)
     else if (action === 'get') {
       if (!taskId) {
