@@ -39,9 +39,19 @@ Titre : [Nom de la chanson créatif]
         body: { prompt }
       });
 
-      if (error || data?.error) {
-        console.error("Erreur Gemini Proxy:", error || data?.error);
-        const errMsg = data?.error?.message || error?.message || "Erreur inconnue";
+      if (error) {
+        let errorMsg = error.message;
+        if (error.context && typeof error.context.json === 'function') {
+           const errBody = await error.context.json().catch(() => null);
+           if (errBody && errBody.error) errorMsg = errBody.error;
+        }
+        console.error("Erreur Gemini Proxy:", errorMsg);
+        throw new Error("ERREUR_API: " + errorMsg);
+      }
+
+      if (data?.error) {
+        console.error("Erreur Gemini Proxy:", data?.error);
+        const errMsg = data?.error?.message || data?.error || "Erreur inconnue";
         throw new Error("ERREUR_API: " + errMsg);
       }
 
@@ -53,7 +63,8 @@ Titre : [Nom de la chanson créatif]
 
     } catch (err) {
       console.error("Erreur lors de la génération de paroles avec Gemini :", err);
-      return this.generateFallbackLyrics(err.message, story, style);
+      // BUG FIX: On passe occasion, et non err.message
+      return this.generateFallbackLyrics(occasion, story, style);
     }
   }
 
