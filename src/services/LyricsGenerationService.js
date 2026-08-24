@@ -35,6 +35,33 @@ Titre : [Nom de la chanson créatif]
     try {
       const prompt = this.buildPrompt(occasion, story, style);
 
+      // Priorité à OpenAI (GPT-4o-mini) car c'est ultra-rapide (comme demandé par l'utilisateur)
+      if (this.OPENAI_KEY && this.OPENAI_KEY !== 'votre_cle_openai') {
+        try {
+          const response = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${this.OPENAI_KEY}`
+            },
+            body: JSON.stringify({
+              model: "gpt-4o-mini",
+              messages: [{ role: "user", content: prompt }],
+              temperature: 0.8,
+              max_tokens: 600
+            })
+          });
+
+          const data = await response.json();
+          if (response.ok && data.choices && data.choices.length > 0) {
+            return data.choices[0].message.content;
+          }
+        } catch (e) {
+          console.warn("Échec d'OpenAI, tentative avec Gemini Proxy...", e);
+        }
+      }
+
+      // Fallback sur le proxy Gemini si OpenAI échoue ou n'est pas configuré
       const { data, error } = await supabase.functions.invoke('gemini-proxy', {
         body: { prompt }
       });
@@ -59,7 +86,7 @@ Titre : [Nom de la chanson créatif]
         return data.candidates[0].content.parts[0].text;
       }
       
-      throw new Error("Réponse inattendue de Gemini");
+      throw new Error("Réponse inattendue du LLM");
 
     } catch (err) {
       console.error("Erreur lors de la génération de paroles avec Gemini :", err);
